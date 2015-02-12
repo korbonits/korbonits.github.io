@@ -4,3 +4,5 @@ Cogito ergo sum
 This is my first website. Took me long enough.
 
 I imagine I will spend some time trying to make this look pretty.
+
+For now... this is simply a sandbox.

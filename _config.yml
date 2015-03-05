@@ -1,0 +1,6 @@
+markdown: redcarpet
+redcarpet:
+  extensions: ["tables"]
+exclude: ["*.Rmd"]
+name: Alex Korbonits
+description: Math | Data

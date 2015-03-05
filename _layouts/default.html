@@ -1,8 +1,20 @@
-{% include main_header.html %}
-{% include main_sidebar.html %}
+<!DOCTYPE html>
+<html>
 
-<section>
-	{{ content }}
-</section>
+  {% include head.html %}
 
-{% include main_footer.html %}
+  <body>
+
+    {% include header.html %}
+
+    <div class="page-content">
+      <div class="wrapper">
+        {{ content }}
+      </div>
+    </div>
+
+    {% include footer.html %}
+
+  </body>
+
+</html>

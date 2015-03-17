@@ -1,10 +1,9 @@
 # Site settings
-title: korbonits
+title: korbonits | Math ∩ Data
 email: alexkorbonits@gmail.com
 description: > # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
+  Born and raised in Seattle.<br>
+  Currently working at Nuiku, Inc.
 baseurl: "" # the subpath of your site, e.g. /blog/
 url: "http://korbonits.github.io" # the base hostname & protocol for your site
 twitter_username: korbonits
@@ -12,3 +11,7 @@ github_username:  korbonits
 
 # Build settings
 markdown: kramdown
+highlighter: pygments
+
+# Exlcude certain things:
+exclude: ['README.md', 'LICENSE', '_drafts']

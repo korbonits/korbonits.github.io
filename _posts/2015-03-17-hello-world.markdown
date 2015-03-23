@@ -13,9 +13,9 @@ One thing I'd like to get out of the experience of managing the code and creatin
 
 I intend to use this blog as a personal platform for learning and sharing my insights. There will be links to github repos; there will be links to source material.
 
-I should probably created a blogroll and figure out what the best practices are for citing sources within posts (bibliblography?).
+I should probably created a blogroll and figure out what the best practices are for citing sources within posts (bibli*blog*raphy?).
 
-Note that this blog is hosted by [gitHub pages][github-pages], and is built using [Jekyll][jekyll].
+Note that this blog is hosted by [GitHub Pages][github-pages], and is built using [Jekyll][jekyll].
 
 Those who know my love of [Python][python] may be surprised.
 

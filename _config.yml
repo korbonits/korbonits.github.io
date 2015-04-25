@@ -11,6 +11,8 @@ github_username:  korbonits
 
 # Build settings
 markdown: kramdown
+kramdown:
+  input: GFM
 highlighter: pygments
 
 # Exlcude certain things:

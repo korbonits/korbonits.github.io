@@ -31,7 +31,7 @@ Last, I'm not just interested in the theoretical underpinnings, though anyone wh
 
 $$\partial_t g_{ij}=-2 R_{ij}$$
 
-Wherever possible, I will try to cite my sources and include both math and code, whether inline or as links code living elsewhere (e.g., in a gitHub repo).
+Wherever possible, I will try to cite my sources and include both math and code, whether inline or as links to math or code living elsewhere (e.g., in a gitHub repo).
 
 {% highlight python linenos %}
 

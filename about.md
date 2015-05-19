@@ -27,7 +27,7 @@ Does anyone remember [AngelFire][angelfire] websites? Back in the *day*, one of 
 
 This is my first *real* website, built from scratch (harnessing [Jekyll][jekyll] and [GitHub Pages][github-pages]), and where I talk about things *other* than N64 games... most of the time, anyway.
 
-[linkedin]: http://www.linkedin/in/korbonits
+[linkedin]: http://www.linkedin.com/in/korbonits
 [twitter]: http://www.twitter.com/korbonits
 [angelfire]: http://www.angelfire.lycos.com
 [goldeneye]: http://en.wikipedia.org/wiki/GoldenEye_007_%281997_video_game%29

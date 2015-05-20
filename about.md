@@ -13,6 +13,7 @@ Selected links to public social networks:
 - Résumé/CV on [LinkedIn][linkedin]
 - twitter [profile][twitter]
 - GitHub [account][github]
+- Kaggle [profile][kaggle]
 - stackoverflow [profile][stackoverflow]
 
 # **warning: greater than 140 characters**
@@ -37,3 +38,4 @@ This is my first *real* website, built from scratch (harnessing [Jekyll][jekyll]
 [github-pages]: https://pages.github.com/
 [github]: http://www.github.com/korbonits
 [stackoverflow]: http://stackoverflow.com/users/3320944/korbonits
+[Kaggle]: https://www.kaggle.com/korbonits

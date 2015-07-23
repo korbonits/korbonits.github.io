@@ -107,18 +107,57 @@ Here's our first sample:
 $ th sample.lua cv/lm_lstm_epoch1.73_1.9188.t7
 ```
 
->nned posted, his bind. He are so had. Mishing not eumal dy saye
->gap, Jesmotition, Hefleston foum his isence, Bloom, the peptlemer and callidant or yame of cersainitien. With Redellosy
->Wisco oum for con. Maldrear sailly of exchochened liaty that in throum munders anutetoH icatiped _Koumban of falles aroumedupacelly)_ Jal. Noceping fer scontactrents?
->
->--Comanen, felliits.
-> Shourd comentlaned
->on or whal onverfoul of wappen in that blinking awdactire of like
->a bancaserable with m. Joy, E! I,, dlodnce good thet? Stubre he owald few of cloum. THy and more of
->the
->varss spewing how. What?
+> nned posted, his bind. He are so had. Mishing not eumal dy saye
+> gap, Jesmotition, Hefleston foum his isence, Bloom, the peptlemer and callidant or yame of cersainitien. With Redellosy
+> Wisco oum for con. Maldrear sailly of exchochened liaty that in throum munders anutetoH icatiped \_Koumban of falles aroumedupacelly)\_ Jal. Noceping fer scontactrents?
+> 
+> --Comanen, felliits.
+>  Shourd comentlaned
+> on or whal onverfoul of wappen in that blinking awdactire of like
+> a bancaserable with m. Joy, E! I,, dlodnce good thet? Stubre he owald few of cloum. THy and more of
+> the
+> varss spewing how. What?
+> 
+> ut the brom in Bock Murigens, what earte up  vore.
+> Herrom Goloonhy
+> crarks of the time he burth for me fleeterelfs him.
+> 
+> --Claper I saum. Learked of thit?
+> 
+> --On a silthing by smolled in Dra0 Comes beard.
+> 
+> Bliest \_Ceven te moune, Frambly, sears have the druck, turt, some, Manch Cire u'blow. I house I west and yes? I'res
+> babladgow. Jneess of combolast and meeye.\_ Maloraga\_.
+> 
+> You cipet dought
+> who
+> ca
+> sumper herd claused. Lyformselting tumper. Ithere.
+> 
+> He your after urot!
+> Swort up he siblar cappitites. Quains\_ life to a sude her coucting then
+> feose, it wattersing thinsarding oot
+> of
+> Dostle\_)\_ Who one sporial
+> sp. Butnen it the sapined by Gulleruust pursan, Muss? Mome Ponain's. Jesoliy, \_10 Excudis amored he's yel. \_Thobe and pricty.
+> 
+> I movery's to.
+> 
+> 
+>  moned her have coman 4Dakit them man her are to yeard took to Detrarn yound more, Woundackel. And the bgoinalius Parman's bushove bifferly,
+> larging toost)\_ Goine of the nothing any suppencede\_ lictedy groveby)\_
+> 
+> \_(Werrical mentovatubaly alking flames of conson
+> is was diys.
+> Hat, they'ke of dest jegcises corsay:
+> 
+> \_Wemstan's naks 107rearminal gruttell and here to gusrouted or shunonil on that the to in temhord beasing hay Lovely, Mn Purninat.
+> 
+> U telloss aster. Dewained. Setherades)\_ Hishur hand, Drisim, Hell Twander thack
+> \_Dousfuar prosy, doneson. Mound deatingsed, that pibst it on melughands and smul I make to enel in the comuty he and butterelan
+> and
 
-I recognize some words in there! Wow, this almost looks like Finnegans Wake[^0] and we're just getting started. Or perhaps some form of primordial English/Anglo-Saxon. Leopold Bloom is in there, "Jesmotition" seems like a play on "Jesuit", and it's formatting italics properly in markdown with two `_` (though it did not close its parentheses property... yet).
+I recognize some words in there! Wow, this almost looks like Finnegans Wake[^0] and we're just getting started. Or perhaps some form of primordial English/Anglo-Saxon. Leopold Bloom is in there, "Jesmotition" seems like a play on "Jesuit", and it's occasionally formatting italics properly in markdown with two `_` (though it did not close its parentheses properly... yet).
 
 Here's the best sample, after 50 training epochs. Ulysses is about ~1.5mb in size, so fairly small. Smaller than Karpathy's Shakespeare contactenated training/validation file of ~4.4mb. The lowest validation error that was captured was after 17 epochs (after which it started to slightly overfit... the default parameters are small!).
 
@@ -232,6 +271,8 @@ Another thing you can do is do a deep dive into the literature! Here is an excel
 [^2]: You are a brave, brave soul. Finnegans Wake itself looks like the output of an RNN with high temperature.
 
 [^3]: Graves, Alex. Supervised sequence labelling with recurrent neural networks. Vol. 385. Heidelberg: Springer, 2012.
+
+[^4]: Not sure why, but Markdown is not rendering those characters properly.
 
 [Tomasz Malisiewicz]: https://plus.google.com/+TomaszMalisiewicz/posts
 [rabbit-hole]: http://www.computervisionblog.com/2015/06/deep-down-rabbit-hole-cvpr-2015-and.html

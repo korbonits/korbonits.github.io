@@ -272,8 +272,6 @@ Another thing you can do is do a deep dive into the literature! Here is an excel
 
 [^3]: Graves, Alex. Supervised sequence labelling with recurrent neural networks. Vol. 385. Heidelberg: Springer, 2012.
 
-[^4]: Not sure why, but Markdown is not rendering those characters properly.
-
 [Tomasz Malisiewicz]: https://plus.google.com/+TomaszMalisiewicz/posts
 [rabbit-hole]: http://www.computervisionblog.com/2015/06/deep-down-rabbit-hole-cvpr-2015-and.html
 [karpathy]: https://plus.google.com/100209651993563042175

@@ -45,7 +45,11 @@ Going to link to separate blog posts for each way of doing deep learning via Pyt
 
 ### Torch
 
-Here's a link to my blog post, [Torch: bleeding edge DNN research]({% post_url 2015-06-28-Torch-bleeding-edge-DNN-research %})!
+Here's a link to my blog post, [Torch: bleeding edge DNN research]({% post_url 2015-06-28-Torch-bleeding-edge-DNN-research %}). In this post, you'll learn how to train a recurrent neural network (with an [LSTM][lstm]) how to write Joycean prose.
+
+### Caffe
+
+Here's a link to my blog post, [Caffe: breww your first DNN]({% post_url 2015-07-29-Caffe-brew-your-first-DNN %}). In this post, you'll learn how to use the Caffe Model Zoo to download a pre-trained deep neural net. We'll explore one example -- one that has gone *mainstream* viral (yes, you read that right) -- Google's Deep Dream, where you'll learn how to start with images of your own and go straight down the rabbit hole.
 
 # How do I start?
 
@@ -72,7 +76,8 @@ All your data are belong to you. Use Python and deep learning for great justice.
 [caffe-installation]: http://caffe.berkeleyvision.org/installation.html#prerequisites
 [nervanasys]: https://github.com/NervanaSystems/neon
 [Torch]: http://torch.ch/
+[lstm]: https://en.wikipedia.org/wiki/Long_short_term_memory
 
-[^0]: While the literature is certainly academic, it is mostly *not* theoretical work in that the progress in this field is -- admittedly, according to many of those achieving the greatest advances -- at present being driven primarily by empirical successes and failures. There are a lot of prominent researchers in the space calling for more theoretically-driven research.
+[^0]: While the literature is certainly academic, it is mostly *not* theoretical work in that the progress in this field is -- admittedly, according to many of those achieving the greatest advances -- at present being driven primarily by empirical successes and failures. There are a lot of prominent researchers in the space calling for more theoretically-driven research, including [Yann LeCun](http://techtalks.tv/talks/whats-wrong-with-deep-learning/61639/).
 
 [^1]: When I started writing this blog post, I thought about focusing solely on Pythonic deep learning tools, but after a lot of exploration, such focus is the wrong approach. There are different interesting problems and approaches in deep learning, with different tools to fit. E.g., a researcher may choose a different set of tools than a practitioner.

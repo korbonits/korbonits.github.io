@@ -10,7 +10,7 @@ This year, I propose the following set of New Years Resolutions. I am posting th
 
 ## Reading
 
-- Read 50 books (tracking with Goodreads)
+- Read 50 books/15,000-20,000 pages (tracking with Goodreads)
 - Read year 1 of the 10 year reading plan of Great Books of the Western World
 - Read all papers in Microsoft Research's "Paper Legend: Artificial Intelligence Edition" card game
 

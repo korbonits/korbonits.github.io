@@ -1,12 +1,12 @@
 ---
 layout: post
-title:  "New Years Resolutions 2018"
+title:  "New Year's Resolutions 2018"
 date:   2018-01-05
 ---
 
 ## Hold me accountable
 
-This year, I propose the following set of New Years Resolutions. I am posting this subset of my goals publically so you can hold me accountable. I'll do a retrospective at the end of 2018, and try to keep this list updated with progress throughout the year. I'm using Trello to keep track in real time.
+This year, I propose the following set of New Year's Resolutions. I am posting this subset of my goals publically so you can hold me accountable. I'll do a retrospective at the end of 2018, and try to keep this list updated with progress throughout the year. I'm using Trello to keep track in real time.
 
 Importantly, in this post I focus on personal, not-strictly-professional goals. Undoubtedly, many of my 2018 goals are professional, and many of my outside-of-work activities are professional in nature and directly or indirectly benefit my professional life. To me, it goes without saying that I intend to craft, measure, track, and achieve professional goals throughout the year. In terms of specifics, most of those are internal to where I work. This post is about "fun stuff outside of work that I can share" :). Furthermore, I'm not going to include things that I'll do anyway like see new art exhibits, go to concerts, or other cultural events.
 

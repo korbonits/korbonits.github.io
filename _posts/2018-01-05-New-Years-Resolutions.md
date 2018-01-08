@@ -69,9 +69,9 @@ One of my reading sub-goals in 2018 is to start systematically attacking my copy
 
 Here is the recommended reading list for year one of the Great Books:
 
-- Plato: Apology, Crito
-- Aristophanies: Clouds, Lysistrata
-- Plato: Republic [Book I, II]
+- [x] Plato: Apology, Crito
+- [x] Aristophanies: Clouds, Lysistrata
+- [x] Plato: Republic [Book I, II]
 - Aristotle Ethics [Book I]
 - Aristotle Politics [Book I]
 - Plutarch: Lycurgus, Numa Pompilius, Lycurgus and Numa compared, Alexander, Caesar
@@ -177,8 +177,8 @@ Watkins, Christopher JCH, and Peter Dayan. "Q-learning." Machine learning 8, no.
 
 In 2018, I am going to take on writing goals. Here's my list:
 
-- Blogging: >= 12 blog posts (1x/month)
-- Speaking: >= 1 public speaking event (under writing because it's putting together a talk)
+- Blogging: >= 12 blog posts (1x/month) [1/12]
+- Speaking: >= 1 public speaking event (under writing because it's putting together a talk) [0/1]
 - NIPS workshop submission (this is pretty ambitious, I need to scope)
 - Music composition (string quartet -- likely a single movement), to be premiered for my 30th birthday.
 
@@ -201,15 +201,15 @@ This year I will be heading back to Paris for the first time since I was 17. I'd
 
 As I enter a new decade of life, I want to add a focus on physical fitness. In 2017 I started regularly working with a personal trainer and it has been a great start to being fit. That being said, it isn't enough. I need to take some attainable yet challenging and measurable goals. Challenging especially if I fall behind (see running goal).
 
-- Personal training 1x/week
-- Lifting 1x/week (in addition to training)
-- Go sailing >= 1x/month
-- Enter >= 1 sailboat race
-- Run a 5k race (I have subgoals to get to this)
-- Run 365 miles in 2018 (>= 1 mile/day)
+- Personal training 1x/week [1/52]
+- Lifting 1x/week (in addition to training) [1/52]
+- Go sailing >= 1x/month [0/12]
+- Enter >= 1 sailboat race [0/1]
+- Run a 5k race (I have subgoals to get to this) [0/1]
+- Run 365 miles in 2018 (>= 1 mile/day) [1/365]
 - Lose 10 lbs., sustainably
 - Do yoga >= 1x in January; >= 1x/month after if I enjoy it
-- Climb Mt. Pilchuk
+- Climb Mt. Pilchuk [0/1]
 
 Stretch goals:
 - Win >= 1 sailboat race

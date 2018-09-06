@@ -72,10 +72,10 @@ Here is the recommended reading list for year one of the Great Books:
 - [x] Plato: Apology, Crito
 - [x] Aristophanies: Clouds, Lysistrata
 - [x] Plato: Republic [Book I, II]
-- Aristotle Ethics [Book I]
-- Aristotle Politics [Book I]
-- Plutarch: Lycurgus, Numa Pompilius, Lycurgus and Numa compared, Alexander, Caesar
-- New Testament [Matthew & Acts of Apostles]
+- [x] Aristotle Ethics [Book I]
+- [x] Aristotle Politics [Book I]
+- [x] Plutarch: Lycurgus, Numa Pompilius, Lycurgus and Numa compared, Alexander, Caesar
+- [x] New Testament [Matthew & Acts of Apostles]
 - St. Augustine: Confessions [Books I-VIII]
 - Machiavelli: The Prince
 - Rabelais: Gargantua and Pantagruel [Book I-II]

@@ -17,3 +17,6 @@ highlighter: rouge
 
 # Exlcude certain things:
 exclude: ['README.md', 'LICENSE', '_drafts']
+
+# Google Analytics
+google_analytics: UA-131731029-1

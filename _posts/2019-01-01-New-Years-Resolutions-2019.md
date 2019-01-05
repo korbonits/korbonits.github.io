@@ -41,11 +41,13 @@ By OKR standards, I knocked this one out of the park in 2018. By that logic, I s
 
 By wasting less time in 2019, I think I can still balance fitness and reading goals.
 
+**2019-01-04 update:** This should go without saying, but, as a privileged white cis-het male, I feel it is my duty to represent the following. In 2019 I will commit to reading books/stories/poetry written by women, POC, nonbinary folks, and other underrepresented author identities or authors from less privileged backgrounds. These works will stand for themselves and I will not review them as conveniently fitting into some sort of diversity category/genre, as if I am checking off a box. I think this is important and I think everyone else should do the same.
+
 ### Great Books, year one and two
 
 ![The Great Books](/assets/great_books.jpg)
 
-Here is a Great Books [reading plan](https://gbwwblog.wordpress.com/reading-plan/). Year two doesn't look so bad. One thing I like about this breakdown is that it includes page counts.
+Here is a Great Books [reading plan](https://gbwwblog.wordpress.com/reading-plan/). Year two doesn't look so bad. One thing I like about this breakdown is that it includes page counts (though it's really double this count since they are large double-column pages in tiny print)
 
 By the end of 2019, I'd like to commit to having read all of year one and year two of the great books. This sounds ridiculous since I only got halfway through year one in 2018, but I'm willing to sacrifice a few books from my Goodreads list this year if it means completing this goal `#tradeoffs`.
 

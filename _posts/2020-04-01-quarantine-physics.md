@@ -46,6 +46,6 @@ It’s ephemeral, a blip on the cosmic timescale, but right now, it’s everythi
 
 # National Poetry (Writing) Month
 
-This is a poem in a series of poems during April, 2020, for #NationalPoetryMonth and #NationalPoetryWritingMonth
+This is a poem in a series of poems during April, 2020, for #NationalPoetryMonth and #NaPoWriMo #NaPoWriMo2020
 
 My [NationalPoetryWritingMonth post]({% post_url 2020-03-31-national-poetry-writing-month %}).

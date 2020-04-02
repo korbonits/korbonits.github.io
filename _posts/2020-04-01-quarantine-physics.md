@@ -1,11 +1,10 @@
 ---
 layout: post
 title:  "Quarantine Physics"
-date:   2019-01-01
+date:   2020-04-01
 ---
 
-#NationalPoetryMonth
-#NationalPoetryWritingMonth
+Hashtag #NationalPoetryMonth #NationalPoetryWritingMonth
 
 All day we’re solving a system of equations
 A three body problem, f(you, me, the cat)

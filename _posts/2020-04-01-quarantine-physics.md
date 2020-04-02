@@ -44,6 +44,8 @@ It’s ephemeral, a blip on the cosmic timescale, but right now, it’s everythi
 
 ---
 
+![NaPoWriMo](http://www.napowrimo.net/wp-content/uploads/2020/03/napo2020button1-1.png)
+
 # National Poetry (Writing) Month
 
 This is a poem in a series of poems during April, 2020, for #NationalPoetryMonth and #NaPoWriMo #NaPoWriMo2020

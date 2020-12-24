@@ -8,7 +8,7 @@ date:   2020-01-01
 
 Well, [that was ambitious](http://korbonits.github.io/2019/01/01/New-Years-Resolutions-2019.html)!
 
-All in all, I did pretty well. Two major new hobbies emerged: writing prose and sailing. I read a lot of books, and traveled to one new country (Japan) and new parts of others (Montréal). I learned how to learn better than I had for a while.
+All in all, I did pretty well. My sailing skill increased dramatically and I continued to write albeit with less zeal. I read a lot of books, and traveled to one new country (Japan) and new parts of others (Montréal). I learned how to learn better than I had for a while.
 
 The MOST important update of 2019 is that I met the love of my life (first week of 2019!), we fell in love, and planned a trip for early 2020 to propose to each other. Wasn't even on the list. Definitely the best surprise of the year (and of my life). Renders 2019 a success no matter how you look at it. Looking forward to writing about this in a subsequent blog post :).
 

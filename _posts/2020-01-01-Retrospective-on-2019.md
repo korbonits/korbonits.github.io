@@ -20,7 +20,7 @@ At a high level, for 2019 I had goals in the following categories:
  - Travel: success
  - Language: failure
  - Fitness: failure
- - Sailing: success/failire
+ - Sailing: success/failure
  - Organization: success
  - Use less technology: success
 
@@ -34,7 +34,7 @@ In 2019 I read 16,918 pages of **completed** books on Goodreads, which is 50 boo
 
 Great Books: didn't make any headway here. Ironically, I picked up a full set (pristine!) of the Harvard Classics, so, Hutchins and Adler have some competition for my reading attention.
 
-Classic machine learning papers: this just wansn't high on the interest list in 2019. Dropping it until further notice. I did however spend real quality time dissecting the latest NLP papers, math and all, on whiteboards or on Google Hangouts. BERT, Attention is All You Need, ELMo, etc., they were great reads but by far the better part was the sharing of knowledge with curious colleagues and friends.
+Classic machine learning papers: this just wasn't high on the interest list in 2019. Dropping it until further notice. I did however spend real quality time dissecting the latest NLP papers, math and all, on whiteboards or on Google Hangouts. BERT, Attention is All You Need, ELMo, etc., they were great reads but by far the better part was the sharing of knowledge with curious colleagues and friends.
 
 #### Writing: success/failure
 

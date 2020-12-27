@@ -38,7 +38,7 @@ Classic machine learning papers: this just wasn't high on the interest list in 2
 
 #### Writing: success/failure
 
-In early 2019, fresh off the huge NaNoWriMo tailwinds of hitting 50,000 words in late 2018, I started one of two fiction courses at ![Hugo House](https://hugohouse.org/): Fiction II and Fiction III.
+In early 2019, fresh off the huge NaNoWriMo tailwinds of hitting 50,000 words in late 2018, I started one of two fiction courses at [Hugo House](https://hugohouse.org/): Fiction II and Fiction III.
 
 I was very invested in Fiction II but conflicts with sailing and other obligations had me missing out on Fiction III and I unfortunately withdrew from participation after workshopping a piece of flash fiction derived from one of my NaNoWriMo scenes.
 
@@ -102,6 +102,6 @@ Throughout the year I became progressively more organized. I had many more deman
 
 #### Use less technology, 2019: success
 
-Speaking of wasting less time, I'd say that's definitely true of 2019. Screen time was down. I spent more time reading, more time outside, more time traveling (and without internet in foreign places), and more time spending time with others <3. At some point in the year I read Cal Newport's ![Digital Minimalism](https://www.amazon.com/Digital-Minimalism-Choosing-Focused-Noisy/dp/0525536515) and deleted Twitter, Instagram, and Facebook from my phone. Though sometimes I continued to log in via Chrome or Safari, the lack of push notifiactions alone drastically reduced my usage and the increased friction/reduced UX also helped reduce my time spent doomscrolling. I would highly recommend this approach. Just removing one's access altogether or making it slightly more cumbersome. Time is the most valuable commodity I have and choosing to spend less of it on social media has made me feel happier.
+Speaking of wasting less time, I'd say that's definitely true of 2019. Screen time was down. I spent more time reading, more time outside, more time traveling (and without internet in foreign places), and more time spending time with others <3. At some point in the year I read Cal Newport's [Digital Minimalism](https://www.amazon.com/Digital-Minimalism-Choosing-Focused-Noisy/dp/0525536515) and deleted Twitter, Instagram, and Facebook from my phone. Though sometimes I continued to log in via Chrome or Safari, the lack of push notifiactions alone drastically reduced my usage and the increased friction/reduced UX also helped reduce my time spent doomscrolling. I would highly recommend this approach. Just removing one's access altogether or making it slightly more cumbersome. Time is the most valuable commodity I have and choosing to spend less of it on social media has made me feel happier.
 
 

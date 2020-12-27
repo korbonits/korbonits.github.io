@@ -14,7 +14,7 @@ The thesis of their editorial is simple: Law and Order should rule the day and S
 
 # Quick primer of the Wall Street Journal editorial board
 
-![Seattle's New Theory of Crime](https://www.wsj.com/articles/seattles-new-theory-of-crime-11605309361?st=njn5ejeyzgc1rtp&reflink=desktopwebshare_permalink) is an article whose byline is ![The Editorial Board](https://www.wsj.com/news/author/editorial-board) (and whose twitter handle is ![@WSJopinion](https://twitter.com/WSJopinion)). Their biography linked to above reads like a mini manifesto courtesy of John Galt. But the board's biography doesn't even begin to touch on racism, crime, or poverty, which, this being the editorial board of the Wall Street Journal, has strong opinions indeed.
+[Seattle's New Theory of Crime](https://www.wsj.com/articles/seattles-new-theory-of-crime-11605309361?st=njn5ejeyzgc1rtp&reflink=desktopwebshare_permalink) is an article whose byline is [The Editorial Board](https://www.wsj.com/news/author/editorial-board) (and whose twitter handle is [@WSJopinion](https://twitter.com/WSJopinion)). Their biography linked to above reads like a mini manifesto courtesy of John Galt. But the board's biography doesn't even begin to touch on racism, crime, or poverty, which, this being the editorial board of the Wall Street Journal, has strong opinions indeed.
 
 # My unpublished response -- unedited
 

@@ -6,11 +6,11 @@ import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
-const { title, date } = Astro.props;
+const { title, date, description } = Astro.props;
 ---
 <html lang="en">
   <head>
-    <BaseHead title={title} />
+    <BaseHead title={title} description={description} />
     <style>
       main { width: calc(100% - 2em); max-width: 100%; margin: 0; }
       .prose { width: 720px; max-width: calc(100% - 2em); margin: auto; padding: 1em; color: rgb(var(--gray-dark)); }

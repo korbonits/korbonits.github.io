@@ -1,4 +1,5 @@
 ---
+tags: ["personal", "goals", "travel"]
 description: "Looking back on 2019 — sailing, travel to Japan, books, and the best surprise of the year."
 title:  "2019 Retrospective"
 date:   2020-01-01

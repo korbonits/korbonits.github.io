@@ -1,4 +1,5 @@
 ---
+tags: ["poetry", "personal"]
 description: "A poem about quarantine, closeness, and the physics of two people and a cat solving equations together."
 title:  "Q(uarantine) P(hysics)"
 date:   2020-04-01

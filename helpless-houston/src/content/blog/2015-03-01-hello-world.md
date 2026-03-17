@@ -1,4 +1,5 @@
 ---
+tags: ["meta", "blogging"]
 description: "Inaugural post on a newly-created personal website — a platform for learning, sharing insights, and linking to code."
 title:  "Hello, World!"
 date:   2015-03-01 11:49:38

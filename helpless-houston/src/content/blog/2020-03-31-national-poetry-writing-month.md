@@ -1,4 +1,5 @@
 ---
+tags: ["poetry", "writing", "personal"]
 description: "Poems written daily in celebration of National Poetry Month and NaPoWriMo 2020."
 title:  "National Poetry (Writing) Month"
 date:   2020-03-31

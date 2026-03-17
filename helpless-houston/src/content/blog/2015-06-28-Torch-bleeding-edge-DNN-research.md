@@ -1,4 +1,5 @@
 ---
+tags: ["deep-learning", "torch", "tutorial"]
 description: "An introduction to Torch, the deep learning framework favored by Facebook AI and Google DeepMind for cutting-edge research."
 title:  "Torch: bleeding edge DNN research"
 date:   2015-06-28 11:49:40

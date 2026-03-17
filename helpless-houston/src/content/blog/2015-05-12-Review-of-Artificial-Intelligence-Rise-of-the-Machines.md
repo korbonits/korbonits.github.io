@@ -1,4 +1,5 @@
 ---
+tags: ["deep-learning", "ai", "books"]
 description: "A response to The Economist on computer vision, deep learning, and whether AI really threatens jobs."
 title:  "Review of \"Artificial Intelligence: Rise of the Machines\""
 date:   2015-05-12 11:49:39

@@ -1,4 +1,5 @@
 ---
+tags: ["personal", "goals", "books"]
 description: "2018 retrospective and ambitious goals for 2019: reading, sailing, writing, and learning."
 title:  "New Year's Resolutions 2019"
 date:   2019-01-01

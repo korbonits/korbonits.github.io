@@ -1,4 +1,5 @@
 ---
+description: "Public New Year's resolutions for 2018 — reading, fitness, travel, and personal growth goals."
 title:  "New Year's Resolutions 2018"
 date:   2018-01-05
 ---

@@ -1,4 +1,5 @@
 ---
+description: "A practical introduction to deep learning with Python — from zero to insights in minutes, no theory required."
 title:  "Deep Learning with Python"
 date:   2015-05-04 11:49:39
 ---

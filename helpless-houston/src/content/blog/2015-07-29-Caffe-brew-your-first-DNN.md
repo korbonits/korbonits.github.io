@@ -1,4 +1,5 @@
 ---
+description: "A hands-on guide to Caffe — how to brew your first deep neural network and run Google Deep Dream."
 title:  "Caffe: Brew your first DNN"
 date:   2015-07-29 11:49:40
 ---

@@ -1,4 +1,5 @@
 ---
+description: "A response to a WSJ editorial on Seattle's proposed legislation to decriminalize poverty."
 title:  "In re: Seattle's New Theory of Crime"
 date:   2020-12-26
 ---

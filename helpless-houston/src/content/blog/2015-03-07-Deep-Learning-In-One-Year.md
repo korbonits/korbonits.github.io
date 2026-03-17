@@ -1,4 +1,5 @@
 ---
+description: "A birthday resolution: achieve a working understanding of deep learning within one year."
 title: Deep Learning in one year
 tags: ["deep-learning"]
 date:   2015-03-07 11:49:38

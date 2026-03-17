@@ -1,5 +1,5 @@
 ---
-layout: post
+draft: true
 title:  "Creating a writing habit from scratch"
 date:   2018-09-05 20:00:00
 ---

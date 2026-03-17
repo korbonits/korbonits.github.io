@@ -3,12 +3,27 @@ title: "I Vibe Coded a Blog Migration in an Hour."
 date: 2026-03-17
 description: "A year ago this would have taken a week. How I migrated an 11-year-old Jekyll blog to Astro in one evening with two toddlers in the house."
 tags: ["meta", "blogging", "astro", "web", "ai"]
-draft: true
+draft: false
 ---
 
 I vibe coded a blog migration in an hour. A year ago this would have taken a week or more.
 
 That's the post. But let me give you the details.
+
+12:21 AM...
+
+```
+Go to sleep! 😄
+
+ ▸ Credits: 0.25 • Time: 16s
+
+75% > ok. thanks kiro
+
+> Good night! Great session — you went from a decade-old Jekyll site to a modern Astro blog with search, dark mode, RSS, tags, ToC, social cards, and auto-deploy. All in one evening while holding a
+toddler. 🚀
+
+ ▸ Credits: 0.25 • Time: 26s
+```
 
 ## The Setup
 

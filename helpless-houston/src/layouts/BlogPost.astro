@@ -5,8 +5,9 @@ import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 
-type Props = CollectionEntry<'blog'>['data'] & { body: string; prev?: CollectionEntry<'blog'> | null; next?: CollectionEntry<'blog'> | null };
-const { title, date, description, body, tags, prev, next } = Astro.props;
+type Props = CollectionEntry<'blog'>['data'] & { body: string; prev?: CollectionEntry<'blog'> | null; next?: CollectionEntry<'blog'> | null; headings?: { depth: number; slug: string; text: string }[] };
+const { title, date, description, body, tags, prev, next, headings } = Astro.props;
+const toc = headings?.filter(h => h.depth <= 3) ?? [];
 const readingTime = body ? Math.ceil(body.split(/\s+/).length / 200) : null;
 ---
 <html lang="en">
@@ -24,6 +25,12 @@ const readingTime = body ? Math.ceil(body.split(/\s+/).length / 200) : null;
       .post-nav { display: flex; justify-content: space-between; margin-top: 2em; padding-top: 1em; border-top: 1px solid rgb(var(--gray-light)); font-size: 0.9em; }
       .post-nav a { text-decoration: none; max-width: 45%; }
       .post-nav .next { margin-left: auto; text-align: right; }
+      .toc { background: rgb(var(--gray-light), 0.3); border-left: 4px solid var(--accent); padding: 1em 1.5em; margin-bottom: 2em; border-radius: 4px; }
+      .toc h2 { font-size: 1em; margin: 0 0 0.5em 0; }
+      .toc ul { list-style: none; margin: 0; padding: 0; }
+      .toc li { padding: 0.15em 0; font-size: 0.9em; }
+      .toc a { text-decoration: none; }
+      .toc a:hover { text-decoration: underline; }
     </style>
   </head>
   <body>
@@ -41,6 +48,19 @@ const readingTime = body ? Math.ceil(body.split(/\s+/).length / 200) : null;
               </div>
             )}
           </div>
+          <slot />
+          {toc.length > 3 && (
+            <nav class="toc">
+              <h2>Contents</h2>
+              <ul>
+                {toc.map(h => (
+                  <li style={`margin-left: ${(h.depth - 1) * 1}em`}>
+                    <a href={`#${h.slug}`}>{h.text}</a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
           <slot />
           <nav class="post-nav">
             {prev && <a href={`/blog/${prev.id}/`} class="prev">← {prev.data.title}</a>}

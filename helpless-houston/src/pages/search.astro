@@ -1,0 +1,24 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title="Search" description="Search all posts on korbonits.com" />
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <h1>Search</h1>
+      <div id="search"></div>
+    </main>
+    <Footer />
+    <script src="/pagefind/pagefind-ui.js" is:inline></script>
+    <script is:inline>
+      new PagefindUI({ element: '#search', showSubResults: true });
+    </script>
+  </body>
+</html>

@@ -145,14 +145,20 @@ hr {
 	}
 	body {
 		background: #0f1219;
-		color: rgb(var(--gray-light));
+		color: #e8eaf0;
 	}
 	h1, h2, h3, h4, h5, h6 {
 		color: #fff;
 	}
+	.prose {
+		color: #e8eaf0;
+	}
+	a {
+		color: var(--accent);
+	}
 	code {
 		background-color: #1a1f2e;
-		color: rgb(var(--gray-light));
+		color: #e8eaf0;
 	}
 	pre {
 		background-color: #1a1f2e;

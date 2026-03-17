@@ -27,12 +27,10 @@ jobs:
           node-version: 22
       - uses: actions/configure-pages@v4
       - run: npm ci
-        working-directory: helpless-houston
       - run: npm run build
-        working-directory: helpless-houston
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: helpless-houston/dist
+          path: dist
 
   deploy:
     needs: build

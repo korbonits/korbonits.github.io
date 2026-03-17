@@ -5,7 +5,6 @@ Personal blog and portfolio. Built with [Astro](https://astro.build).
 ## Development
 
 ```bash
-cd helpless-houston
 npm install
 npm run dev
 ```
@@ -13,7 +12,7 @@ npm run dev
 ## Build & Preview
 
 ```bash
-npm run build   # builds to helpless-houston/dist/
+npm run build   # builds to dist/
 npm run preview # preview the build locally
 ```
 

@@ -136,6 +136,32 @@ hr {
 	}
 }
 
+@media (prefers-color-scheme: dark) {
+	:root {
+		--accent: #7b8fff;
+		--accent-dark: #a0aaff;
+		--gray-gradient: rgba(var(--gray-light), 10%), #0f1219;
+	}
+	body {
+		background: #0f1219;
+		color: rgb(var(--gray-light));
+	}
+	h1, h2, h3, h4, h5, h6 {
+		color: #fff;
+	}
+	header {
+		background: #1a1f2e;
+		box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+	}
+	code {
+		background-color: #1a1f2e;
+		color: rgb(var(--gray-light));
+	}
+	pre {
+		background-color: #1a1f2e;
+	}
+}
+
 .sr-only {
 	border: 0;
 	padding: 0;

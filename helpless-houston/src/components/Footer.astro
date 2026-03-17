@@ -1,0 +1,17 @@
+---
+const today = new Date();
+---
+<footer>
+  &copy; {today.getFullYear()} Alex Korbonits. All rights reserved.
+  <div class="social-links">
+    <a href="https://twitter.com/korbonits" target="_blank">Twitter</a>
+    <a href="https://github.com/korbonits" target="_blank">GitHub</a>
+    <a href="https://www.linkedin.com/in/korbonits" target="_blank">LinkedIn</a>
+  </div>
+</footer>
+<style>
+  footer { padding: 2em 1em 6em; background: linear-gradient(var(--gray-gradient)) no-repeat; color: rgb(var(--gray)); text-align: center; }
+  .social-links { display: flex; justify-content: center; gap: 1em; margin-top: 1em; }
+  .social-links a { text-decoration: none; color: rgb(var(--gray)); }
+  .social-links a:hover { color: rgb(var(--gray-dark)); }
+</style>

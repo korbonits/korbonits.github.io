@@ -1,0 +1,61 @@
+---
+import '../styles/global.css';
+const { title } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title ? `${title} — Alex Korbonits` : 'Alex Korbonits'}</title>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <h2><a href="/">Alex Korbonits</a></h2>
+        <div class="links">
+          <a href="/">Home</a>
+          <a href="/blog">Blog</a>
+          <a href="/about">About</a>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer>
+      <p>&copy; {new Date().getFullYear()} Alex Korbonits</p>
+    </footer>
+  </body>
+</html>
+
+<style>
+  header {
+    margin: 0;
+    padding: 0 1em;
+    background: white;
+    box-shadow: 0 2px 8px rgba(15, 18, 25, 0.05);
+  }
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 720px;
+    margin: auto;
+  }
+  h2 { margin: 0; font-size: 1em; }
+  h2 a { text-decoration: none; color: inherit; }
+  .links a {
+    padding: 1em 0.5em;
+    color: rgb(15, 18, 25);
+    text-decoration: none;
+    border-bottom: 4px solid transparent;
+  }
+  .links a:hover { border-bottom-color: var(--accent); }
+  footer {
+    text-align: center;
+    padding: 2em;
+    color: rgb(var(--gray));
+    font-size: 0.85em;
+  }
+</style>

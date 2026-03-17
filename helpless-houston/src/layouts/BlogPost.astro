@@ -5,8 +5,9 @@ import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 
-type Props = CollectionEntry<'blog'>['data'];
-const { title, date, description } = Astro.props;
+type Props = CollectionEntry<'blog'>['data'] & { body: string };
+const { title, date, description, body } = Astro.props;
+const readingTime = body ? Math.ceil(body.split(/\s+/).length / 200) : null;
 ---
 <html lang="en">
   <head>
@@ -25,7 +26,7 @@ const { title, date, description } = Astro.props;
       <article>
         <div class="prose">
           <div class="title">
-            <div class="date"><FormattedDate date={date} /></div>
+            <div class="date"><FormattedDate date={date} />{readingTime && ` · ${readingTime} min read`}</div>
             <h1>{title}</h1>
             <hr />
           </div>

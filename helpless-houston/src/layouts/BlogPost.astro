@@ -5,8 +5,8 @@ import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 
-type Props = CollectionEntry<'blog'>['data'] & { body: string };
-const { title, date, description, body, tags } = Astro.props;
+type Props = CollectionEntry<'blog'>['data'] & { body: string; prev?: CollectionEntry<'blog'> | null; next?: CollectionEntry<'blog'> | null };
+const { title, date, description, body, tags, prev, next } = Astro.props;
 const readingTime = body ? Math.ceil(body.split(/\s+/).length / 200) : null;
 ---
 <html lang="en">
@@ -21,6 +21,9 @@ const readingTime = body ? Math.ceil(body.split(/\s+/).length / 200) : null;
       .tags { display: flex; gap: 0.5em; flex-wrap: wrap; margin-top: 0.75em; }
       .tag { background: rgb(var(--gray-light)); color: rgb(var(--gray-dark)); padding: 0.2em 0.6em; border-radius: 4px; font-size: 0.8em; text-decoration: none; }
       .tag:hover { background: var(--accent); color: white; }
+      .post-nav { display: flex; justify-content: space-between; margin-top: 2em; padding-top: 1em; border-top: 1px solid rgb(var(--gray-light)); font-size: 0.9em; }
+      .post-nav a { text-decoration: none; max-width: 45%; }
+      .post-nav .next { margin-left: auto; text-align: right; }
     </style>
   </head>
   <body>
@@ -39,6 +42,10 @@ const readingTime = body ? Math.ceil(body.split(/\s+/).length / 200) : null;
             )}
           </div>
           <slot />
+          <nav class="post-nav">
+            {prev && <a href={`/blog/${prev.id}/`} class="prev">← {prev.data.title}</a>}
+            {next && <a href={`/blog/${next.id}/`} class="next">{next.data.title} →</a>}
+          </nav>
         </div>
       </article>
     </main>

@@ -6,7 +6,7 @@ import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 
 type Props = CollectionEntry<'blog'>['data'] & { body: string };
-const { title, date, description, body } = Astro.props;
+const { title, date, description, body, tags } = Astro.props;
 const readingTime = body ? Math.ceil(body.split(/\s+/).length / 200) : null;
 ---
 <html lang="en">
@@ -18,6 +18,9 @@ const readingTime = body ? Math.ceil(body.split(/\s+/).length / 200) : null;
       .title { margin-bottom: 1em; padding: 1em 0; text-align: center; line-height: 1; }
       .title h1 { margin: 0 0 0.5em 0; }
       .date { margin-bottom: 0.5em; color: rgb(var(--gray)); }
+      .tags { display: flex; gap: 0.5em; flex-wrap: wrap; margin-top: 0.75em; }
+      .tag { background: rgb(var(--gray-light)); color: rgb(var(--gray-dark)); padding: 0.2em 0.6em; border-radius: 4px; font-size: 0.8em; text-decoration: none; }
+      .tag:hover { background: var(--accent); color: white; }
     </style>
   </head>
   <body>
@@ -29,6 +32,11 @@ const readingTime = body ? Math.ceil(body.split(/\s+/).length / 200) : null;
             <div class="date"><FormattedDate date={date} />{readingTime && ` · ${readingTime} min read`}</div>
             <h1>{title}</h1>
             <hr />
+            {tags && tags.length > 0 && (
+              <div class="tags">
+                {tags.map(tag => <a href={`/tags/${tag}/`} class="tag">{tag}</a>)}
+              </div>
+            )}
           </div>
           <slot />
         </div>

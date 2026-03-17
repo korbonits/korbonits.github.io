@@ -1,6 +1,6 @@
 ---
 title: Deep Learning in one year
-tags: "Deep Learning"
+tags: ["deep-learning"]
 date:   2015-03-07 11:49:38
 ---
 

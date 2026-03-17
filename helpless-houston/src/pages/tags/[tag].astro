@@ -1,0 +1,45 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import Header from '../../components/Header.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  const tags = [...new Set(posts.flatMap(p => p.data.tags ?? []))];
+  return tags.map(tag => ({
+    params: { tag },
+    props: { posts: posts.filter(p => p.data.tags?.includes(tag)).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()) },
+  }));
+}
+
+const { tag } = Astro.params;
+const { posts } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={`Posts tagged "${tag}"`} />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <h1>#{tag}</h1>
+      <ul>
+        {posts.map(post => (
+          <li>
+            <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+            <span class="date"><FormattedDate date={post.data.date} /></span>
+          </li>
+        ))}
+      </ul>
+    </main>
+    <Footer />
+  </body>
+</html>
+<style>
+  ul { list-style: none; padding: 0; }
+  li { display: flex; justify-content: space-between; padding: 0.5em 0; border-bottom: 1px solid rgb(var(--gray-light)); }
+  .date { color: rgb(var(--gray)); font-size: 0.85em; }
+</style>

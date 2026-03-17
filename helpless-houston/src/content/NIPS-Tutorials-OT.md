@@ -2,6 +2,7 @@
 layout: post
 title:  "A Primer on Optimal Transport #NIPS2017"
 date:   2017-12-04 08:00:00
+draft: true
 ---
 
 ![NIPS](/assets/nips.png)

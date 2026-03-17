@@ -1,5 +1,4 @@
 ---
-layout: post
 title:  "2019 Retrospective"
 date:   2020-01-01
 ---

@@ -1,5 +1,4 @@
 ---
-layout: post
 title:  "Q(uarantine) P(hysics)"
 date:   2020-04-01
 ---

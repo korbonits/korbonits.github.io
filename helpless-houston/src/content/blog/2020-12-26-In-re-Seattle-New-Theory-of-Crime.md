@@ -1,5 +1,4 @@
 ---
-layout: post
 title:  "In re: Seattle's New Theory of Crime"
 date:   2020-12-26
 ---

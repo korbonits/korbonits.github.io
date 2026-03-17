@@ -1,5 +1,4 @@
 ---
-layout: post
 title:  "National Poetry (Writing) Month"
 date:   2020-03-31
 ---

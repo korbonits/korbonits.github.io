@@ -1,7 +1,12 @@
 ---
-draft: true
 title:  "Creating a writing habit from scratch"
 date:   2018-09-05 20:00:00
+description: "Rough notes from 2018 on building a writing habit — published as-is, brackets and all."
+tags: ["writing", "personal", "meta"]
+---
+
+*This is a rough draft from September 2018, published as-is. Brackets indicate notes-to-self I never got around to filling in. Make of that what you will.*
+
 ---
 
 # Late is better than never

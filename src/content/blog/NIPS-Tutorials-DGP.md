@@ -1,5 +1,4 @@
 ---
-layout: post
 title:  "Deep Probabilistic Modelling with Gaussian Processes #NIPS2017"
 date:   2017-12-04 12:00:00
 draft: false
@@ -7,238 +6,112 @@ description: "Lecture notes from Neil Lawrence's NIPS 2017 tutorial on deep prob
 tags: ["machine-learning", "gaussian-processes", "probabilistic-ml", "nips", "notes"]
 ---
 
-*I wrote these notes in December 2017 after attending my first NeurIPS and never published them. Eight years later, I’m hitting publish with no edits — just this note as context.
-Reading them back is strange. The five takeaways from that week — Bayesian deep learning, fairness and bias, the need for theory, deep RL, GANs — all became defining research arcs of the decade that followed. The Rahimi & Recht “alchemy” talk, which was controversial at the time, looks prophetic now. And the throwaway concern about “generating realistic fake videos with geopolitical consequences” landed harder than I think anyone in that room expected.*
+*I wrote these notes in December 2017 after attending my first NeurIPS and never published them. Eight years later, I'm hitting publish with no edits — just this note as context.
+Reading them back is strange. The five takeaways from that week — Bayesian deep learning, fairness and bias, the need for theory, deep RL, GANs — all became defining research arcs of the decade that followed. The Rahimi & Recht "alchemy" talk, which was controversial at the time, looks prophetic now. And the throwaway concern about "generating realistic fake videos with geopolitical consequences" landed harder than I think anyone in that room expected.*
 
 *The corporate circus section is its own kind of time capsule: an Intel Flo Rida concert, Nvidia handing out $3k GPUs to the audience, and an invite-only Tesla party with Elon Musk and Andrej Karpathy. A different era.*
 
-*What strikes me most, though, is how optimistic and open everything felt. The field was moving fast but still felt legible — you could go to one conference and get your arms around the major themes. That’s long gone. Anyway — notes from the before-times, published from the future.*
+*What strikes me most, though, is how optimistic and open everything felt. The field was moving fast but still felt legible — you could go to one conference and get your arms around the major themes. That's long gone. Anyway — notes from the before-times, published from the future.*
 
 ![NIPS](/assets/nips.png)
 
 ## Deep Probabilistic Modelling with Gaussian Processes
 ### [Neil D. Lawrence](http://inverseprobability.com/)
 
-ML? data + models -> prediction
+ML = data + models → prediction. But predictions alone aren't enough — we need to make decisions. To combine data and model we need: (1) a prediction function, and (2) an objective function. Sources of **uncertainty**: scarcity of training data, mismatch of prediction functions, uncertainty in the objective/cost function.
 
-ML is a mainstay of AI because of the importance of prediction. But preds not enough, need to make decisions.
+Following MacKay (1992) and Neal (1994): take a probabilistic approach.
 
-to combine data + model:
-1. prediction function (!= inference)
-2. objective function
+### 1. Neural Networks as Probabilistic Models
 
-UNCERTAINTY
+A neural network computes:
 
-- scarcity of training data
-- mismatch of pred functions
-- uncertainties in objective/cost function
+$$f(\mathbf{x}) = \mathbf{W}_2^\top \phi(\mathbf{W}_1, \mathbf{x})$$
 
+where $\phi$ is a nonlinear activation. This is linear in the parameters $\mathbf{W}_2$ but nonlinear in the inputs — **adaptive basis functions**. $\mathbf{W}_1$ are fixed for a given analysis; in ML we optimize both $\mathbf{W}_1$ and $\mathbf{W}_2$.
 
-neural networks are gr8!
+**Probabilistic inference:**
+- $\mathbf{y}$ ← data
+- $p(\mathbf{y}^*, \mathbf{y})$ ← model (joint distribution over world)
+- $p(\mathbf{y}^* \mid \mathbf{y})$ ← prediction (posterior)
 
-f(x) = (w^2)^T * phi(W_1, x), phi nonlinear
+The goal: $p(\mathbf{y}^* \mid \mathbf{y}, \mathbf{X}, \mathbf{x}^*)$ — the predictive distribution at a new point $\mathbf{x}^*$.
 
-in statistics, it's linear in the parameters, but non-linear in the inputs. 
+The likelihood of a data point: $p(\mathbf{y} \mid \mathbf{x}, \mathbf{W})$. Under iid noise (the iid assumption is about the *noise*, not the underlying function):
 
-adaptive basis functions.
+$$p(\mathbf{y} \mid \mathbf{X}, \mathbf{W}) = \prod_i p(y_i \mid \mathbf{x}_i, \mathbf{W})$$
 
-activation functions are basis functions.
+Commonly Gaussian likelihood; MLE for supervised learning. With priors over latents, you get unsupervised learning.
 
-W1 (weights) are static parameters
+**Graphical models** represent joint distributions through conditional dependencies (e.g., Markov chains). Performing inference is easy to write down but computationally challenging — high-dimensional integrals.
 
-stats: interpretability > prediction
+### 2. From Neural Networks to Gaussian Processes
 
-In ML we optimize W1 and W2.
+Fix $\mathbf{W}_1$. Place a Gaussian prior over $\mathbf{W}_2$:
 
-This tutorial (MacKay, 1992) (Neal, 1994) theses -- follow their path. Probabilistic approach.
+$$\mathbf{W}_2 \sim \mathcal{N}(0, \sigma^2 \mathbf{I})$$
 
-p(y* | y, X, x*)
+Since sums and scalings of Gaussians are Gaussian, marginalizing out $\mathbf{W}_2$ gives:
 
-JOINT MODEL FO THE WORLD --> we compute posterior distributions (bayesian neural networks)
+$$p(\mathbf{y}) = \int p(\mathbf{W}_2)\, p(\mathbf{y} \mid \mathbf{W}_2)\, d\mathbf{W}_2$$
 
-p(y | x, W) is the likelihood of a data point
+$\mathbf{y}$ is distributed with zero mean and covariance $\mathbf{K} = \Phi \Phi^\top / H$ where $\Phi$ is the design matrix of activations. **A neural network with a Gaussian prior over its output weights is already a Gaussian process** — but a degenerate one.
 
-(normally we assume independence)
+**Degeneracy:** the rank of $\mathbf{K}$ is at most $H$ (the number of hidden units). As $n \to \infty$, the covariance matrix is not full rank: $|\mathbf{K}| = 0$. The model can't respond to new data as it comes in — it's parametric.
 
-iid assumption is about NOISE, not the underlying function.
+**Neal's insight (1994):** take $H \to \infty$. Sample infinitely many hidden units in the kernel function. The prior doesn't need to be Gaussian. Scale output variance down as $H$ increases. You get a **non-degenerate Gaussian process**.
 
-commonly a gaussian likelihood, do MLE for supervised
+### 3. Gaussian Processes
 
-considering priors over latents, you can do unsupervised learning
+A GP is a distribution over functions: any finite collection of function values $\{f(\mathbf{x}_1), \ldots, f(\mathbf{x}_n)\}$ is jointly Gaussian. Fully specified by:
 
-probabilistic inference
-y <-- data
-p(y*, y) <- model
-p(y*|y) <- prediction
+- **Mean function:** $m(\mathbf{x}) = \mathbb{E}[f(\mathbf{x})]$
+- **Covariance (kernel) function:** $k(\mathbf{x}_i, \mathbf{x}_j) = \mathbb{E}[(f(\mathbf{x}_i) - m(\mathbf{x}_i))(f(\mathbf{x}_j) - m(\mathbf{x}_j))]$
 
-GRAPHICAL MODELS:
+The kernel matrix: $K_{ij} = k(\mathbf{x}_i, \mathbf{x}_j)$.
 
-- represent joint distribution through _conditional dependencies_
+**Posterior:** given observations $\mathbf{y} = f(\mathbf{X}) + \boldsymbol{\varepsilon}$, $\boldsymbol{\varepsilon} \sim \mathcal{N}(0, \sigma^2 \mathbf{I})$, the posterior at test point $\mathbf{x}^*$ is:
 
-e.g., markov chain
+$$p(f^* \mid \mathbf{X}, \mathbf{y}, \mathbf{x}^*) = \mathcal{N}(\mu^*, \sigma^{*2})$$
 
-performing inferene:
-- easy to write in probabilities
-- wealth of computational challenges
-- high dimensional integrals require lots of computation
+$$\mu^* = \mathbf{k}_*^\top (\mathbf{K} + \sigma^2 \mathbf{I})^{-1} \mathbf{y}$$
 
+$$\sigma^{*2} = k(\mathbf{x}^*, \mathbf{x}^*) - \mathbf{k}_*^\top (\mathbf{K} + \sigma^2 \mathbf{I})^{-1} \mathbf{k}_*$$
 
-linear models:
+GPs let you analytically compute the posterior mean and variance at all points. The **exponentiated quadratic (RBF) kernel** gives infinite smoothness — not always desirable (Brownian motion is also a GP, with very different smoothness properties).
 
-HOLD W1 as fixed for given analysis.
+**Sparse GPs:** full GP inference is $O(n^3)$ in time and $O(n^2)$ in storage (due to the matrix inversion $(\mathbf{K} + \sigma^2 \mathbf{I})^{-1}$). In practice, use a sparse GP with $m \ll n$ **inducing variables** to get a low-rank approximation of the full covariance.
 
-Gaussian prior for W
+### 4. Deep Neural Networks and Bottleneck Layers
 
-sum of gaussians is gaussian
+A matrix between two 1000-unit layers has $10^6$ parameters — prone to overfitting. One fix: parametrize $\mathbf{W}$ via its SVD to create **bottleneck layers**. Stacking neural networks gives a composite function.
 
-scaling a gaussian --> gaussian
+If you want to eliminate NN parameters entirely: replace each layer with a GP and integrate them out. Taking each layer to infinitely many units gives a **vector-valued GP**. Bottleneck layers are critical in this construction.
 
-hashtag linear algebra
+### 5. Deep Gaussian Processes
 
-p(y) = integral (P(x) * P(y|x))dydx
+A deep GP is a composition of GPs:
 
-design matrix of activations of data points and hidden units
+$$g(\mathbf{x}) = f_L(f_{L-1}(\cdots f_2(f_1(\mathbf{x}))\cdots))$$
 
-y is distributed with 0 mean and a covariance (see slides)
+where each $f_\ell$ is a GP. This is equivalent to a Markov chain under the Markov condition:
 
-neural net is already a type of gaussian process (a degenerate one...)
+$$p(\mathbf{y} \mid \mathbf{x}) = p(\mathbf{y} \mid \mathbf{f}_L)\, p(\mathbf{f}_L \mid \mathbf{f}_{L-1})\, p(\mathbf{f}_{L-1} \mid \mathbf{f}_{L-2}) \cdots p(\mathbf{f}_1 \mid \mathbf{x})$$
 
-joint gaussian density: only a certain amount of maths that works. kernels are dangerous.
+**Why go deep?**
+- GPs give priors over functions
+- Derivatives of a GP are a GP (when they exist)
+- Some kernels are universal approximators
+- Depth enables **abstraction of features** and handles non-Gaussian derivative distributions
 
-====
+**Caveat:** Gaussian derivatives can be problematic — many functions (jump functions, heavy-tailed) don't have Gaussian derivatives. Depth helps encode these via process composition.
 
-(Ioffe and Szegedy, 2015) batch normalization, gaussian process maths
+**Difficulties:**
+- Propagating probability distributions through nonlinearities
+- Normalization of the distribution becomes intractable
 
-basis function can be a deep net if you like
+**Solution:** use a variational approach to stack GP models [Damianou & Lawrence, 2013]. As depth increases, the derivative distribution becomes heavy-tailed [Duvenaud et al., 2014] — which is actually desirable for modeling complex functions.
 
-Non-degenerate gaussian process
+Deep GPs handle heteroskedasticity well (e.g., Olympic marathon running times where length scales change over time). Can be extended with a **shared latent variable model (LVM)** for multi-output settings.
 
-- the process is degenerate
-- rank is a most H of the kernel function
-- as n--> infinity, cov matrix is not full rank
-- |K| = 0
-
-model can't respond to the data as it comes in (cuz its parametric, duh)
-
-"what if you took h --> infinity?" <-- radford's thesis (page 37, big deal!)
-
-sample infinitely many hidden units in kernel fcn instead... prior doesn't need to be gaussian either.
-
-scale output variance down as you increase sample size
-
-obj. in bayesian inference: sample from model for what the world looks like.
-
-
-data... throw away all functions that don't go through the data (ABC)
-
-dist. over functions
-
-if i've observed f1, what's f2?
-
-key object = covariance function (kernel fcn) K
-
-it's a distribution and a fcn of X
-
-k_ij = k(x_i, x_j)
-
-#linear algebra
-
-posterior mean/covarance functions of the kcovariance
-
-GP --> analytically compute mean/variance at all points
-
-Exponentiated Quadratic Covariance
-
-Alan Turing would've done well in the 1948 marathon(!)
-
-why the hell would we want neural networks???
-
-infinite smoothness not always a good idea...
-
-
-brownian motion is a gaussian process... stochastic 
-
-CMWB is a GP !
-
-at some point the universe was a GP and it is no longer
-
----> pushing around too many nonlinearities does this :)
-
-
-Full Gaussian fitting
-
-in practice, we'll do a sparse gaussian process --> use low-rank approximation of full covariance matrix
-
-SPARS GAUSSIAN PROCESSES
-inducing variable fit
-
-cubic complexity (quadratic storage, cubic for matrix inversion)
-
-
-
-=====
-
-Deep neural networks
-
-in GP we talked about making hidden layer --> infinity
-
-matrix between two 1000-unit layers is 1 million parameters. overfitting! dropout...
-
-try parametrizing W with its SVD: Bottleneck Layers
-
-stacks of neural networks
-
-if you want to get rid of NN params... replace each network with a gaussian process. integrate all of them out. you get a vector-valued GP.
-
-Take each layer to infinity units. Bottlenecks important in deep GP.
-
-composite stochastic process...
-
-g(x) = f5(f4(f3(f2(f1(x)))) --> composite multivariate function
-
-equiv to markov chain assuming markov condition
-
-p(y|x) = p(y|f5)p(f5|f4)p(f4|f3)...
-
-why deep?
-
-gps give priors over fcns
-
-derivatives of a gp are a gp (if they exist)
-
-for some covariance fcns they're universal approximators.
-
-gaussian derivatives might ring alarm bells! (lots of fcns don't have gaussian derivatives... e.g. a jump function or heavy tail fcn)
-
-you have to ENCODE jumps
-
-process composition.
-
-just graphical models with GPs... (lots of conditional independence assumptions)
-
-difficulty -->
-
-- propagating probabliity dist. through a nonlinearity
-- normalizatioin of distribution becomes intractable
-
-check out density networks
-
-
-
-======
-
-Deep GPs
-
-- deep ==> abstraction of features
-- use variational approach to stack GP models
-
-derivative distribution becomes heavy-tailed as depth increases Duvenaud et al. 2014
-
-How deep are deep GPs? https://scirate.com/arxiv/1711.11280
-
-deals with stochasticity quite well
-
-heteroskedacicity with olympic marathon running times (length scales changing)
-
-shared LVM (latent variable model)
-
+See: [How deep are deep GPs?](https://scirate.com/arxiv/1711.11280)

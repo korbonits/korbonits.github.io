@@ -27,7 +27,7 @@ toddler. 🚀
 
 ## The Setup
 
-This blog has been running on Jekyll since 2015. Eleven years of posts, a Ruby dependency chain I hadn't touched in years, and a `Gemfile.lock` that was basically archaeology. I'd been meaning to modernize it forever. Specifically, in the aftermath of the Musk Twitter acquisition in 2022, I had seen some great posts on mathstodon about migrating from Jekyll to Hyde. I was using Evernote religiously and tools like Obsidian and Notion were beginning to explode in popularity. It seemed like a good time to upgrade my stack even then, but I didn't have time while preparing for my first child, and working at AWS.
+This blog has been running on Jekyll since 2015. Eleven years of posts, a Ruby dependency chain I hadn't touched in years, and a `Gemfile.lock` that was basically archaeology. I'd been meaning to modernize it forever. Specifically, in the aftermath of the Musk Twitter acquisition in 2022, I had seen some great posts on mathstodon about migrating from Jekyll to Hyde (a Jekyll alternative). I was using Evernote religiously and tools like Obsidian and Notion were beginning to explode in popularity. It seemed like a good time to upgrade my stack even then, but I didn't have time while preparing for my first child, and working at AWS.
 
 Last night, my toddler woke up at 10:30pm and needed to be held. I was sitting in the dark with a kid on my chest and my phone in one hand, and I started chatting with Claude about what a Jekyll-to-Astro migration would look like. By the time she fell back asleep and when I was able to transfer her to her crib, I had a plan. By the time I went to bed, the re-designed site was live. Jekyll -> Astro dot js. Boom 💥.
 
@@ -53,7 +53,7 @@ A few Jekyll-specific things needed fixing:
 
 **TLS certificate errors** — `NODE_TLS_REJECT_UNAUTHORIZED=0` to scaffold the project, then `npm config set cafile /etc/ssl/cert.pem` to fix it permanently. Classic.
 
-These are a few gotchas (and I'm sure there are a few tags that haven't been updated yet -- brb, going to read 11 years of blog posts), but it worked pretty well. I did have a few issues like font colors/contrasts not going well together in Dark Mode, or the header not being in Dark Mode while the main body of the site was, etc.
+These are a few gotchas (and I'm sure there are a few tags that haven't been updated yet), but it worked pretty well. I did have a few issues like font colors/contrasts not going well together in Dark Mode, or the header not being in Dark Mode while the main body of the site was, etc.
 
 What was amazing however is that I could simply point this out in natural language in the kiro-cli and it would be fixed within a couple of tries. I didn't need to dig into css or .js files to figure it out.
 
@@ -86,6 +86,8 @@ The source is on [GitHub](https://github.com/korbonits/korbonits.github.io) if y
 Honestly, I feel powerful. I just did what with a static website? In an hour? What should I do next? What about a non-static site? I can build new things to learn and share. The rate limiting factor is no longer code development (perhaps it never was -- it was meeting jenga with leadership) but the speed of your ideas. In an era of AI slop, the playing field has been leveled by code generation, but the true differentiation will be in taste. If you have taste and speed, you will succeed.
 
 ## Thoughts on next steps to try
+
+I migrated an 11-year blog in an hour. Vibe-coding early stages. What's next? Here are a few ideas I could consider trying that would incrementally take the challenge up a notch without going to 11, as it were.
 
 1. Augment personal blog site into a portfolio site. Add other projects to showcase. Perhaps they can be vibe-coded as well.
 2. Write about machine learning.

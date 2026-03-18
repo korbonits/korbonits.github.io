@@ -1,5 +1,4 @@
 ---
-layout: post
 title:  "A Primer on Optimal Transport #NIPS2017"
 date:   2017-12-04 08:00:00
 draft: false
@@ -19,274 +18,114 @@ Reading them back is strange. The five takeaways from that week — Bayesian dee
 ## [A Primer on Optimal Transport](https://nips.cc/Conferences/2017/Schedule?showEvent=8736)
 ### [Marco Cuturi](http://marcocuturi.net/) | [Justin M Solomon](http://people.csail.mit.edu/jsolomon/)
 
-what is optimal transport?
+What is optimal transport? The natural geometry for probability measures — it puts a distance on the space of distributions, enabling comparisons of "bags of features." Given statistical models $p$ and $p'$, OT gives us a notion of divergence to measure how well we're doing.
 
-the natural geometry for probability measures
+**Outline:** intro → algorithms → apps ($W$ as a loss) → apps ($W$ for estimation). Slides at [optimaltransport.github.io](https://optimaltransport.github.io).
 
-(comparisons of bags of features) -- puts distance on this space
+### 1. The Monge Problem
 
-generative models vs. data, or, comparing statistical models p and p'
+Monge (1781): move a pile of dirt $\mu$ into a hole $\nu$ (with shovels).
 
-(see slides)
+- $\mu(x)$: height of pile at $x$
+- $y = T(x)$: destination for point $x$ — a map from $\mu$ to $\nu$
+- $d(x, T(x))$: distance traveled
+- $\mu(x) \cdot d(x, T(x))$: work done at $x$
 
-notion of divergence to measure how well we're doing.
+$T$ must satisfy the **pushforward constraint** $T_\#\mu = \nu$, meaning $\mu(A_1) + \mu(A_2) = \nu(B)$ for preimages mapping into $B$.
 
-OUTLINE
+The Monge problem: find the map $T$ that minimizes total work:
 
-intro
+$$\min_{T \,:\, T_\#\mu = \nu} \int d(x,\, T(x))\, d\mu(x)$$
 
-algos
+**Caveat:** an optimal Monge map $T^*$ does not always exist (e.g., when $\mu$ is a Dirac mass and $\nu$ is not).
 
-apps (W as a loss)
+### 1a. The Kantorovich Relaxation
 
-apps (W for estimation)
+Kantorovich's insight: instead of a deterministic map, allow **measure couplings** (joint distributions) $\gamma \in \Pi(\mu, \nu)$ — i.e., $\gamma(x, y) \geq 0$ with marginals $\mu$ and $\nu$. This is just a linear program.
 
-OT and ML workshop on Saturday
+**Primal (Kantorovich):**
 
-optimaltransport.github.io <-- slides and survey
+$$\min_{\gamma \in \Pi(\mu,\nu)} \int d(x,y)\, d\gamma(x,y)$$
 
-Monge problem: but pile of dir mu into hole nu (in 1781... shovels)
+**Dual (potential functions):**
 
-mu(x), height of pile mu.
+$$\max_{f,\, g} \int f\, d\mu + \int g\, d\nu \quad \text{s.t.} \quad f(x) + g(y) \leq d(x,y)$$
 
-y = T(x) <-- destination for point x. (mapping of points in mu to points in nu)
+The dual is elegant: $f$ and $g$ are the potential functions, and the dual tells you which points are most "expensive" to transport.
 
-D(x, T(x))  <-- distance
+**Proposition:** for well-behaved cost functions, if $\mu$ has a density then an optimal Monge map $T^*$ between $\mu$ and $\nu$ exists.
 
-mu(x)*D(x,T(x)) <-- work *
+### 1b. $p$-Wasserstein Distance
 
-T must map red to blue (sum up preimages) # mu(A1) + mu(A2) = nu(B) (T is the pushforward)
+The $p$-Wasserstein distance between probability measures $\mu$ and $\nu$:
 
-T#mu = nu (pushforward notation)
+$$W_p(\mu, \nu) = \left( \inf_{\gamma \in \Pi(\mu,\nu)} \int d(x,y)^p\, d\gamma(x,y) \right)^{1/p}$$
 
-=====
-What T s.t. T#mu = nu  minimize WORK (integral of  mu(x)*D(x,T(x)) <-- work *) 
-=====
+This is a true metric on the space of probability measures. The geometry it induces is very different from information-theoretic metrics like KL divergence. McCann (1995) showed it gives rise to **displacement interpolation** — geodesics in the space of measures. (Solomon '15 has nice applications.)
 
+### 2. How to Compute OT
 
-Kantorovich problem: move troops around.
+Four cases:
+1. discrete → discrete
+2. discrete → continuous
+3. continuous → continuous
+4. continuous → discrete *(open)*
 
-Naive approach results in too many displacements --> find a cheaper alternative
+Cases 2–3 are largely "up for grabs." Easy special cases:
 
-TABLE: sources are rows, destinations are columns (matrix)
+- **Univariate:** compute CDFs and quantile functions. $W_p$ has a closed form: $W_p(\mu,\nu)^p = \int_0^1 |F_\mu^{-1}(t) - F_\nu^{-1}(t)|^p\, dt$
+- **Gaussians:** closed form, $T$ is linear.
+- **Dirac masses:** $W_p(\delta_x, \delta_y) = d(x,y)$ — Wasserstein distance between point masses equals the ground distance.
+- **Equal number of points:** reduces to the Monge problem (an assignment problem).
 
-distance matrix (distances between sources and destinations) --> what's a transportation matrix?
+**Complexity of the LP:** $O(n^3 \log n)$ via min-cost flow. Ouch.
 
-all soldiers leave, all barracks filled up (supply = demand?) (so this is just a lagrangian?)
+### Entropic Regularization and Sinkhorn
 
-look at slides for eq.s
+Optimal solutions $P^*$ to the LP are vertices of a polytope — unstable, non-unique, and non-differentiable. We want something faster, scalable, and differentiable.
 
-T not does exist for all probability measures.
+**Entropic regularization** (Shannon entropy $H(\gamma) = -\sum_{ij} \gamma_{ij} \log \gamma_{ij}$):
 
-MEASURE COUPLINGS (bijection)
+$$\min_{\gamma \in \Pi(\mu,\nu)} \langle C, \gamma \rangle - \varepsilon\, H(\gamma)$$
 
-nothing fancy. just a linear program
+As $\varepsilon \to \infty$, the solution approaches the independent coupling $\mu \otimes \nu$; as $\varepsilon \to 0$, it recovers the Monge solution. The regularization makes the problem strictly convex and smooth. [Wilson '62]
 
-minimize the expectation of th e cost over all possible couplings
+This can be solved with simple Lagrangians — leading to **Sinkhorn's algorithm**: alternately rescale rows and columns of the kernel matrix $K_{ij} = e^{-C_{ij}/\varepsilon}$ to match the marginals $\mu$ and $\nu$.
 
-primal vs. dual --> elegant formulation! (potential functions)
+Sinkhorn = block coordinate ascent on the dual. [Altschuler et al. '17]
 
+- **Convergence:** linear $O(nm)$ in general; $O(n \log n)$ on gridded spaces using convolutions.
+- Sinkhorn interpolates between $W$ (hard OT) and MMD (kernel two-sample test).
 
+**Sample complexity caveat** [Hashimoto '16, Bonneel '16, Shalit '16]: error in $W$ decreases very slowly in $n$ — bad sample complexity. The Wasserstein LP is not well-suited for high-dimensional data directly.
 
+### 3. Applications
 
-Prop. for "well behaved" cost functions, if mu has a density then an optimal monge map T* between mu and nu must exist
+**Retrieval:** [Kusner '15] Word Mover's Distance — document similarity via OT over word embeddings.
 
-p-Wasserstein distance!
+**Barycenters:** averaging measures under $W$ vs. $L^2$ gives very different results. The **Wasserstein barycenter** of distributions $\{\mu_k\}$ with weights $\{\lambda_k\}$:
 
-distance on the space of probability measures
+$$\bar{\mu} = \arg\min_{\mu} \sum_k \lambda_k W_2(\mu, \mu_k)^2$$
 
-OPtimal transport geometry
+Averaging histograms is an LP; or use primal descent on regularized $W$ [Cuturi '14]. Application: brain imaging, finding smooth interpolations between distributions.
 
-distributions on a manifold
+**Wasserstein Posterior (WASP):** aggregate distributed posteriors using Wasserstein barycenters [Srivastava '15].
 
-McCann '95' displacement interpolation
+**Wasserstein Propagation** [Solomon '14]: semi-supervised learning on graphs — propagate label distributions via OT. Could fix label noise or handle missing data.
 
-very different geometry than information theoretic metrics (KL divergence etc.)
+**Dictionary learning / topic models** [Rolet '16]: represent documents as mixtures of dictionary elements under a Wasserstein loss.
 
-SOlomon '15'
+**Wasserstein PCA:** generalized principal geodesics in the space of measures (negative curvature space — worth investigating further).
 
+**Distributionally robust optimization** [Esfahani '17]: learning with Wasserstein ambiguity — robust to perturbations of the training distribution (minimax formulation).
 
-what's missing? computation
+**Domain adaptation:**
+1. Estimate transport map $T$ from source to target domain
+2. Transport labeled source samples to target domain
+3. Train classifier on transported samples
 
-2010: fast OT solvers
+**Generative models:** density fitting via maximum likelihood is just minimizing $\text{KL}(p_\text{data} \| p_\theta)$. Instead, use a low-dimensional latent space with pushforward $f_\theta : \mathcal{Z} \to \mathcal{X}$:
 
-Now: use OT as a loss or fidelity term
+$$\min_\theta\, W(f_{\theta\,\#}\,\mu_z,\, \nu_\text{data})$$
 
-taking gradient of W distance
-
-
-
-2. How to compute OT
-
-discrete/continuous problems:
-1. discrete -> discrete
-2. discrete -> continuous
-3. continuous -> continuous
-(what about continuous -> discrete?)
-
-2-3 "up for grabs"
-
-easy cases, zoo of solvers,
-
-univariate case easy :)
-
-compute CDF and quantile functions. 
-
-gaussians easy too :)
-
-CLOSED FORM :-D
-
-T is linear.
-
-
-
-====
-
- - distance between points == Wasserstein distance between dirac masses of those points! 
- - when # of points same on each side, it simplifies to the Monge problem
-
-dual problem is great because it tells you which points are most expensive
-
-O(n^3 * log(n)) # OUCH (min cost flow function is super cubic)
-
-entropic regularization
-
-differentiability of the W distance
-
-
-
-solutions P* are unstable (vertices in polytopes from linear programs) and not unique. makes W distance non-differentiable. want: faster, scalable, differntiable
-
-
-Entropic regulatization (shannon entropy). as gamma increases, you move away from the Monge problem but the fuzziness helps generalize. gamma = infinity ==> coupling of marginals
-[Wilson '62']
-
-solve with simple lagrangians -- wow
-
-Sinkhorn's algorithm -- repeat
-
-[Altschuler '17'] <-- nips paper on this algo.
-
-LINEAR CONVERGENCE :-D
-
-O(nm) 
-O(nlogn) on gridded spaces with convolutions!
-
-Sinkhorn = Block coordinate ascent on dual
-
-sinkhorn is inbetween W and MMD
-
-
-
-a programmer view
-
-[Hashimoto '16] [Bonneel '16] [Shalit '16]
-
-q: how many samples do you need to achieve a certain error epsilon?
-a: error decreases VERY SLOWLY (bad sample complexity) --> wasserstein linear program stuff NOT good for data
-========================
-
-
-3. Applications
-
-retrieval
-barycenters
-unsupervised learnine
-inverse problems
-learn parameters... generative functions too
-
-
-photo's as distributions over color space
-
-
-*** [Kusner '15'] word mover's distance (similarity between documents) *** <-- #data-team (retrieval?)
-
-averaging measures: L2 vs. W average.
-
-barycenter for multiple distributions! (wasserstein barycenter)
-
-averaging histograms is a LP
-
-or primal descent on reg. W --> just to ML instead of hard LP
-
-[Cuturi'14] <-- one of the speakers!
-
-
-Optimal transport barycenter --> brain imaging
-
-imagine using this for finding smooth document maximums for high scores ---> high gamma to regularize could be helpful #data-team
-
-===
-
-Wasserstein POsterior WASP
-
-aggregate distributed optimization problems with Wass. barycenters. cool.
-[Srivastava '15']
-
-
-Wasserstein propagation [Solomon '14'] (semi-supervised learning problem) ((could we use to label unlabeled documents? or fix label noise?))
-
-could be used for missing data as well.
-
-
-Dictionary learning --> topic models![Rolet'16]
-
-Let's compute not just means, but also variances?
-
-Wasserstein PCA
-
-negative curvature space... (hmmm investigate)
-
-Generalized Principal Geodesics (!)
-
-=====
-
-Wasserstein inverse problems
-
-dict, new data point, want to write as combination of dict elements, but weights unknown.
-
-application: volume reconstruction
-\
-
-distributionally robust optimization [Esvahani'17]
-
-supervised learning
-learning with wasserstein ambiguity
-
-(e.g., data != distribution, how do we learn robustly) robust to dataset perturbations (minimax gain style problem)
-
-domain adaptation/transfer learning
-
-1. estimate transport map
-2. transport labeled samples to new domain
-3. train classifier on transported labeled samples.
-
-======
-
-learning with a W loss
-
-goal is to find mapping f from images --> labels (e.g. photo of dogsled --> caption with (husky, snow, sled, slope, men))
-
-compare two non-normalized histograms
-
-=====
-
-generative models
-
-density fitting
-
-maximum likelihood estimation
-
-just a KL div of your data to a prob dist.
-
-low dimensional latent space, use a push-forward to get to data space. f: latent space --> data space
-
-deconvolutional nets
-
-f#mu <-- BOOM
-
-goal: find theta such that f_theta # mu fits nu_data
-
-[GPM'14] adversarial problem formulation
-
-use wasserstein distances to define.a loss between data and model
+This is the Wasserstein GAN formulation [Arjovsky et al. '17] — use $W$ as the loss between data and model rather than JS divergence.

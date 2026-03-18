@@ -2,7 +2,9 @@
 layout: post
 title:  "NeurIPS notes"
 date:   2017-12-04 12:00:00
-draft: true
+draft: false
+description: "Notes from NIPS 2017 — covering geometric deep learning, GAN theory, reinforcement learning, fairness in ML, Bayesian deep learning, and more."
+tags: ["machine-learning", "nips", "notes", "deep-learning", "reinforcement-learning"]
 ---
 
 

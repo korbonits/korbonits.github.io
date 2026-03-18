@@ -2,7 +2,9 @@
 layout: post
 title:  "A Primer on Optimal Transport #NIPS2017"
 date:   2017-12-04 08:00:00
-draft: true
+draft: false
+description: "Lecture notes from Marco Cuturi and Justin Solomon's NIPS 2017 tutorial on optimal transport — Wasserstein distances, Sinkhorn's algorithm, and applications in generative models and ML."
+tags: ["machine-learning", "optimal-transport", "math", "nips", "notes"]
 ---
 
 ![NIPS](/assets/nips.png)

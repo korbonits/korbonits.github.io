@@ -2,7 +2,9 @@
 layout: post
 title:  "Deep Probabilistic Modelling with Gaussian Processes #NIPS2017"
 date:   2017-12-04 12:00:00
-draft: true
+draft: false
+description: "Lecture notes from Neil Lawrence's NIPS 2017 tutorial on deep probabilistic modelling with Gaussian processes — from GPs to deep GPs and variational inference."
+tags: ["machine-learning", "gaussian-processes", "probabilistic-ml", "nips", "notes"]
 ---
 
 ![NIPS](/assets/nips.png)

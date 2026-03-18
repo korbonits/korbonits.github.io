@@ -7,7 +7,12 @@ description: "Notes from NIPS 2017 — covering geometric deep learning, GAN the
 tags: ["machine-learning", "nips", "notes", "deep-learning", "reinforcement-learning"]
 ---
 
+*I wrote these notes in December 2017 after attending my first NeurIPS and never published them. Eight years later, I’m hitting publish with no edits — just this note as context.
+Reading them back is strange. The five takeaways from that week — Bayesian deep learning, fairness and bias, the need for theory, deep RL, GANs — all became defining research arcs of the decade that followed. The Rahimi & Recht “alchemy” talk, which was controversial at the time, looks prophetic now. And the throwaway concern about “generating realistic fake videos with geopolitical consequences” landed harder than I think anyone in that room expected.*
 
+*The corporate circus section is its own kind of time capsule: an Intel Flo Rida concert, Nvidia handing out $3k GPUs to the audience, and an invite-only Tesla party with Elon Musk and Andrej Karpathy. A different era.*
+
+*What strikes me most, though, is how optimistic and open everything felt. The field was moving fast but still felt legible — you could go to one conference and get your arms around the major themes. That’s long gone. Anyway — notes from the before-times, published from the future.*
 
 
 

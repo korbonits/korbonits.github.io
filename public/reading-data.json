@@ -1,0 +1,238 @@
+{
+  "yearStats": [
+    {
+      "year": "2005",
+      "count": 1,
+      "pages": 564,
+      "rated": 1,
+      "ratingSum": 5,
+      "avgRating": "5.00"
+    },
+    {
+      "year": "2006",
+      "count": 8,
+      "pages": 2807,
+      "rated": 8,
+      "ratingSum": 32,
+      "avgRating": "4.00"
+    },
+    {
+      "year": "2007",
+      "count": 2,
+      "pages": 1140,
+      "rated": 2,
+      "ratingSum": 9,
+      "avgRating": "4.50"
+    },
+    {
+      "year": "2009",
+      "count": 2,
+      "pages": 1199,
+      "rated": 1,
+      "ratingSum": 4,
+      "avgRating": "4.00"
+    },
+    {
+      "year": "2011",
+      "count": 1,
+      "pages": 310,
+      "rated": 0,
+      "ratingSum": 0,
+      "avgRating": null
+    },
+    {
+      "year": "2012",
+      "count": 7,
+      "pages": 3451,
+      "rated": 7,
+      "ratingSum": 31,
+      "avgRating": "4.43"
+    },
+    {
+      "year": "2013",
+      "count": 2,
+      "pages": 432,
+      "rated": 2,
+      "ratingSum": 9,
+      "avgRating": "4.50"
+    },
+    {
+      "year": "2014",
+      "count": 1,
+      "pages": 384,
+      "rated": 1,
+      "ratingSum": 5,
+      "avgRating": "5.00"
+    },
+    {
+      "year": "2015",
+      "count": 4,
+      "pages": 1215,
+      "rated": 4,
+      "ratingSum": 17,
+      "avgRating": "4.25"
+    },
+    {
+      "year": "2016",
+      "count": 25,
+      "pages": 8562,
+      "rated": 25,
+      "ratingSum": 104,
+      "avgRating": "4.16"
+    },
+    {
+      "year": "2017",
+      "count": 37,
+      "pages": 14308,
+      "rated": 37,
+      "ratingSum": 137,
+      "avgRating": "3.70"
+    },
+    {
+      "year": "2018",
+      "count": 44,
+      "pages": 13672,
+      "rated": 44,
+      "ratingSum": 167,
+      "avgRating": "3.80"
+    },
+    {
+      "year": "2019",
+      "count": 49,
+      "pages": 17062,
+      "rated": 49,
+      "ratingSum": 178,
+      "avgRating": "3.63"
+    },
+    {
+      "year": "2020",
+      "count": 90,
+      "pages": 28309,
+      "rated": 81,
+      "ratingSum": 278,
+      "avgRating": "3.43"
+    },
+    {
+      "year": "2021",
+      "count": 99,
+      "pages": 29287,
+      "rated": 92,
+      "ratingSum": 340,
+      "avgRating": "3.70"
+    },
+    {
+      "year": "2022",
+      "count": 88,
+      "pages": 27773,
+      "rated": 86,
+      "ratingSum": 311,
+      "avgRating": "3.62"
+    },
+    {
+      "year": "2023",
+      "count": 17,
+      "pages": 7279,
+      "rated": 17,
+      "ratingSum": 75,
+      "avgRating": "4.41"
+    },
+    {
+      "year": "2024",
+      "count": 38,
+      "pages": 14650,
+      "rated": 38,
+      "ratingSum": 147,
+      "avgRating": "3.87"
+    },
+    {
+      "year": "2025",
+      "count": 35,
+      "pages": 12528,
+      "rated": 33,
+      "ratingSum": 138,
+      "avgRating": "4.18"
+    },
+    {
+      "year": "2026",
+      "count": 9,
+      "pages": 3128,
+      "rated": 9,
+      "ratingSum": 41,
+      "avgRating": "4.56"
+    }
+  ],
+  "ratingDist": {
+    "1": 3,
+    "2": 42,
+    "3": 157,
+    "4": 205,
+    "5": 130
+  },
+  "topAuthors": [
+    {
+      "author": "Paul Strathern",
+      "count": 20
+    },
+    {
+      "author": "William Shakespeare",
+      "count": 14
+    },
+    {
+      "author": "Haruki Murakami",
+      "count": 10
+    },
+    {
+      "author": "J.K. Rowling",
+      "count": 7
+    },
+    {
+      "author": "Jane Austen",
+      "count": 6
+    },
+    {
+      "author": "Ali Hazelwood",
+      "count": 6
+    },
+    {
+      "author": "Susannah Nix",
+      "count": 6
+    },
+    {
+      "author": "Emily Henry",
+      "count": 5
+    },
+    {
+      "author": "Mohsin Hamid",
+      "count": 5
+    },
+    {
+      "author": "Elena Ferrante",
+      "count": 5
+    },
+    {
+      "author": "Ottessa Moshfegh",
+      "count": 5
+    },
+    {
+      "author": "Fyodor Dostoevsky",
+      "count": 5
+    },
+    {
+      "author": "Elena  Armas",
+      "count": 4
+    },
+    {
+      "author": "Sally Rooney",
+      "count": 4
+    },
+    {
+      "author": "Michel Houellebecq",
+      "count": 4
+    }
+  ],
+  "summary": {
+    "total": 559,
+    "totalPages": 188060,
+    "avgRating": "3.78"
+  }
+}

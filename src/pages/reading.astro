@@ -1,0 +1,100 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const data = await fetch(new URL('/reading-data.json', Astro.site || 'http://localhost:4321')).then(r => r.json()).catch(() => null)
+  ?? JSON.parse((await import('fs')).readFileSync(new URL('../../public/reading-data.json', import.meta.url), 'utf8'));
+
+const { yearStats, ratingDist, topAuthors, summary } = data;
+
+// Only show years with meaningful data (2007 onward based on data)
+const years = yearStats.filter((y: any) => parseInt(y.year) >= 2007);
+
+// SVG helpers
+function barChart(items: {label: string, value: number, highlight?: boolean}[], opts: {w?: number, h?: number, color?: string, hlColor?: string} = {}) {
+  const W = opts.w ?? 640, H = opts.h ?? 260, PAD = { top: 24, right: 16, bottom: 36, left: 44 };
+  const cW = W - PAD.left - PAD.right, cH = H - PAD.top - PAD.bottom;
+  const max = Math.max(...items.map(i => i.value));
+  const bW = Math.floor(cW / items.length) - 3;
+  const bars = items.map((item, i) => {
+    const bh = Math.round((item.value / max) * cH);
+    const x = PAD.left + i * (cW / items.length) + 1;
+    const y = PAD.top + cH - bh;
+    const fill = item.highlight ? (opts.hlColor ?? '#4f8ef7') : (opts.color ?? '#94a3b8');
+    return `<rect x="${x}" y="${y}" width="${bW}" height="${bh}" fill="${fill}" rx="2"/>
+    <text x="${x + bW/2}" y="${y - 4}" text-anchor="middle" font-size="9" fill="#94a3b8">${item.value}</text>
+    <text x="${x + bW/2}" y="${H - PAD.bottom + 14}" text-anchor="middle" font-size="9" fill="#94a3b8" transform="rotate(-35,${x + bW/2},${H - PAD.bottom + 14})">${item.label}</text>`;
+  }).join('');
+  // y-axis ticks
+  const ticks = [0, Math.round(max/2), max].map(v => {
+    const y = PAD.top + cH - Math.round((v / max) * cH);
+    return `<line x1="${PAD.left - 4}" y1="${y}" x2="${PAD.left}" y2="${y}" stroke="#334155"/>
+    <text x="${PAD.left - 6}" y="${y + 3}" text-anchor="end" font-size="9" fill="#94a3b8">${v}</text>`;
+  }).join('');
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W}px;font-family:sans-serif">
+  <line x1="${PAD.left}" y1="${PAD.top}" x2="${PAD.left}" y2="${PAD.top+cH}" stroke="#334155"/>
+  <line x1="${PAD.left}" y1="${PAD.top+cH}" x2="${W-PAD.right}" y2="${PAD.top+cH}" stroke="#334155"/>
+  ${ticks}${bars}</svg>`;
+}
+---
+<html lang="en">
+  <head>
+    <BaseHead title="Reading" description={`${summary.total} books read. A dashboard of Alex Korbonits' reading history from Goodreads.`} />
+    <style>
+      main { width: 720px; max-width: calc(100% - 2em); margin: auto; padding: 3em 1em; }
+      h1 { margin-bottom: 0.25em; }
+      .subtitle { color: rgb(var(--gray)); font-size: 0.9em; margin-bottom: 2.5em; }
+      .stats { display: flex; gap: 2em; flex-wrap: wrap; margin-bottom: 2.5em; }
+      .stat { text-align: center; }
+      .stat-value { font-size: 2em; font-weight: 700; color: rgb(var(--black)); line-height: 1; }
+      .stat-label { font-size: 0.8em; color: rgb(var(--gray)); margin-top: 0.25em; }
+      h2 { font-size: 1.25em; margin: 2.5em 0 0.75em; }
+      .chart { margin-bottom: 0.5em; }
+      .authors { columns: 2; gap: 2em; }
+      .authors li { margin-bottom: 0.3em; font-size: 0.95em; break-inside: avoid; }
+      .author-count { color: rgb(var(--gray)); font-size: 0.85em; margin-left: 0.4em; }
+      @media (max-width: 480px) { .stats { gap: 1em; } .stat-value { font-size: 1.5em; } .authors { columns: 1; } }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <h1>Reading</h1>
+      <p class="subtitle">All-time stats from my <a href="https://www.goodreads.com/user/show/49504536-alex-korbonits">Goodreads</a> library.</p>
+
+      <div class="stats">
+        <div class="stat"><div class="stat-value">{summary.total}</div><div class="stat-label">books read</div></div>
+        <div class="stat"><div class="stat-value">{(summary.totalPages / 1000).toFixed(0)}k</div><div class="stat-label">pages</div></div>
+        <div class="stat"><div class="stat-value">{summary.avgRating}</div><div class="stat-label">avg rating</div></div>
+        <div class="stat"><div class="stat-value">{years.length}</div><div class="stat-label">years tracked</div></div>
+      </div>
+
+      <h2>Books per year</h2>
+      <div class="chart" set:html={barChart(
+        years.map((y: any) => ({ label: y.year, value: y.count, highlight: ['2020','2021','2022'].includes(y.year) })),
+        { hlColor: '#4f8ef7' }
+      )} />
+
+      <h2>Pages per year</h2>
+      <div class="chart" set:html={barChart(
+        years.map((y: any) => ({ label: y.year, value: y.pages, highlight: ['2020','2021','2022'].includes(y.year) })),
+        { hlColor: '#4f8ef7' }
+      )} />
+
+      <h2>Ratings distribution</h2>
+      <div class="chart" set:html={barChart(
+        [1,2,3,4,5].map(r => ({ label: '★'.repeat(r), value: (ratingDist as any)[r] })),
+        { w: 400, color: '#4f8ef7' }
+      )} />
+
+      <h2>Top authors</h2>
+      <ul class="authors">
+        {topAuthors.map((a: any) => (
+          <li>{a.author}<span class="author-count">{a.count} books</span></li>
+        ))}
+      </ul>
+    </main>
+    <Footer />
+  </body>
+</html>

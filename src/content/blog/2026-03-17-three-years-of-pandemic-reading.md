@@ -55,4 +55,4 @@ Honorable mentions: *Notes of a Native Son* (Baldwin), *How to Live* (Bakewell),
 
 730 books. It grows faster than I read. I've made peace with this too.
 
-My Goodreads profile is [here](https://www.goodreads.com/user/show/49504536-alex-korbonits) if you want to see the full list or compare shelves.
+My Goodreads profile is [here](https://www.goodreads.com/user/show/49504536-alex-korbonits) if you want to see the full list or compare shelves. I also built a [reading dashboard](/reading) with the full stats.

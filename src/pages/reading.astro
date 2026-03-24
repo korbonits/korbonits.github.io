@@ -3,8 +3,10 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 
-const data = await fetch(new URL('/reading-data.json', Astro.site || 'http://localhost:4321')).then(r => r.json()).catch(() => null)
-  ?? JSON.parse((await import('fs')).readFileSync(new URL('../../public/reading-data.json', import.meta.url), 'utf8'));
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
+const data = JSON.parse(readFileSync(join(process.cwd(), 'public/reading-data.json'), 'utf8'));
 
 const { yearStats, ratingDist, topAuthors, summary } = data;
 

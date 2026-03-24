@@ -1,0 +1,107 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { getCollection } from 'astro:content';
+
+const username = 'korbonits';
+const goodreadsId = '49504536';
+
+const [eventsRes, goodreadsRes] = await Promise.all([
+  fetch(`https://api.github.com/users/${username}/events/public?per_page=100`, {
+    headers: { 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' }
+  }),
+  fetch(`https://www.goodreads.com/review/list_rss/${goodreadsId}?shelf=currently-reading`),
+]);
+
+const events = eventsRes.ok ? await eventsRes.json() : [];
+
+// Recent unique repos from push events
+const pushedRepos = [...new Map(
+  events
+    .filter((e: any) => e.type === 'PushEvent')
+    .map((e: any) => [e.repo.name, { name: e.repo.name, url: `https://github.com/${e.repo.name}`, date: new Date(e.created_at) }])
+).values()].slice(0, 5);
+
+// Parse currently-reading shelf from Goodreads RSS
+let currentlyReading: { title: string; author: string; url: string }[] = [];
+if (goodreadsRes.ok) {
+  const xml = await goodreadsRes.text();
+  const items = xml.match(/<item>([\s\S]*?)<\/item>/g) ?? [];
+  currentlyReading = items.slice(0, 5).map(item => ({
+    title: (item.match(/<title>([\s\S]*?)<\/title>/)?.[1]?.trim() ?? '').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/, '$1'),
+    author: (item.match(/<author_name>([\s\S]*?)<\/author_name>/)?.[1]?.trim() ?? '').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/, '$1'),
+    url: (item.match(/<link>([\s\S]*?)<\/link>/)?.[1]?.trim() ?? '').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/, '$1'),
+  }));
+}
+
+const buildDate = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+const recentPosts = (await getCollection('blog', p => !p.data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 2);
+
+const nowEntries = await getCollection('now');
+const manual = nowEntries[0]?.data;
+---
+<html lang="en">
+  <head>
+    <BaseHead title="Now" description="What Alex Korbonits is up to right now." />
+    <style>
+      main { width: 720px; max-width: calc(100% - 2em); margin: auto; padding: 3em 1em; }
+      h1 { margin-bottom: 0.25em; }
+      .updated { color: rgb(var(--gray)); font-size: 0.85em; margin-bottom: 2em; }
+      h2 { font-size: 1.25em; margin: 2em 0 0.5em; }
+      ul { padding-left: 1.25em; margin: 0; }
+      li { margin-bottom: 0.4em; }
+      .repo-date { color: rgb(var(--gray)); font-size: 0.8em; margin-left: 0.5em; }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <h1>Now</h1>
+      <p class="updated">Last updated: {buildDate}</p>
+
+      {manual?.location && <p>📍 {manual.location}</p>}
+      {manual?.working_on && <><h2>Working on</h2><p>{manual.working_on}</p></>}
+      {manual?.thinking_about && <><h2>Thinking about</h2><p>{manual.thinking_about}</p></>}
+
+      <h2>Recently active on GitHub</h2>
+      {pushedRepos.length > 0 ? (
+        <ul>
+          {pushedRepos.map((r: any) => (
+            <li>
+              <a href={r.url}>{r.name}</a>
+              <span class="repo-date">{r.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No recent activity found.</p>
+      )}
+
+      <h2>Currently reading</h2>
+      {currentlyReading.length > 0 ? (
+        <ul>
+          {currentlyReading.map(b => (
+            <li><a href={b.url}>{b.title}</a>{b.author && ` — ${b.author}`}</li>
+          ))}
+        </ul>
+      ) : (
+        <p>Nothing on the shelf right now.</p>
+      )}
+
+      <h2>Recent writing</h2>
+      <ul>
+        {recentPosts.map(p => (
+          <li>
+            <a href={`/blog/${p.id}/`}>{p.data.title}</a>
+            <span class="repo-date">{p.data.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+          </li>
+        ))}
+      </ul>
+    </main>
+    <Footer />
+  </body>
+</html>

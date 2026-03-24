@@ -18,7 +18,11 @@ import Header from '../components/Header.astro';
     <Footer />
     <script src="/pagefind/pagefind-ui.js" is:inline></script>
     <script is:inline>
-      new PagefindUI({ element: '#search', showSubResults: true });
+      function initSearch() {
+        const el = document.getElementById('search');
+        if (el) { el.innerHTML = ''; new PagefindUI({ element: '#search', showSubResults: true }); }
+      }
+      document.addEventListener('astro:page-load', initSearch);
     </script>
   </body>
 </html>

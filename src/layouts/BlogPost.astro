@@ -5,8 +5,8 @@ import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 
-type Props = CollectionEntry<'blog'>['data'] & { body: string; prev?: CollectionEntry<'blog'> | null; next?: CollectionEntry<'blog'> | null; headings?: { depth: number; slug: string; text: string }[]; ogImage?: URL };
-const { title, date, description, body, tags, prev, next, headings, ogImage } = Astro.props;
+type Props = CollectionEntry<'blog'>['data'] & { body: string; prev?: CollectionEntry<'blog'> | null; next?: CollectionEntry<'blog'> | null; headings?: { depth: number; slug: string; text: string }[]; ogImage?: URL; id?: string };
+const { title, date, description, body, tags, prev, next, headings, ogImage, id } = Astro.props;
 const toc = headings?.filter(h => h.depth <= 3) ?? [];
 const readingTime = body ? Math.ceil(body.split(/\s+/).length / 200) : null;
 ---
@@ -40,7 +40,7 @@ const readingTime = body ? Math.ceil(body.split(/\s+/).length / 200) : null;
         <div class="prose">
           <div class="title">
             <div class="date"><FormattedDate date={date} />{readingTime && ` · ${readingTime} min read`}</div>
-            <h1>{title}</h1>
+            <h1 transition:name={id ? `title-${id}` : undefined}>{title}</h1>
             <hr />
             {tags && tags.length > 0 && (
               <div class="tags">

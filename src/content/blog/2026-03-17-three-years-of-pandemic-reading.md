@@ -3,7 +3,7 @@ title: "Three Years of Pandemic Reading"
 date: 2026-03-17
 description: "I read 277 books between 2020 and 2022. Here's what the data looks like and what I'd actually recommend."
 tags: ["books", "reading", "data", "personal"]
-draft: true
+draft: false
 ---
 
 I've been tracking my reading on Goodreads since around 2016. When I exported the data recently, the pandemic years jumped off the page.
@@ -37,7 +37,7 @@ The 2020 list was heavily shaped by that summer — a lot of American history, r
 
 2021 shifted toward philosophy and intellectual history. Will Durant's *The Story of Philosophy* was a revelation — I'd been meaning to read it for years and it delivered completely. Sarah Bakewell's *How to Live* (on Montaigne) is one of the best books I've read about how to read. S. Frederick Starr's *Lost Enlightenment* was my favorite book of the year — I had no idea how much I didn't know about Central Asia's golden age of scholarship from the 9th to 13th centuries.
 
-2022 got eclectic. I read *Introduction to Algorithms* (CLRS) cover to cover, which I'd been meaning to do since grad school. I read a lot of romance novels, which I'm not embarrassed about. I read *The Gates of Europe* right as Russia invaded Ukraine, which gave the news a different texture. And I read *Four Thousand Weeks*, which is the only time-management book I've ever found genuinely useful — its argument is essentially that you will never finish your to-do list and you should make peace with that.
+2022 got eclectic. I read *Introduction to Algorithms* (CLRS) cover to cover, which I'd been meaning to do since I taught myself how to code in 2013. I remember studying it one day in particular at Third Place Books in Lake Forest Park, WA. My girlfriend was attending a *fountain pen meetup* and I recall cracking it open and trying to code up some sorting algorithms in Python. In 2022, I read a lot of romance novels, which I'm not embarrassed about. I read *The Gates of Europe* right as Russia invaded Ukraine, which gave the news a different texture. And I read *Four Thousand Weeks*, which is the only time-management book I've ever found genuinely useful — its argument is essentially that you will never finish your to-do list and you should make peace with that.
 
 ## Recommendations
 

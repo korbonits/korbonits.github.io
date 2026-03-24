@@ -41,7 +41,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
           {posts.map(post => (
             <li>
               <a href={`/blog/${post.id}/`}>
-                <h4 class="title">{post.data.title}</h4>
+                <h4 class="title" transition:name={`title-${post.id}`}>{post.data.title}</h4>
                 <p class="date"><FormattedDate date={post.data.date} /></p>
               </a>
             </li>

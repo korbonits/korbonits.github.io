@@ -46,7 +46,7 @@ const manual = nowEntries[0]?.data;
 ---
 <html lang="en">
   <head>
-    <BaseHead title="Now" description="What Alex Korbonits is up to right now." />
+    <BaseHead title="Now" description="What Alex Korbonits is up to right now." ogImage={new URL('/og/now.png', Astro.site)} />
     <style>
       main { width: 720px; max-width: calc(100% - 2em); margin: auto; padding: 3em 1em; }
       h1 { margin-bottom: 0.25em; }

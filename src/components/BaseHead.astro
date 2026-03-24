@@ -5,8 +5,10 @@ import { SITE_TITLE } from '../consts';
 interface Props {
   title: string;
   description?: string;
+  ogImage?: string;
 }
-const { title, description = '' } = Astro.props;
+const { title, description = '', ogImage } = Astro.props;
+const ogImageUrl = ogImage ?? new URL('/og-default.png', Astro.site);
 ---
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -20,8 +22,9 @@ const { title, description = '' } = Astro.props;
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:type" content="website" />
-<meta property="og:image" content={new URL('/og-default.png', Astro.site)} />
+<meta property="og:image" content={ogImageUrl} />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImageUrl} />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" />

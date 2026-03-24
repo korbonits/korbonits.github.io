@@ -40,7 +40,7 @@ function barChart(items: {label: string, value: number, highlight?: boolean}[], 
 ---
 <html lang="en">
   <head>
-    <BaseHead title="Reading" description={`${summary.total} books read. A dashboard of Alex Korbonits' reading history from Goodreads.`} />
+    <BaseHead title="Reading" description={`${summary.total} books read. A dashboard of Alex Korbonits' reading history from Goodreads.`} ogImage={new URL('/og/reading.png', Astro.site)} />
     <style>
       main { width: 720px; max-width: calc(100% - 2em); margin: auto; padding: 3em 1em; }
       h1 { margin-bottom: 0.25em; }

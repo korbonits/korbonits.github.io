@@ -5,14 +5,14 @@ import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 
-type Props = CollectionEntry<'blog'>['data'] & { body: string; prev?: CollectionEntry<'blog'> | null; next?: CollectionEntry<'blog'> | null; headings?: { depth: number; slug: string; text: string }[] };
-const { title, date, description, body, tags, prev, next, headings } = Astro.props;
+type Props = CollectionEntry<'blog'>['data'] & { body: string; prev?: CollectionEntry<'blog'> | null; next?: CollectionEntry<'blog'> | null; headings?: { depth: number; slug: string; text: string }[]; ogImage?: URL };
+const { title, date, description, body, tags, prev, next, headings, ogImage } = Astro.props;
 const toc = headings?.filter(h => h.depth <= 3) ?? [];
 const readingTime = body ? Math.ceil(body.split(/\s+/).length / 200) : null;
 ---
 <html lang="en">
   <head>
-    <BaseHead title={title} description={description} />
+    <BaseHead title={title} description={description} ogImage={ogImage} />
     <style>
       main { width: calc(100% - 2em); max-width: 100%; margin: 0; }
       .prose { width: 720px; max-width: calc(100% - 2em); margin: auto; padding: 1em; }

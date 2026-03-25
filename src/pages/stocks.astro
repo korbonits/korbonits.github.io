@@ -2,6 +2,8 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+
+const apiKey = import.meta.env.PUBLIC_ALPHA_VANTAGE_KEY ?? '';
 ---
 <!doctype html>
 <html lang="en">
@@ -12,15 +14,12 @@ import Footer from '../components/Footer.astro';
     <Header />
     <main>
       <h1>Stock Dashboard</h1>
-      <p class="note">
-        Prices via <a href="https://www.alphavantage.co" target="_blank">Alpha Vantage</a>.
-        Enter your free API key below (get one at <a href="https://www.alphavantage.co/support/#api-key" target="_blank">alphavantage.co</a>).
-        The free tier allows 25 requests/day and 5/minute — fetching 6 symbols uses 6 requests.
-      </p>
-      <div class="api-key-row">
-        <label for="api-key">Alpha Vantage API Key:</label>
-        <input id="api-key" type="text" placeholder="YOUR_API_KEY" autocomplete="off" />
-        <button id="fetch-btn">Fetch Prices</button>
+      <p class="note">Prices via <a href="https://www.alphavantage.co" target="_blank">Alpha Vantage</a>. Updated on page load.</p>
+      {!apiKey && (
+        <p class="warning">API key not configured. Set <code>ALPHA_VANTAGE_KEY</code> in GitHub repository secrets.</p>
+      )}
+      <div class="controls">
+        <button id="fetch-btn">Refresh Prices</button>
       </div>
       <div id="status"></div>
       <table id="stocks-table" hidden>
@@ -46,22 +45,15 @@ import Footer from '../components/Footer.astro';
   main { max-width: 800px; margin: auto; padding: 1em; }
   h1 { margin-bottom: 0.25em; }
   .note { color: rgb(var(--gray)); font-size: 0.85em; margin: 0.5em 0; }
-  .api-key-row {
-    display: flex;
-    align-items: center;
-    gap: 0.5em;
-    margin: 1em 0;
-    flex-wrap: wrap;
-  }
-  .api-key-row label { font-weight: bold; white-space: nowrap; }
-  #api-key {
-    flex: 1;
-    min-width: 180px;
-    padding: 0.4em 0.6em;
-    border: 1px solid rgb(var(--gray-light));
+  .warning {
+    background: #fef9c3;
+    border: 1px solid #fde047;
     border-radius: 4px;
+    padding: 0.5em 0.75em;
     font-size: 0.9em;
+    margin: 0.75em 0;
   }
+  .controls { margin: 1em 0 0.5em; }
   #fetch-btn {
     padding: 0.4em 1em;
     background: var(--accent);
@@ -70,20 +62,11 @@ import Footer from '../components/Footer.astro';
     border-radius: 4px;
     cursor: pointer;
     font-size: 0.9em;
-    white-space: nowrap;
   }
   #fetch-btn:disabled { opacity: 0.6; cursor: not-allowed; }
   #status { color: rgb(var(--gray)); font-size: 0.85em; min-height: 1.2em; margin-bottom: 0.5em; }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.95em;
-  }
-  th, td {
-    text-align: right;
-    padding: 0.5em 0.75em;
-    border-bottom: 1px solid rgb(var(--gray-light));
-  }
+  table { width: 100%; border-collapse: collapse; font-size: 0.95em; }
+  th, td { text-align: right; padding: 0.5em 0.75em; border-bottom: 1px solid rgb(var(--gray-light)); }
   th:first-child, td:first-child { text-align: left; font-weight: bold; }
   th { background: rgb(var(--gray-light), 0.3); font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.03em; }
   tr:hover td { background: rgba(var(--gray-light), 0.15); }
@@ -92,36 +75,26 @@ import Footer from '../components/Footer.astro';
   .flat { color: rgb(var(--gray)); }
 </style>
 
-<script>
+<script define:vars={{ apiKey }}>
   const SYMBOLS = ['DIS', 'GS', 'META', 'NVDA', 'AMZN', 'RELY'];
-  const STORAGE_KEY = 'av_api_key';
 
-  const keyInput = document.getElementById('api-key') as HTMLInputElement;
-  const fetchBtn = document.getElementById('fetch-btn') as HTMLButtonElement;
-  const statusEl = document.getElementById('status') as HTMLElement;
-  const tableEl = document.getElementById('stocks-table') as HTMLTableElement;
-  const tbody = document.getElementById('stocks-body') as HTMLTableSectionElement;
-  const lastUpdated = document.getElementById('last-updated') as HTMLElement;
+  const fetchBtn = document.getElementById('fetch-btn');
+  const statusEl = document.getElementById('status');
+  const tableEl = document.getElementById('stocks-table');
+  const tbody = document.getElementById('stocks-body');
+  const lastUpdated = document.getElementById('last-updated');
 
-  // Restore saved key
-  const savedKey = localStorage.getItem(STORAGE_KEY);
-  if (savedKey) keyInput.value = savedKey;
+  function fmt(n, digits = 2) { return n.toFixed(digits); }
 
-  function fmt(n: number, digits = 2) {
-    return n.toFixed(digits);
-  }
-
-  function fmtLarge(n: number) {
+  function fmtLarge(n) {
     if (n >= 1_000_000) return (n / 1_000_000).toFixed(2) + 'M';
     if (n >= 1_000) return (n / 1_000).toFixed(1) + 'K';
     return String(n);
   }
 
-  function setStatus(msg: string) {
-    statusEl.textContent = msg;
-  }
+  function setStatus(msg) { statusEl.textContent = msg; }
 
-  async function fetchQuote(symbol: string, apiKey: string) {
+  async function fetchQuote(symbol) {
     const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${apiKey}`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status} for ${symbol}`);
@@ -140,7 +113,7 @@ import Footer from '../components/Footer.astro';
     };
   }
 
-  function renderRow(q: { symbol: string; price: number; prevClose: number; change: number; changePct: number; volume: number }) {
+  function renderRow(q) {
     const cls = q.change > 0 ? 'up' : q.change < 0 ? 'down' : 'flat';
     const sign = q.change > 0 ? '+' : '';
     const tr = document.createElement('tr');
@@ -156,36 +129,29 @@ import Footer from '../components/Footer.astro';
   }
 
   async function fetchAll() {
-    const apiKey = keyInput.value.trim();
-    if (!apiKey) { setStatus('Please enter an API key.'); return; }
-    localStorage.setItem(STORAGE_KEY, apiKey);
-
+    if (!apiKey) { setStatus('No API key configured.'); return; }
     fetchBtn.disabled = true;
     tbody.innerHTML = '';
     tableEl.hidden = true;
     lastUpdated.textContent = '';
-
-    const results: ReturnType<typeof renderRow>[] = [];
     let errors = 0;
 
     for (let i = 0; i < SYMBOLS.length; i++) {
       const sym = SYMBOLS[i];
       setStatus(`Fetching ${sym} (${i + 1}/${SYMBOLS.length})…`);
       try {
-        const q = await fetchQuote(sym, apiKey);
+        const q = await fetchQuote(sym);
         renderRow(q);
-      } catch (err: unknown) {
+      } catch (err) {
         errors++;
         const msg = err instanceof Error ? err.message : String(err);
         setStatus(`Error fetching ${sym}: ${msg}`);
-        // Add error row
         const tr = document.createElement('tr');
         tr.innerHTML = `<td>${sym}</td><td colspan="5" class="flat">Error: ${msg}</td>`;
         tbody.appendChild(tr);
-        // If rate limited, stop early
         if (msg.includes('Rate limit') || msg.includes('invalid key')) break;
       }
-      // Alpha Vantage free tier: 5 req/min — wait 12s between calls (except after last)
+      // Alpha Vantage free tier: 5 req/min — wait 12s between calls
       if (i < SYMBOLS.length - 1) {
         for (let s = 12; s > 0; s--) {
           setStatus(`Waiting to avoid rate limit… ${s}s (${i + 1}/${SYMBOLS.length} done)`);
@@ -195,12 +161,12 @@ import Footer from '../components/Footer.astro';
     }
 
     tableEl.hidden = false;
-    const now = new Date();
-    lastUpdated.textContent = `Last updated: ${now.toLocaleString()}`;
+    lastUpdated.textContent = `Last updated: ${new Date().toLocaleString()}`;
     setStatus(errors ? `Done with ${errors} error(s).` : 'Done.');
     fetchBtn.disabled = false;
   }
 
   fetchBtn.addEventListener('click', fetchAll);
-  keyInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') fetchAll(); });
+  // Auto-fetch on load if key is available
+  if (apiKey) fetchAll();
 </script>

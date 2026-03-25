@@ -34,7 +34,7 @@
 backend:
   name: github
   repo: korbonits/korbonits.github.io
-  branch: main
+  branch: master
   # Replace with your Netlify OAuth relay subdomain (see setup above):
   site_domain: beamish-cassata-fc006d.netlify.app
   base_url: https://api.netlify.com

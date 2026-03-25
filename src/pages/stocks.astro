@@ -1,0 +1,206 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title="Stocks" description="Stock price dashboard" />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <h1>Stock Dashboard</h1>
+      <p class="note">
+        Prices via <a href="https://www.alphavantage.co" target="_blank">Alpha Vantage</a>.
+        Enter your free API key below (get one at <a href="https://www.alphavantage.co/support/#api-key" target="_blank">alphavantage.co</a>).
+        The free tier allows 25 requests/day and 5/minute — fetching 6 symbols uses 6 requests.
+      </p>
+      <div class="api-key-row">
+        <label for="api-key">Alpha Vantage API Key:</label>
+        <input id="api-key" type="text" placeholder="YOUR_API_KEY" autocomplete="off" />
+        <button id="fetch-btn">Fetch Prices</button>
+      </div>
+      <div id="status"></div>
+      <table id="stocks-table" hidden>
+        <thead>
+          <tr>
+            <th>Symbol</th>
+            <th>Price</th>
+            <th>Change</th>
+            <th>Change %</th>
+            <th>Prev. Close</th>
+            <th>Volume</th>
+          </tr>
+        </thead>
+        <tbody id="stocks-body"></tbody>
+      </table>
+      <p id="last-updated" class="note"></p>
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  main { max-width: 800px; margin: auto; padding: 1em; }
+  h1 { margin-bottom: 0.25em; }
+  .note { color: rgb(var(--gray)); font-size: 0.85em; margin: 0.5em 0; }
+  .api-key-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    margin: 1em 0;
+    flex-wrap: wrap;
+  }
+  .api-key-row label { font-weight: bold; white-space: nowrap; }
+  #api-key {
+    flex: 1;
+    min-width: 180px;
+    padding: 0.4em 0.6em;
+    border: 1px solid rgb(var(--gray-light));
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  #fetch-btn {
+    padding: 0.4em 1em;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    white-space: nowrap;
+  }
+  #fetch-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  #status { color: rgb(var(--gray)); font-size: 0.85em; min-height: 1.2em; margin-bottom: 0.5em; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95em;
+  }
+  th, td {
+    text-align: right;
+    padding: 0.5em 0.75em;
+    border-bottom: 1px solid rgb(var(--gray-light));
+  }
+  th:first-child, td:first-child { text-align: left; font-weight: bold; }
+  th { background: rgb(var(--gray-light), 0.3); font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.03em; }
+  tr:hover td { background: rgba(var(--gray-light), 0.15); }
+  .up { color: #16a34a; }
+  .down { color: #dc2626; }
+  .flat { color: rgb(var(--gray)); }
+</style>
+
+<script>
+  const SYMBOLS = ['DIS', 'GS', 'META', 'NVDA', 'AMZN', 'RELY'];
+  const STORAGE_KEY = 'av_api_key';
+
+  const keyInput = document.getElementById('api-key') as HTMLInputElement;
+  const fetchBtn = document.getElementById('fetch-btn') as HTMLButtonElement;
+  const statusEl = document.getElementById('status') as HTMLElement;
+  const tableEl = document.getElementById('stocks-table') as HTMLTableElement;
+  const tbody = document.getElementById('stocks-body') as HTMLTableSectionElement;
+  const lastUpdated = document.getElementById('last-updated') as HTMLElement;
+
+  // Restore saved key
+  const savedKey = localStorage.getItem(STORAGE_KEY);
+  if (savedKey) keyInput.value = savedKey;
+
+  function fmt(n: number, digits = 2) {
+    return n.toFixed(digits);
+  }
+
+  function fmtLarge(n: number) {
+    if (n >= 1_000_000) return (n / 1_000_000).toFixed(2) + 'M';
+    if (n >= 1_000) return (n / 1_000).toFixed(1) + 'K';
+    return String(n);
+  }
+
+  function setStatus(msg: string) {
+    statusEl.textContent = msg;
+  }
+
+  async function fetchQuote(symbol: string, apiKey: string) {
+    const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${apiKey}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status} for ${symbol}`);
+    const data = await res.json();
+    if (data['Information']) throw new Error('Rate limit or invalid key: ' + data['Information']);
+    if (data['Note']) throw new Error('Rate limit reached: ' + data['Note']);
+    const q = data['Global Quote'];
+    if (!q || !q['05. price']) throw new Error(`No data returned for ${symbol}`);
+    return {
+      symbol,
+      price: parseFloat(q['05. price']),
+      prevClose: parseFloat(q['08. previous close']),
+      change: parseFloat(q['09. change']),
+      changePct: parseFloat(q['10. change percent']),
+      volume: parseInt(q['06. volume'], 10),
+    };
+  }
+
+  function renderRow(q: { symbol: string; price: number; prevClose: number; change: number; changePct: number; volume: number }) {
+    const cls = q.change > 0 ? 'up' : q.change < 0 ? 'down' : 'flat';
+    const sign = q.change > 0 ? '+' : '';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${q.symbol}</td>
+      <td>$${fmt(q.price)}</td>
+      <td class="${cls}">${sign}$${fmt(q.change)}</td>
+      <td class="${cls}">${sign}${fmt(q.changePct)}%</td>
+      <td>$${fmt(q.prevClose)}</td>
+      <td>${fmtLarge(q.volume)}</td>
+    `;
+    tbody.appendChild(tr);
+  }
+
+  async function fetchAll() {
+    const apiKey = keyInput.value.trim();
+    if (!apiKey) { setStatus('Please enter an API key.'); return; }
+    localStorage.setItem(STORAGE_KEY, apiKey);
+
+    fetchBtn.disabled = true;
+    tbody.innerHTML = '';
+    tableEl.hidden = true;
+    lastUpdated.textContent = '';
+
+    const results: ReturnType<typeof renderRow>[] = [];
+    let errors = 0;
+
+    for (let i = 0; i < SYMBOLS.length; i++) {
+      const sym = SYMBOLS[i];
+      setStatus(`Fetching ${sym} (${i + 1}/${SYMBOLS.length})…`);
+      try {
+        const q = await fetchQuote(sym, apiKey);
+        renderRow(q);
+      } catch (err: unknown) {
+        errors++;
+        const msg = err instanceof Error ? err.message : String(err);
+        setStatus(`Error fetching ${sym}: ${msg}`);
+        // Add error row
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${sym}</td><td colspan="5" class="flat">Error: ${msg}</td>`;
+        tbody.appendChild(tr);
+        // If rate limited, stop early
+        if (msg.includes('Rate limit') || msg.includes('invalid key')) break;
+      }
+      // Alpha Vantage free tier: 5 req/min — wait 12s between calls (except after last)
+      if (i < SYMBOLS.length - 1) {
+        for (let s = 12; s > 0; s--) {
+          setStatus(`Waiting to avoid rate limit… ${s}s (${i + 1}/${SYMBOLS.length} done)`);
+          await new Promise(r => setTimeout(r, 1000));
+        }
+      }
+    }
+
+    tableEl.hidden = false;
+    const now = new Date();
+    lastUpdated.textContent = `Last updated: ${now.toLocaleString()}`;
+    setStatus(errors ? `Done with ${errors} error(s).` : 'Done.');
+    fetchBtn.disabled = false;
+  }
+
+  fetchBtn.addEventListener('click', fetchAll);
+  keyInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') fetchAll(); });
+</script>

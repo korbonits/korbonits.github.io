@@ -41,7 +41,7 @@ backend:
   auth_endpoint: auth
 
 # Uncomment for local development (run `npm run cms:dev` first):
-local_backend: false
+# local_backend: true
 
 # Where uploaded images land in the repo and how they're referenced in content
 media_folder: public/images/uploads

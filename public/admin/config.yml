@@ -1,0 +1,133 @@
+# ---------------------------------------------------------------------------
+# Decap CMS — korbonits.com
+# Docs: https://decapcms.org/docs/
+# ---------------------------------------------------------------------------
+#
+# PRODUCTION AUTH SETUP (one-time, ~10 min)
+# ==========================================
+# Decap uses GitHub as the storage backend. You need a GitHub OAuth App so
+# the browser can commit on your behalf.
+#
+# 1. Go to GitHub → Settings → Developer settings → OAuth Apps → New OAuth App
+#    Homepage URL:        https://korbonits.com
+#    Authorization callback URL: https://api.netlify.com/auth/v1/callback
+#
+# 2. Copy the Client ID. Generate a Client Secret. Keep both.
+#
+# 3. Create a free Netlify site (any blank site — it's just an OAuth relay):
+#    - netlify.com → New site → "Deploy manually" (drag an empty folder)
+#    - Site settings → Access control → OAuth → Install provider → GitHub
+#    - Paste your Client ID and Client Secret
+#
+# 4. In the `backend` block below, set `site_domain` to your Netlify site's
+#    subdomain, e.g. "my-oauth-relay.netlify.app"
+#
+# LOCAL DEVELOPMENT
+# =================
+# To edit content locally without OAuth:
+#   npm run cms:dev
+# This runs `decap-server` on :8081 alongside `astro dev`.
+# Uncomment `local_backend: true` below while working locally,
+# then re-comment before committing.
+# ---------------------------------------------------------------------------
+
+backend:
+  name: github
+  repo: korbonits/korbonits.github.io
+  branch: main
+  # Replace with your Netlify OAuth relay subdomain (see setup above):
+  site_domain: beamish-cassata-fc006d.netlify.app
+  base_url: https://api.netlify.com
+  auth_endpoint: auth
+
+# Uncomment for local development (run `npm run cms:dev` first):
+local_backend: false
+
+# Where uploaded images land in the repo and how they're referenced in content
+media_folder: public/images/uploads
+public_folder: /images/uploads
+
+# ---------------------------------------------------------------------------
+# Collections — mirror your Astro content.config.ts schema exactly
+# ---------------------------------------------------------------------------
+collections:
+  # Blog posts — src/content/blog/YYYY-MM-DD-slug.md
+  - name: blog
+    label: Blog Posts
+    folder: src/content/blog
+    create: true
+    delete: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    preview_path: "blog/{{slug}}"
+    fields:
+      - label: Title
+        name: title
+        widget: string
+
+      - label: Date
+        name: date
+        widget: datetime
+        date_format: YYYY-MM-DD
+        time_format: false
+        format: YYYY-MM-DD
+
+      - label: Draft
+        name: draft
+        widget: boolean
+        default: false
+        required: false
+        hint: "Draft posts are excluded from the build."
+
+      - label: Description
+        name: description
+        widget: string
+        required: false
+        hint: "Used for SEO meta description and post previews."
+
+      - label: Tags
+        name: tags
+        widget: list
+        required: false
+        hint: "Comma-separated or press Enter after each tag."
+
+      - label: Body
+        name: body
+        widget: markdown
+
+  # Single-file collections — pages with structured frontmatter
+  - name: pages
+    label: Pages
+    files:
+      # src/content/now.md — /now page
+      - name: now
+        label: Now
+        file: src/content/now.md
+        fields:
+          - label: Location
+            name: location
+            widget: string
+            required: false
+
+          - label: Working On
+            name: working_on
+            widget: string
+            required: false
+
+          - label: Thinking About
+            name: thinking_about
+            widget: string
+            required: false
+
+          - label: Body
+            name: body
+            widget: markdown
+            required: false
+
+      # src/content/about.md — /about page
+      - name: about
+        label: About
+        file: src/content/about.md
+        fields:
+          - label: Body
+            name: body
+            widget: markdown

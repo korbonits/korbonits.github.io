@@ -9,7 +9,9 @@
     "dev": "astro dev",
     "build": "astro build && pagefind --site dist",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "cms:proxy": "npx decap-server",
+    "cms:dev": "npm run cms:proxy & astro dev"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.17",

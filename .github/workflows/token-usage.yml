@@ -1,0 +1,40 @@
+name: Update Token Usage
+
+on:
+  schedule:
+    - cron: '0 4 * * *'  # 4am UTC daily — data is available within ~5 min of request
+  workflow_dispatch:      # allow manual runs from the Actions tab
+
+permissions:
+  contents: write  # needed to commit the updated JSON back to the repo
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Fetch token usage
+        env:
+          ANTHROPIC_ADMIN_API_KEY: ${{ secrets.ANTHROPIC_ADMIN_API_KEY }}
+        run: python scripts/fetch_token_usage.py
+
+      - name: Commit updated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/data/token-usage.json
+          if git diff --cached --quiet; then
+            echo "No changes — data already up to date."
+          else
+            git commit -m "chore: update token usage snapshot $(date -u +%Y-%m-%d)"
+            git push
+          fi

@@ -30,6 +30,8 @@ jobs:
       - uses: actions/configure-pages@v4
       - run: npm ci
       - run: npm run build
+        env:
+          PUBLIC_ALPHA_VANTAGE_KEY: ${{ secrets.ALPHA_VANTAGE_KEY }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

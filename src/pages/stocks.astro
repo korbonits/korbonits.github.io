@@ -1,0 +1,172 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const apiKey = import.meta.env.PUBLIC_ALPHA_VANTAGE_KEY ?? '';
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title="Stocks" description="Stock price dashboard" />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <h1>Stock Dashboard</h1>
+      <p class="note">Prices via <a href="https://www.alphavantage.co" target="_blank">Alpha Vantage</a>. Updated on page load.</p>
+      {!apiKey && (
+        <p class="warning">API key not configured. Set <code>ALPHA_VANTAGE_KEY</code> in GitHub repository secrets.</p>
+      )}
+      <div class="controls">
+        <button id="fetch-btn">Refresh Prices</button>
+      </div>
+      <div id="status"></div>
+      <table id="stocks-table" hidden>
+        <thead>
+          <tr>
+            <th>Symbol</th>
+            <th>Price</th>
+            <th>Change</th>
+            <th>Change %</th>
+            <th>Prev. Close</th>
+            <th>Volume</th>
+          </tr>
+        </thead>
+        <tbody id="stocks-body"></tbody>
+      </table>
+      <p id="last-updated" class="note"></p>
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  main { max-width: 800px; margin: auto; padding: 1em; }
+  h1 { margin-bottom: 0.25em; }
+  .note { color: rgb(var(--gray)); font-size: 0.85em; margin: 0.5em 0; }
+  .warning {
+    background: #fef9c3;
+    border: 1px solid #fde047;
+    border-radius: 4px;
+    padding: 0.5em 0.75em;
+    font-size: 0.9em;
+    margin: 0.75em 0;
+  }
+  .controls { margin: 1em 0 0.5em; }
+  #fetch-btn {
+    padding: 0.4em 1em;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+  }
+  #fetch-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  #status { color: rgb(var(--gray)); font-size: 0.85em; min-height: 1.2em; margin-bottom: 0.5em; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.95em; }
+  th, td { text-align: right; padding: 0.5em 0.75em; border-bottom: 1px solid rgb(var(--gray-light)); }
+  th:first-child, td:first-child { text-align: left; font-weight: bold; }
+  th { background: rgb(var(--gray-light), 0.3); font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.03em; }
+  tr:hover td { background: rgba(var(--gray-light), 0.15); }
+  .up { color: #16a34a; }
+  .down { color: #dc2626; }
+  .flat { color: rgb(var(--gray)); }
+</style>
+
+<script define:vars={{ apiKey }}>
+  const SYMBOLS = ['DIS', 'GS', 'META', 'NVDA', 'AMZN', 'RELY'];
+
+  const fetchBtn = document.getElementById('fetch-btn');
+  const statusEl = document.getElementById('status');
+  const tableEl = document.getElementById('stocks-table');
+  const tbody = document.getElementById('stocks-body');
+  const lastUpdated = document.getElementById('last-updated');
+
+  function fmt(n, digits = 2) { return n.toFixed(digits); }
+
+  function fmtLarge(n) {
+    if (n >= 1_000_000) return (n / 1_000_000).toFixed(2) + 'M';
+    if (n >= 1_000) return (n / 1_000).toFixed(1) + 'K';
+    return String(n);
+  }
+
+  function setStatus(msg) { statusEl.textContent = msg; }
+
+  async function fetchQuote(symbol) {
+    const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${apiKey}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status} for ${symbol}`);
+    const data = await res.json();
+    if (data['Information']) throw new Error('Rate limit or invalid key: ' + data['Information']);
+    if (data['Note']) throw new Error('Rate limit reached: ' + data['Note']);
+    const q = data['Global Quote'];
+    if (!q || !q['05. price']) throw new Error(`No data returned for ${symbol}`);
+    return {
+      symbol,
+      price: parseFloat(q['05. price']),
+      prevClose: parseFloat(q['08. previous close']),
+      change: parseFloat(q['09. change']),
+      changePct: parseFloat(q['10. change percent']),
+      volume: parseInt(q['06. volume'], 10),
+    };
+  }
+
+  function renderRow(q) {
+    const cls = q.change > 0 ? 'up' : q.change < 0 ? 'down' : 'flat';
+    const sign = q.change > 0 ? '+' : '';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${q.symbol}</td>
+      <td>$${fmt(q.price)}</td>
+      <td class="${cls}">${sign}$${fmt(q.change)}</td>
+      <td class="${cls}">${sign}${fmt(q.changePct)}%</td>
+      <td>$${fmt(q.prevClose)}</td>
+      <td>${fmtLarge(q.volume)}</td>
+    `;
+    tbody.appendChild(tr);
+  }
+
+  async function fetchAll() {
+    if (!apiKey) { setStatus('No API key configured.'); return; }
+    fetchBtn.disabled = true;
+    tbody.innerHTML = '';
+    tableEl.hidden = true;
+    lastUpdated.textContent = '';
+    let errors = 0;
+
+    for (let i = 0; i < SYMBOLS.length; i++) {
+      const sym = SYMBOLS[i];
+      setStatus(`Fetching ${sym} (${i + 1}/${SYMBOLS.length})…`);
+      try {
+        const q = await fetchQuote(sym);
+        renderRow(q);
+      } catch (err) {
+        errors++;
+        const msg = err instanceof Error ? err.message : String(err);
+        setStatus(`Error fetching ${sym}: ${msg}`);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${sym}</td><td colspan="5" class="flat">Error: ${msg}</td>`;
+        tbody.appendChild(tr);
+        if (msg.includes('Rate limit') || msg.includes('invalid key')) break;
+      }
+      // Alpha Vantage free tier: 5 req/min — wait 12s between calls
+      if (i < SYMBOLS.length - 1) {
+        for (let s = 12; s > 0; s--) {
+          setStatus(`Waiting to avoid rate limit… ${s}s (${i + 1}/${SYMBOLS.length} done)`);
+          await new Promise(r => setTimeout(r, 1000));
+        }
+      }
+    }
+
+    tableEl.hidden = false;
+    lastUpdated.textContent = `Last updated: ${new Date().toLocaleString()}`;
+    setStatus(errors ? `Done with ${errors} error(s).` : 'Done.');
+    fetchBtn.disabled = false;
+  }
+
+  fetchBtn.addEventListener('click', fetchAll);
+  // Auto-fetch on load if key is available
+  if (apiKey) fetchAll();
+</script>

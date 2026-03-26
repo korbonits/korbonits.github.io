@@ -16,3 +16,7 @@
 [[edge_functions]]
   path = "/analytics"
   function = "analytics-auth"
+
+[[edge_functions]]
+  path = "/analytics/"
+  function = "analytics-auth"

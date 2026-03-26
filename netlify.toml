@@ -13,10 +13,8 @@
 
 # Basic auth on the analytics page via edge function.
 # Set ANALYTICS_USER and ANALYTICS_PASSWORD in Netlify environment variables.
-[[edge_functions]]
-  path = "/analytics"
-  function = "analytics-auth"
-
+# Only guard /analytics/ (the canonical path). Netlify redirects /analytics →
+# /analytics/ before the edge function runs, so no auth-on-redirect loop.
 [[edge_functions]]
   path = "/analytics/"
   function = "analytics-auth"

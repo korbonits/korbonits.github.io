@@ -1,20 +1,25 @@
 export default async (request, context) => {
-  const user = Deno.env.get('ANALYTICS_USER');
-  const password = Deno.env.get('ANALYTICS_PASSWORD');
+  const expectedUser = Deno.env.get('ANALYTICS_USER') ?? '';
+  const expectedPass = Deno.env.get('ANALYTICS_PASSWORD') ?? '';
 
-  if (!user || !password) {
-    return new Response('Analytics auth not configured', { status: 500 });
+  const authHeader = request.headers.get('authorization') ?? '';
+
+  if (authHeader.startsWith('Basic ')) {
+    try {
+      const decoded = atob(authHeader.slice(6));
+      const colon = decoded.indexOf(':');
+      if (colon !== -1) {
+        const user = decoded.slice(0, colon);
+        const pass = decoded.slice(colon + 1);
+        if (user === expectedUser && pass === expectedPass) {
+          return context.next();
+        }
+      }
+    } catch (_) {}
   }
 
-  const auth = request.headers.get('Authorization') ?? '';
-  const expected = 'Basic ' + btoa(`${user}:${password}`);
-
-  if (auth !== expected) {
-    return new Response('Unauthorized', {
-      status: 401,
-      headers: { 'WWW-Authenticate': 'Basic realm="Analytics"' },
-    });
-  }
-
-  return context.next();
+  return new Response('Unauthorized', {
+    status: 401,
+    headers: { 'WWW-Authenticate': 'Basic realm="Analytics"' },
+  });
 };

@@ -11,11 +11,8 @@
   to = "/.netlify/functions/track"
   status = 200
 
-# Basic auth on the analytics page.
-# NOTE: Netlify does not interpolate env vars in header values.
-# Set these to literal credentials here, or use Netlify's Site Protection
-# feature (Team plan) if you want to keep credentials out of the repo.
-[[headers]]
-  for = "/analytics"
-  [headers.values]
-    Basic-Auth = "ANALYTICS_USER_VALUE:ANALYTICS_PASSWORD_VALUE"
+# Basic auth on the analytics page via edge function.
+# Set ANALYTICS_USER and ANALYTICS_PASSWORD in Netlify environment variables.
+[[edge_functions]]
+  path = "/analytics"
+  function = "analytics-auth"

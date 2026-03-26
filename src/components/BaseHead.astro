@@ -10,6 +10,7 @@ interface Props {
 }
 const { title, description = '', ogImage } = Astro.props;
 const ogImageUrl = ogImage ?? new URL('/og-default.png', Astro.site);
+const analyticsSecret = import.meta.env.PUBLIC_ANALYTICS_SECRET ?? '';
 ---
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -30,3 +31,24 @@ const ogImageUrl = ogImage ?? new URL('/og-default.png', Astro.site);
 <meta name="twitter:image" content={ogImageUrl} />
 <ClientRouter />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" />
+<script define:vars={{ analyticsSecret }}>
+  document.addEventListener('astro:page-load', () => {
+    if (!analyticsSecret) return;
+    try {
+      fetch('/api/track', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-analytics-secret': analyticsSecret,
+        },
+        body: JSON.stringify({
+          path: window.location.pathname,
+          referrer: document.referrer,
+          user_agent: navigator.userAgent,
+          timestamp: new Date().toISOString(),
+        }),
+        keepalive: true,
+      });
+    } catch (_) {}
+  });
+</script>

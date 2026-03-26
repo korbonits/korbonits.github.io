@@ -1,7 +1,6 @@
 ---
 import '../styles/global.css';
 const { title } = Astro.props;
-const analyticsSecret = import.meta.env.PUBLIC_ANALYTICS_SECRET ?? '';
 ---
 <!doctype html>
 <html lang="en">
@@ -30,27 +29,6 @@ const analyticsSecret = import.meta.env.PUBLIC_ANALYTICS_SECRET ?? '';
     </footer>
   </body>
 </html>
-
-<script define:vars={{ analyticsSecret }}>
-  if (analyticsSecret) {
-    try {
-      fetch('/api/track', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-analytics-secret': analyticsSecret,
-        },
-        body: JSON.stringify({
-          path: window.location.pathname,
-          referrer: document.referrer,
-          user_agent: navigator.userAgent,
-          timestamp: new Date().toISOString(),
-        }),
-        keepalive: true,
-      });
-    } catch (_) {}
-  }
-</script>
 
 <style>
   header {

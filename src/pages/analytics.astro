@@ -1,0 +1,274 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = import.meta.env.SUPABASE_URL ?? '';
+const supabaseKey = import.meta.env.SUPABASE_ANON_KEY ?? '';
+
+interface PageView { path: string; referrer: string | null; created_at: string; }
+
+let totalViews = 0;
+let viewsToday = 0;
+let viewsLast7 = 0;
+let topPages: { path: string; count: number }[] = [];
+let referrerBreakdown: { domain: string; count: number }[] = [];
+let dailyLabels: string[] = [];
+let dailyCounts: number[] = [];
+let configError: string | null = null;
+
+if (!supabaseUrl || !supabaseKey) {
+  configError = 'SUPABASE_URL or SUPABASE_ANON_KEY not set. Configure them as Netlify environment variables.';
+} else {
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
+  const now = new Date();
+  const todayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())).toISOString();
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
+
+  const [allRes, todayRes, sevenRes, thirtyRes] = await Promise.all([
+    supabase.from('page_views').select('*', { count: 'exact', head: true }),
+    supabase.from('page_views').select('*', { count: 'exact', head: true }).gte('created_at', todayStart),
+    supabase.from('page_views').select('*', { count: 'exact', head: true }).gte('created_at', sevenDaysAgo),
+    supabase.from('page_views').select('path, referrer, created_at').gte('created_at', thirtyDaysAgo).limit(100000),
+  ]);
+
+  totalViews = allRes.count ?? 0;
+  viewsToday = todayRes.count ?? 0;
+  viewsLast7 = sevenRes.count ?? 0;
+
+  const rows: PageView[] = thirtyRes.data ?? [];
+
+  // Top 10 pages
+  const pathCounts: Record<string, number> = {};
+  for (const row of rows) {
+    pathCounts[row.path] = (pathCounts[row.path] ?? 0) + 1;
+  }
+  topPages = Object.entries(pathCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10)
+    .map(([path, count]) => ({ path, count }));
+
+  // Referrer breakdown by domain
+  const domainCounts: Record<string, number> = {};
+  for (const row of rows) {
+    if (!row.referrer) {
+      domainCounts['(direct)'] = (domainCounts['(direct)'] ?? 0) + 1;
+      continue;
+    }
+    try {
+      const url = new URL(row.referrer);
+      const domain = url.hostname.replace(/^www\./, '');
+      domainCounts[domain] = (domainCounts[domain] ?? 0) + 1;
+    } catch {
+      domainCounts['(other)'] = (domainCounts['(other)'] ?? 0) + 1;
+    }
+  }
+  referrerBreakdown = Object.entries(domainCounts)
+    .sort((a, b) => b[1] - a[1])
+    .map(([domain, count]) => ({ domain, count }));
+
+  // Daily views — last 30 days (fill gaps with 0)
+  const dayCounts: Record<string, number> = {};
+  for (const row of rows) {
+    const day = row.created_at.slice(0, 10);
+    dayCounts[day] = (dayCounts[day] ?? 0) + 1;
+  }
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+    const key = d.toISOString().slice(0, 10);
+    dailyLabels.push(key.slice(5)); // MM-DD
+    dailyCounts.push(dayCounts[key] ?? 0);
+  }
+}
+
+const buildDate = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+// Serialise chart data for client scripts
+const topPagesChart = {
+  labels: topPages.map(p => p.path),
+  data: topPages.map(p => p.count),
+};
+const dailyChart = { labels: dailyLabels, data: dailyCounts };
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title="Analytics" description="Site analytics dashboard" />
+    <!-- Chart.js loaded blocking so inline scripts below can use it -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js" is:inline></script>
+    <style>
+      main { width: 720px; max-width: calc(100% - 2em); margin: auto; padding: 3em 1em; }
+      h1 { margin-bottom: 0.25em; }
+      .updated { color: rgb(var(--gray)); font-size: 0.85em; margin-bottom: 2em; }
+      h2 { font-size: 1.25em; margin: 2em 0 0.5em; }
+
+      /* Stat cards */
+      .stats { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.5em; }
+      .stat {
+        flex: 1 1 180px;
+        border: 1px solid rgb(var(--gray-light));
+        border-radius: 8px;
+        padding: 1rem 1.25rem;
+        box-shadow: var(--box-shadow);
+      }
+      .stat-label { font-size: 0.8em; color: rgb(var(--gray)); text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 0.25em; }
+      .stat-value { font-size: 2em; font-weight: 700; color: rgb(var(--black)); margin: 0; line-height: 1.1; }
+
+      /* Charts */
+      .chart-wrap { position: relative; width: 100%; margin-bottom: 0.5em; }
+
+      /* Referrer table */
+      table { width: 100%; border-collapse: collapse; font-size: 0.9em; margin-bottom: 0.5em; }
+      th, td { text-align: left; padding: 0.45em 0.6em; border-bottom: 1px solid rgb(var(--gray-light)); }
+      th { color: rgb(var(--gray)); font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.03em; font-weight: 700; }
+      td:last-child, th:last-child { text-align: right; }
+      tr:hover td { background: rgba(var(--gray-light), 0.2); }
+
+      /* Error state */
+      .error {
+        background: #fef9c3;
+        border: 1px solid #fde047;
+        border-radius: 6px;
+        padding: 0.75em 1em;
+        font-size: 0.9em;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        .stat { border-color: rgba(var(--gray-light), 0.15); }
+        .stat-value { color: #fff; }
+        .error { background: #2a2600; border-color: #665b00; color: #fef08a; }
+      }
+      @media (max-width: 720px) {
+        .stats { flex-direction: column; }
+        .stat { flex: unset; }
+      }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <h1>Analytics</h1>
+      <p class="updated">Last built: {buildDate}</p>
+
+      {configError ? (
+        <p class="error">{configError}</p>
+      ) : (
+        <>
+          <div class="stats">
+            <div class="stat">
+              <p class="stat-label">Total views</p>
+              <p class="stat-value">{totalViews.toLocaleString()}</p>
+            </div>
+            <div class="stat">
+              <p class="stat-label">Today</p>
+              <p class="stat-value">{viewsToday.toLocaleString()}</p>
+            </div>
+            <div class="stat">
+              <p class="stat-label">Last 7 days</p>
+              <p class="stat-value">{viewsLast7.toLocaleString()}</p>
+            </div>
+          </div>
+
+          <h2>Daily views — last 30 days</h2>
+          <div class="chart-wrap" style="height:200px">
+            <canvas id="daily-chart"></canvas>
+          </div>
+
+          <h2>Top 10 pages</h2>
+          <div class="chart-wrap" style="height:280px">
+            <canvas id="pages-chart"></canvas>
+          </div>
+
+          <h2>Referrer breakdown</h2>
+          {referrerBreakdown.length > 0 ? (
+            <table>
+              <thead>
+                <tr><th>Source</th><th>Views</th></tr>
+              </thead>
+              <tbody>
+                {referrerBreakdown.map(r => (
+                  <tr>
+                    <td>{r.domain}</td>
+                    <td>{r.count.toLocaleString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p style="color:rgb(var(--gray)); font-size:0.9em;">No referrer data yet.</p>
+          )}
+        </>
+      )}
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<script define:vars={{ topPagesChart, dailyChart }}>
+  const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const gridColor = dark ? 'rgba(229,233,240,0.08)' : 'rgba(96,115,159,0.12)';
+  const tickColor = dark ? '#9ba3b8' : '#60739f';
+  const accent = dark ? '#7b8fff' : '#2337ff';
+  const labelColor = dark ? '#e8eaf0' : '#0f1219';
+
+  Chart.defaults.font.family = '"Atkinson", sans-serif';
+  Chart.defaults.font.size = 13;
+
+  // Daily line chart
+  const dailyCtx = document.getElementById('daily-chart');
+  if (dailyCtx && dailyChart.labels.length) {
+    new Chart(dailyCtx, {
+      type: 'line',
+      data: {
+        labels: dailyChart.labels,
+        datasets: [{
+          data: dailyChart.data,
+          borderColor: accent,
+          backgroundColor: accent + '22',
+          borderWidth: 2,
+          pointRadius: 2,
+          fill: true,
+          tension: 0.3,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: tickColor, maxTicksLimit: 10 }, grid: { color: gridColor } },
+          y: { ticks: { color: tickColor, precision: 0 }, grid: { color: gridColor }, beginAtZero: true },
+        },
+      },
+    });
+  }
+
+  // Top pages horizontal bar chart
+  const pagesCtx = document.getElementById('pages-chart');
+  if (pagesCtx && topPagesChart.labels.length) {
+    new Chart(pagesCtx, {
+      type: 'bar',
+      data: {
+        labels: topPagesChart.labels,
+        datasets: [{
+          data: topPagesChart.data,
+          backgroundColor: accent + 'bb',
+          borderRadius: 3,
+        }],
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: tickColor, precision: 0 }, grid: { color: gridColor }, beginAtZero: true },
+          y: { ticks: { color: labelColor } },
+        },
+      },
+    });
+  }
+</script>

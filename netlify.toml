@@ -4,3 +4,18 @@
 
 [build.environment]
   NODE_VERSION = "22"
+
+# Route /api/track → the serverless function
+[[redirects]]
+  from = "/api/track"
+  to = "/.netlify/functions/track"
+  status = 200
+
+# Basic auth on the analytics page.
+# NOTE: Netlify does not interpolate env vars in header values.
+# Set these to literal credentials here, or use Netlify's Site Protection
+# feature (Team plan) if you want to keep credentials out of the repo.
+[[headers]]
+  for = "/analytics"
+  [headers.values]
+    Basic-Auth = "ANALYTICS_USER_VALUE:ANALYTICS_PASSWORD_VALUE"

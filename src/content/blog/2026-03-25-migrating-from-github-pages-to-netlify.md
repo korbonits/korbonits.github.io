@@ -38,6 +38,8 @@ Push that, connect the repo in the Netlify dashboard, and the first deploy runs 
 
 The DNS migration — the part I'd always imagined being painful — was four nameservers pasted into Squarespace. Netlify gave me the values, Squarespace had a "custom nameservers" field, done. SSL provisioned automatically. The whole thing propagated faster than I expected.
 
+One thing I missed: email forwarding. If your domain is registered through Squarespace (formerly Google Domains), email forwarding is handled via Mailgun under the hood. Switching to Netlify DNS drops those MX records. Mail stops bouncing but never arrives. The fix: add mxa.mailgun.org and mxb.mailgun.org as MX records (both priority 10) in Netlify DNS, plus a TXT record v=spf1 include:mailgun.org ~all. Then verify your forwarding rule still exists in account.squarespace.com under your domain's Email settings. Five minutes, but only if you remember to do it before you need it.
+
 One thing I missed: email forwarding. If you're using Google Domains (now Squarespace) free email forwarding — e.g., alex@yourdomain.com → your Gmail — switching to Netlify DNS will break it silently. Mail stops bouncing but never arrives. The fix: delete the Google Workspace MX records Netlify imports by default and replace them with Squarespace's forwarding records (route1.mx.squarespace.com priority 1, route2 priority 5, route3 priority 10). Then verify your forwarding rule still exists in domains.google.com. Five minutes, but only if you remember to do it before you need it.
 
 ## The Cron Problem

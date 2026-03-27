@@ -48,6 +48,8 @@ The fix: only guard `/analytics/`. Netlify's trailing-slash normalization happen
 
 **Chrome cached credentials.** After debugging the loop, I was still getting `ERR_TOO_MANY_RETRIES` even after the fix deployed. Turns out Chrome had silently cached the bad credentials from the broken earlier deploys and was auto-retrying them on every request, never surfacing a dialog. Opening an incognito window confirmed the fix was working. Cleared the cached credentials and normal browsing worked too.
 
+![Analytics dashboard showing total views, daily chart, top pages, and referrer breakdown](/images/analytics.png)
+
 ## The Honest Take
 
 The whole thing — design, implementation, debugging, deploy — took one session. The interesting problems were not the ones I expected. I thought the hard part would be the Supabase integration or the Chart.js charts. Those were fine. The bugs were in the wiring: a layout component nobody uses, a script that doesn't survive view transitions, a redirect that strips auth headers.

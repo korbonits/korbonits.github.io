@@ -210,6 +210,8 @@ Once the pool existed, I went to app.uniswap.org, switched MetaMask to Sepolia, 
 
 Swapped 0.0001 ETH for VIBE. It worked.
 
+![Uniswap swap confirmation: 0.0001 ETH for 98.7158 VIBE](/images/uniswap-mainnet.png)
+
 What happened under the hood: Uniswap's router called `approve` on my behalf, then called `transferFrom` on the VIBE contract to move tokens out of the pool and into my wallet. The same two functions I wrote by hand earlier in the day.
 
 The price moved slightly after the swap — the pool now has slightly less VIBE and slightly more ETH, so the ratio shifted. That's the AMM doing its job.
@@ -238,6 +240,8 @@ NODE_EXTRA_CA_CERTS=/etc/ssl/cert.pem npx hardhat verify --network mainnet 0x4d5
 Then ran the same liquidity script against mainnet — seeded the pool with 0.01 ETH and 10,000 VIBE. VIBE is now tradeable by anyone on Uniswap mainnet.
 
 Contract: [0x4d5007...505926](https://etherscan.io/address/0x4d5007d5717795331e8b21b3cd584f7bfe505926#code)
+
+![Etherscan showing VibeToken contract source code verified](/images/contract-overview.png)
 
 The testnet-first workflow paid off. By the time I touched mainnet, every step had already run successfully. The only surprise was a Hardhat bug where the ethers.js transaction formatter choked on a contract deployment response (the `to` field is empty for contract creation transactions). The transaction went through fine — the error was in the post-deploy parsing, not the deployment itself.
 

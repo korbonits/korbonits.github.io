@@ -252,3 +252,19 @@ Gas is payment for computation. Every opcode costs gas. The deployment transacti
 The `owner` pattern I implemented is primitive — a real contract would use something like OpenZeppelin's `Ownable` with ownership transfer and renouncement. But I now understand *why* that pattern exists, which I wouldn't if I'd started with the library.
 
 The code is at [github.com/korbonits/vibe-token](https://github.com/korbonits/vibe-token).
+
+## What's Next
+
+This project is a learning exercise, not a production token — but here's what I'd do before treating it as one, in roughly priority order:
+
+**Renounce ownership.** The contract has a `mint` function gated by `onlyOwner`. As long as I hold the owner key, I can inflate the supply at will. Adding a `renounceOwnership()` function and calling it on-chain would permanently disable minting — verifiable by anyone on Etherscan. This is the single highest-trust signal a token can give.
+
+**Lock the liquidity.** I own the LP NFT from Uniswap. Nothing stops me from removing all the liquidity tomorrow. Services like [Team.Finance](https://team.finance) or [Unicrypt](https://unicrypt.network) let you deposit the LP NFT into a time-lock contract — provably unable to withdraw for a set period. Without this, any liquidity pool is a potential rug.
+
+**Concentrate the liquidity.** I used full-range liquidity (equivalent to Uniswap v2). Uniswap v3's concentrated liquidity lets you deposit within a specific price range and earn a larger share of fees from trades in that range. More capital-efficient if you have a view on where the price will trade.
+
+**Use OpenZeppelin.** Now that I understand what the contract does line by line, using OpenZeppelin's audited implementations is the right production move. `ERC20.sol`, `Ownable.sol`, `ERC20Burnable.sol` — all battle-tested, all composable. I avoided them here deliberately to see the internals; I wouldn't avoid them in production.
+
+**Add a transfer tax (carefully).** Many tokens take a small % on each transfer — burned, sent to a treasury, or added to liquidity. This requires overriding the `transfer` and `transferFrom` functions and is a common attack surface. Worth understanding, but easy to get wrong.
+
+If you're following along and want to go further, start with renouncing ownership — it's one function call and immediately makes the token more trustworthy to any outside observer.

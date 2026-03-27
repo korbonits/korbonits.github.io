@@ -1,8 +1,8 @@
 ---
 title: "I Deployed My First Smart Contract in an Afternoon"
-date: 2026-03-26
+date: 2026-03-27
 draft: true
-description: A first-principles walkthrough of building and deploying a minimal ERC-20 token to Ethereum's Sepolia testnet — no frameworks, no abstractions, just Solidity.
+description: A first-principles walkthrough of building and deploying a minimal ERC-20 token to Ethereum mainnet — no frameworks, no abstractions, just Solidity, Hardhat, and Uniswap.
 tags:
   - ethereum
   - solidity
@@ -12,7 +12,7 @@ tags:
 
 I'd been meaning to learn how smart contracts actually work for a while. Not "how to use OpenZeppelin" or "how to deploy with Remix" — how they work. What's in an ERC-20. What happens when you deploy. What gas fees are paying for.
 
-So I sat down and did it from scratch: a hand-rolled ERC-20 token, deployed to Sepolia testnet, using Hardhat. This is that walkthrough.
+So I sat down and did it from scratch: a hand-rolled ERC-20 token, deployed to Ethereum mainnet, with a live Uniswap liquidity pool. This is that walkthrough.
 
 ## What is an ERC-20?
 
@@ -213,6 +213,33 @@ Swapped 0.0001 ETH for VIBE. It worked.
 What happened under the hood: Uniswap's router called `approve` on my behalf, then called `transferFrom` on the VIBE contract to move tokens out of the pool and into my wallet. The same two functions I wrote by hand earlier in the day.
 
 The price moved slightly after the swap — the pool now has slightly less VIBE and slightly more ETH, so the ratio shifted. That's the AMM doing its job.
+
+## Going to Mainnet
+
+Once everything worked on Sepolia, mainnet was anticlimactic — exactly as it should be.
+
+Added a mainnet network to `hardhat.config.js`, pointed it at an Alchemy mainnet RPC, and ran the same deploy script:
+
+```
+npx hardhat run scripts/deploy.js --network mainnet
+```
+
+Gas was 0.165 Gwei. The whole deployment cost $0.40.
+
+```
+VibeToken deployed to: 0x4d5007d5717795331e8b21b3cd584f7bfe505926
+```
+
+Verified on Etherscan:
+```
+NODE_EXTRA_CA_CERTS=/etc/ssl/cert.pem npx hardhat verify --network mainnet 0x4d5007d5717795331e8b21b3cd584f7bfe505926
+```
+
+Then ran the same liquidity script against mainnet — seeded the pool with 0.01 ETH and 10,000 VIBE. VIBE is now tradeable by anyone on Uniswap mainnet.
+
+Contract: [0x4d5007...505926](https://etherscan.io/address/0x4d5007d5717795331e8b21b3cd584f7bfe505926#code)
+
+The testnet-first workflow paid off. By the time I touched mainnet, every step had already run successfully. The only surprise was a Hardhat bug where the ethers.js transaction formatter choked on a contract deployment response (the `to` field is empty for contract creation transactions). The transaction went through fine — the error was in the post-deploy parsing, not the deployment itself.
 
 ## What I Actually Learned
 

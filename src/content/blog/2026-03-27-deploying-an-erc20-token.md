@@ -1,7 +1,7 @@
 ---
 title: "I Deployed My First Smart Contract in an Afternoon"
 date: 2026-03-27
-draft: true
+draft: false
 description: A first-principles walkthrough of building and deploying a minimal ERC-20 token to Ethereum mainnet — no frameworks, no abstractions, just Solidity, Hardhat, and Uniswap.
 tags:
   - ethereum

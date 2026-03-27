@@ -2,6 +2,8 @@
 
 Personal blog and portfolio. Built with [Astro](https://astro.build).
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/fa4577b5-ada4-4867-9c81-c05fd92638bc/deploy-status)](https://app.netlify.com/projects/beamish-cassata-fc006d/deploys)
+
 ## Development
 
 ```bash

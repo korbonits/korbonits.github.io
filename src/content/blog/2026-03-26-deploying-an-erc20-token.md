@@ -143,7 +143,7 @@ npx hardhat run scripts/deploy.js --network sepolia
 Output:
 ```
 Deploying with account: 0xf8C4795DFdaAC904CF2a380e3599a628E902C653
-VibeToken deployed to: 0x4d5007d5717795331E8b21B3cd584F7BfE505926
+VibeToken deployed to: 0x2B2FD8fDdcca4247a1f0370c0F26Dae91648d2F1
 ```
 
 That contract is now permanent. Anyone can call it. The 1,000,000 VIBE tokens exist in my wallet. The whole thing cost roughly 0.001 Sepolia ETH in gas.
@@ -169,6 +169,50 @@ it("non-owner cannot mint", async function () {
 `getSigners()` gives you fake funded accounts. `token.connect(alice)` sends transactions as Alice. `revertedWith` asserts the require message. Nine tests, under a second.
 
 The loop is: write contract → test locally → deploy to testnet when confident. The testnet deployment is the last step, not the first.
+
+## Listing on Uniswap
+
+Deploying a token is one thing. Making it tradeable is another.
+
+Uniswap is a decentralized exchange — no company, no order book, no account. It's a set of smart contracts anyone can interact with directly. The core primitive is the **liquidity pool**: a contract holding two tokens that lets anyone swap between them. The price adjusts automatically based on a constant product formula (`x * y = k`). When you buy VIBE, you're adding ETH and removing VIBE from the pool, which shifts the ratio and raises the price.
+
+To create a VIBE/ETH pool, I wrote a script that does four things:
+
+**1. Wrap ETH → WETH.** Uniswap only works with ERC-20 tokens. Raw ETH isn't an ERC-20, so you wrap it first. WETH is just ETH with a `deposit()`/`withdraw()` interface — 1 WETH is always redeemable for 1 ETH.
+
+**2. Approve the position manager.** Uniswap's contracts need permission to pull tokens from your wallet. This is the `approve` + `transferFrom` pattern from the contract — it applies here too. You approve the Uniswap NonfungiblePositionManager to spend your WETH and VIBE.
+
+**3. Create and initialize the pool.** The pool doesn't exist until someone creates it. You pick a fee tier (0.3% is standard) and set the **starting price** — expressed as `sqrtPriceX96`, which is `sqrt(token1/token0) * 2^96`. I set it so 1 ETH = 1,000,000 VIBE, which is arbitrary on testnet but determines where trading starts.
+
+**4. Mint a liquidity position.** You deposit both tokens into the pool and receive an NFT representing your share. Uniswap v3 uses "concentrated liquidity" — you can choose a price range to earn fees in. I used full range (equivalent to Uniswap v2 behavior) to keep it simple.
+
+```js
+const tx = await positionManager.mint({
+  token0,
+  token1,
+  fee: 3000,
+  tickLower: -887220,  // full range
+  tickUpper: 887220,
+  amount0Desired: amount0,
+  amount1Desired: amount1,
+  amount0Min: 0,
+  amount1Min: 0,
+  recipient: signer.address,
+  deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+});
+```
+
+The pool went live at transaction `0xed4184b73e9848ede46622b4c2afdf392220c94a6b8509ab31ebd400af75ef44`.
+
+## The First Swap
+
+Once the pool existed, I went to app.uniswap.org, switched MetaMask to Sepolia, enabled testnet mode in the Uniswap settings, and pasted the VIBE contract address into the token selector.
+
+Swapped 0.0001 ETH for VIBE. It worked.
+
+What happened under the hood: Uniswap's router called `approve` on my behalf, then called `transferFrom` on the VIBE contract to move tokens out of the pool and into my wallet. The same two functions I wrote by hand earlier in the day.
+
+The price moved slightly after the swap — the pool now has slightly less VIBE and slightly more ETH, so the ratio shifted. That's the AMM doing its job.
 
 ## What I Actually Learned
 

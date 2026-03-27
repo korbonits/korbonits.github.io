@@ -1,8 +1,10 @@
 ---
 title: "Sora Is Gone: Building on Open Source Video Generation"
 date: 2026-03-26
-draft: true
-description: OpenAI killed Sora with no warning and no migration path. Here's the open source video generation stack I'm building to replace it — Wan2.2, LTX-Video, Ray Serve, and the embedding layer most writeups skip.
+draft: false
+description: OpenAI killed Sora with no warning and no migration path. Here's
+  the open source video generation stack I'm building to replace it — Wan2.2,
+  LTX-Video, Ray Serve, and the embedding layer most writeups skip.
 tags:
   - open-source
   - video-generation

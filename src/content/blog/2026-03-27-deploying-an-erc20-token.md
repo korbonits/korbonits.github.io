@@ -245,6 +245,91 @@ Contract: [0x4d5007...505926](https://etherscan.io/address/0x4d5007d5717795331e8
 
 The testnet-first workflow paid off. By the time I touched mainnet, every step had already run successfully. The only surprise was a Hardhat bug where the ethers.js transaction formatter choked on a contract deployment response (the `to` field is empty for contract creation transactions). The transaction went through fine — the error was in the post-deploy parsing, not the deployment itself.
 
+## Minting and Burning On-Chain
+
+The contract has `mint` and `burn` from the start, but I hadn't actually called them on mainnet. A Hardhat script makes this easy:
+
+```js
+const AMOUNT = ethers.parseUnits("1000", 18);
+const tx = await token.mint(signer.address, AMOUNT);
+await tx.wait();
+```
+
+Running this on mainnet:
+
+```
+Total supply before: 1000000.0 VIBE
+Minting 1000.0 VIBE to 0xf8C4...C653...
+Total supply after:  1001000.0 VIBE
+```
+
+Then burning it back:
+
+```
+Total supply before: 1001000.0 VIBE
+Burning 1000.0 VIBE from 0xf8C4...C653...
+Total supply after:  1000000.0 VIBE
+```
+
+A few things are worth noting. `mint` is `onlyOwner` — only my wallet can call it. `burn` is unrestricted — anyone can burn their own tokens. Both emit a `Transfer` event: mint from `address(0)`, burn to `address(0)`. That's the ERC-20 convention for tokens appearing out of nothing or disappearing into nothing.
+
+The total supply tracks correctly. But my wallet balance is 990,000 VIBE, not 1,000,000 — because 10,000 VIBE is locked in the Uniswap pool. The contract doesn't know or care about Uniswap; it just sees that address holding tokens.
+
+## Building a Landing Page with Live On-Chain Data
+
+I built a landing page at [thevibetoken.xyz](https://thevibetoken.xyz) — a single HTML file deployed to Netlify. The interesting part was getting live price, market cap, liquidity, and a transfer feed without paying for any APIs.
+
+### Getting the Price
+
+My first attempt used the Uniswap v3 subgraph via The Graph's public gateway. It returned `{"pairs": null}` — the pool was too new and too thin to get indexed. The Graph also deprecated its free public endpoints, so this was a dead end regardless.
+
+The right approach: read directly from the contracts. No indexer needed.
+
+**Price** comes from the Uniswap v3 pool's `slot0()` function, which returns the current `sqrtPriceX96` — a fixed-point representation of the square root of the pool price. Converting it to a USD price takes three steps:
+
+1. Call `factory.getPool(VIBE, WETH, 3000)` to get the pool address
+2. Call `pool.slot0()` to get `sqrtPriceX96`
+3. Compute: `price = (sqrtPriceX96)² / 2¹⁹²` — this gives WETH per VIBE (both tokens have 18 decimals, so the decimal factors cancel)
+4. Multiply by ETH/USD from the Chainlink price feed at `0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419`
+
+In vanilla JS using BigInt:
+
+```js
+const sqrtPriceX96 = BigInt("0x" + slot0.slice(2, 66));
+const priceETH = Number(sqrtPriceX96 * sqrtPriceX96 * 10n**18n / 2n**192n) / 1e18;
+const ethUSD = Number(BigInt("0x" + chainlink.slice(66, 130))) / 1e8; // 8 decimals
+const priceUSD = priceETH * ethUSD;
+```
+
+**Liquidity** is just the WETH and VIBE balances of the pool contract, converted to USD.
+
+All of this over a public RPC — I ended up using [1rpc.io](https://1rpc.io) after Ankr and LlamaRPC both required auth.
+
+### Getting the Transfer Feed
+
+The `Transfer` event is emitted on every mint, burn, and transfer. `eth_getLogs` fetches them:
+
+```js
+{
+  method: "eth_getLogs",
+  params: [{ address: VIBE, topics: [TRANSFER_TOPIC], fromBlock: "0x...", toBlock: "latest" }]
+}
+```
+
+The catch: 1rpc.io caps `eth_getLogs` at 10,000 blocks per request. The contract is ~16,000 blocks old. So I paginate — fetch in 9,000-block chunks in parallel and flatten:
+
+```js
+const chunks = [];
+for (let from = DEPLOY_BLOCK; from <= currentBlock; from += LOG_CHUNK) {
+  chunks.push(fetchLogChunk(from, Math.min(from + LOG_CHUNK - 1, currentBlock)));
+}
+const logs = (await Promise.all(chunks)).flat();
+```
+
+Parsing a log: `topics[1]` is the `from` address, `topics[2]` is the `to` address, `data` is the amount. Mint events have `from === address(0)`, burns have `to === address(0)`. The page color-codes them accordingly and links each row to Etherscan.
+
+The whole thing is ~100 lines of vanilla JS with no dependencies. It polls every 30 seconds.
+
 ## What I Actually Learned
 
 The mental model shift: **a smart contract is a program that lives at an address on a shared computer.** The EVM is that computer. Every Ethereum node runs it. When you deploy, you're uploading bytecode to a permanent address. When someone calls a function, every node executes it and agrees on the result.
@@ -268,7 +353,5 @@ This project is a learning exercise, not a production token — but here's what 
 **Concentrate the liquidity.** I used full-range liquidity (equivalent to Uniswap v2). Uniswap v3's concentrated liquidity lets you deposit within a specific price range and earn a larger share of fees from trades in that range. More capital-efficient if you have a view on where the price will trade.
 
 **Use OpenZeppelin.** Now that I understand what the contract does line by line, using OpenZeppelin's audited implementations is the right production move. `ERC20.sol`, `Ownable.sol`, `ERC20Burnable.sol` — all battle-tested, all composable. I avoided them here deliberately to see the internals; I wouldn't avoid them in production.
-
-**Add a transfer tax (carefully).** Many tokens take a small % on each transfer — burned, sent to a treasury, or added to liquidity. This requires overriding the `transfer` and `transferFrom` functions and is a common attack surface. Worth understanding, but easy to get wrong.
 
 If you're following along and want to go further, start with renouncing ownership — it's one function call and immediately makes the token more trustworthy to any outside observer.

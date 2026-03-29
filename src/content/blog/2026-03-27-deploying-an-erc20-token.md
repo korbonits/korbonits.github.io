@@ -330,6 +330,8 @@ Parsing a log: `topics[1]` is the `from` address, `topics[2]` is the `to` addres
 
 The whole thing is ~100 lines of vanilla JS with no dependencies. It polls every 30 seconds.
 
+![thevibetoken.xyz showing live price, market cap, liquidity, and recent mint/burn transfers](/images/vibe-token.png)
+
 ## What I Actually Learned
 
 The mental model shift: **a smart contract is a program that lives at an address on a shared computer.** The EVM is that computer. Every Ethereum node runs it. When you deploy, you're uploading bytecode to a permanent address. When someone calls a function, every node executes it and agrees on the result.

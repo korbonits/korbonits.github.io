@@ -1,0 +1,351 @@
+---
+// src/pages/tools/embedding-similarity.astro
+import BaseHead from "../../components/BaseHead.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+---
+
+<html lang="en">
+  <head>
+    <BaseHead
+      title="Embedding Similarity"
+      description="How similar are two pieces of text, really? Paste any two snippets and get a plain-English explanation."
+    />
+  </head>
+  <body>
+    <Header />
+    <main class="page">
+      <header class="page-header">
+        <h1 class="page-title">Embedding Similarity</h1>
+        <p class="page-subtitle">
+          How similar are two pieces of text, <em>really</em>? Paste any two
+          snippets — legal clauses, ad copy, product descriptions — and get a
+          score and plain-English explanation.
+        </p>
+      </header>
+
+      <!-- Example picker -->
+      <div class="example-row">
+        <label class="field-label" for="examples">Try an example</label>
+        <select id="examples">
+          <option value="">— pick a domain —</option>
+          <optgroup label="Legal">
+            <option value="legal1">Trademark: similar brand names</option>
+            <option value="legal2">Contract clause vs. plain restatement</option>
+          </optgroup>
+          <optgroup label="Marketing">
+            <option value="mkt1">Two ad headlines, same product</option>
+            <option value="mkt2">Brand taglines: Apple vs. Samsung</option>
+          </optgroup>
+          <optgroup label="Tech">
+            <option value="tech1">Two ML abstracts on transformers</option>
+            <option value="tech2">Python function vs. its docstring</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <!-- Input area -->
+      <div class="inputs">
+        <div class="input-group">
+          <label class="field-label" for="textA">Text A</label>
+          <textarea id="textA" placeholder="Paste or type your first snippet…"></textarea>
+        </div>
+        <div class="input-group">
+          <label class="field-label" for="textB">Text B</label>
+          <textarea id="textB" placeholder="Paste or type your second snippet…"></textarea>
+        </div>
+      </div>
+
+      <button class="run-btn" id="runBtn">Compare →</button>
+
+      <!-- Status / error -->
+      <p id="status" class="status" aria-live="polite"></p>
+
+      <!-- Result -->
+      <section id="result" class="result-card" hidden aria-label="Similarity result">
+        <div class="score-row">
+          <span class="score-num" id="scoreNum">—</span>
+          <span class="score-denom">/ 100</span>
+          <span class="score-label" id="scoreLabel"></span>
+        </div>
+        <hr class="divider" />
+        <p class="explanation" id="explanation"></p>
+      </section>
+
+      <p class="page-note">
+        Built by <a href="/">Alex Korbonits</a>. Powered by the
+        <a href="https://anthropic.com" target="_blank" rel="noopener">Anthropic API</a>.
+        Scores are Claude's semantic judgment, not exact cosine distance.
+      </p>
+    </main>
+
+    <script>
+      const examples = {
+        legal1: [
+          "Nike — athletic footwear and apparel brand founded in 1964.",
+          "Nike — a new athletic shoe company selling running and training footwear.",
+        ],
+        legal2: [
+          "The licensor shall retain all intellectual property rights not expressly granted herein.",
+          "The company keeps ownership of everything not specifically handed over in this agreement.",
+        ],
+        mkt1: [
+          "Introducing AquaFlow: hydration engineered for peak performance.",
+          "Stay at your best with AquaFlow — water that works as hard as you do.",
+        ],
+        mkt2: ["Think different.", "Do what you can't."],
+        tech1: [
+          "We present a transformer-based architecture for sequence-to-sequence tasks using multi-head self-attention and positional encodings.",
+          "Our model applies attention mechanisms across input sequences, enabling parallel computation and improved long-range dependency modeling.",
+        ],
+        tech2: [
+          "def cosine_similarity(a, b): return dot(a, b) / (norm(a) * norm(b))",
+          "Computes the cosine similarity between two vectors, returning a value between -1 and 1 representing directional alignment.",
+        ],
+      };
+
+      document.getElementById("examples").addEventListener("change", function () {
+        const pair = examples[this.value];
+        if (pair) {
+          document.getElementById("textA").value = pair[0];
+          document.getElementById("textB").value = pair[1];
+        }
+      });
+
+      function scoreLabel(n) {
+        if (n >= 80) return "Very similar";
+        if (n >= 60) return "Somewhat similar";
+        if (n >= 35) return "Loosely related";
+        return "Quite different";
+      }
+
+      function scoreColor(n) {
+        if (n >= 70) return "var(--score-high)";
+        if (n >= 40) return "var(--score-mid)";
+        return "var(--score-low)";
+      }
+
+      document.getElementById("runBtn").addEventListener("click", async () => {
+        const textA = document.getElementById("textA").value.trim();
+        const textB = document.getElementById("textB").value.trim();
+        const status = document.getElementById("status");
+        const result = document.getElementById("result");
+        const btn = document.getElementById("runBtn");
+
+        if (!textA || !textB) {
+          status.textContent = "Both fields are required.";
+          status.className = "status status--error";
+          return;
+        }
+
+        btn.disabled = true;
+        result.hidden = true;
+        status.textContent = "Analyzing…";
+        status.className = "status status--info";
+
+        try {
+          const res = await fetch("/api/compare", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ textA, textB }),
+          });
+
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+
+          const scoreEl = document.getElementById("scoreNum");
+          scoreEl.textContent = data.score;
+          scoreEl.style.color = scoreColor(data.score);
+
+          document.getElementById("scoreLabel").textContent = scoreLabel(data.score);
+          document.getElementById("explanation").textContent = data.explanation;
+
+          status.textContent = "";
+          status.className = "status";
+          result.hidden = false;
+        } catch (e) {
+          status.textContent = "Something went wrong. Please try again.";
+          status.className = "status status--error";
+        }
+
+        btn.disabled = false;
+      });
+    </script>
+
+    <style>
+      :root {
+        --score-high: #15803d;
+        --score-mid: #b45309;
+        --score-low: #b91c1c;
+      }
+
+      .page {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 4rem 1.5rem 5rem;
+      }
+
+      /* Header */
+      .page-title {
+        font-size: clamp(1.8rem, 5vw, 2.6rem);
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+        margin-bottom: 0.75rem;
+      }
+
+      .page-subtitle {
+        font-size: 1rem;
+        color: #555;
+        margin-bottom: 2.5rem;
+        border-bottom: 1px solid #e8e5e0;
+        padding-bottom: 2rem;
+      }
+
+      /* Example row */
+      .example-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      /* Labels */
+      .field-label {
+        font-family: "DM Mono", monospace;
+        font-size: 0.72rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #888;
+        display: block;
+        margin-bottom: 6px;
+        white-space: nowrap;
+      }
+
+      /* Select */
+      select {
+        font-family: "DM Mono", monospace;
+        font-size: 0.82rem;
+        padding: 8px 10px;
+        border: 1px solid #d4d0c8;
+        border-radius: 4px;
+        background: #fff;
+        color: #1a1a1a;
+        cursor: pointer;
+        flex: 1;
+      }
+
+      /* Inputs */
+      .inputs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 1.25rem;
+      }
+
+      @media (max-width: 540px) {
+        .inputs { grid-template-columns: 1fr; }
+        .example-row { flex-direction: column; align-items: flex-start; }
+      }
+
+      textarea {
+        width: 100%;
+        height: 120px;
+        resize: vertical;
+        font-family: "Lora", serif;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        padding: 10px 12px;
+        border: 1px solid #d4d0c8;
+        border-radius: 4px;
+        background: #fff;
+        color: #1a1a1a;
+        transition: border-color 0.15s;
+      }
+      textarea:focus { outline: none; border-color: #888; }
+
+      /* Button */
+      .run-btn {
+        font-family: "DM Mono", monospace;
+        font-size: 0.85rem;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        padding: 10px 24px;
+        border: 1.5px solid #1a1a1a;
+        border-radius: 4px;
+        background: #1a1a1a;
+        color: #faf9f7;
+        cursor: pointer;
+        transition: background 0.15s, color 0.15s;
+        width: 100%;
+        margin-bottom: 0.5rem;
+      }
+      .run-btn:hover { background: #333; }
+      .run-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+      /* Status */
+      .status { font-family: "DM Mono", monospace; font-size: 0.8rem; min-height: 1.4rem; margin-top: 0.5rem; }
+      .status--error { color: #b91c1c; }
+      .status--info { color: #888; }
+
+      /* Result card */
+      .result-card {
+        margin-top: 1.5rem;
+        border: 1px solid #e8e5e0;
+        border-radius: 6px;
+        padding: 1.5rem;
+        background: #fff;
+      }
+
+      .score-row {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        margin-bottom: 1rem;
+      }
+
+      .score-num {
+        font-family: "DM Mono", monospace;
+        font-size: 3rem;
+        font-weight: 500;
+        line-height: 1;
+        transition: color 0.3s;
+      }
+
+      .score-denom {
+        font-family: "DM Mono", monospace;
+        font-size: 1rem;
+        color: #aaa;
+      }
+
+      .score-label {
+        font-family: "DM Mono", monospace;
+        font-size: 0.78rem;
+        color: #888;
+        letter-spacing: 0.04em;
+        margin-left: 4px;
+      }
+
+      .divider { border: none; border-top: 1px solid #e8e5e0; margin: 1rem 0; }
+
+      .explanation {
+        font-size: 0.98rem;
+        line-height: 1.75;
+        color: #333;
+      }
+
+      /* Attribution note */
+      .page-note {
+        margin-top: 3rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #e8e5e0;
+        font-size: 0.82rem;
+        color: #aaa;
+        font-family: "DM Mono", monospace;
+      }
+      .page-note a { color: #888; }
+      .page-note a:hover { color: #1a1a1a; }
+    </style>
+    <Footer />
+  </body>
+</html>

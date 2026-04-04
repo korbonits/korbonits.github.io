@@ -50,6 +50,18 @@ export const projects: Project[] = [
   //   },
   // },
   {
+    name: "Embedding Similarity",
+    slug: "embedding-similarity",
+    description:
+      "Paste any two text snippets and get a similarity score and plain-English explanation, powered by Claude. Built to make semantic similarity legible to non-technical users.",
+    date: "2026-04-04",
+    tags: ["ml", "agents"],
+    status: "active",
+    links: {
+      primary: { label: "Try it", url: "/tools/embedding-similarity" },
+    },
+  },
+  {
     name: "VIBE Token",
     slug: "vibe-token",
     description:

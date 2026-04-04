@@ -68,6 +68,9 @@ import Footer from "../../components/Footer.astro";
           <span class="score-denom">/ 100</span>
           <span class="score-label" id="scoreLabel"></span>
         </div>
+        <div class="score-bar-track">
+          <div class="score-bar-fill" id="scoreBar"></div>
+        </div>
         <hr class="divider" />
         <p class="explanation" id="explanation"></p>
       </section>
@@ -140,6 +143,8 @@ import Footer from "../../components/Footer.astro";
 
         btn.disabled = true;
         result.hidden = true;
+        document.getElementById("scoreBar").style.width = "0%";
+        document.getElementById("scoreNum").textContent = "—";
         status.textContent = "Analyzing…";
         status.className = "status status--info";
 
@@ -154,8 +159,23 @@ import Footer from "../../components/Footer.astro";
           const data = await res.json();
 
           const scoreEl = document.getElementById("scoreNum");
-          scoreEl.textContent = data.score;
-          scoreEl.style.color = scoreColor(data.score);
+          const barEl = document.getElementById("scoreBar");
+          const color = scoreColor(data.score);
+          const target = data.score;
+          const duration = 600;
+          const start = performance.now();
+
+          function animate(now) {
+            const t = Math.min((now - start) / duration, 1);
+            const ease = 1 - Math.pow(1 - t, 3);
+            const current = Math.round(ease * target);
+            scoreEl.textContent = current;
+            scoreEl.style.color = color;
+            barEl.style.width = (ease * target) + "%";
+            barEl.style.background = color;
+            if (t < 1) requestAnimationFrame(animate);
+          }
+          requestAnimationFrame(animate);
 
           document.getElementById("scoreLabel").textContent = scoreLabel(data.score);
           document.getElementById("explanation").textContent = data.explanation;
@@ -324,6 +344,21 @@ import Footer from "../../components/Footer.astro";
         color: #888;
         letter-spacing: 0.04em;
         margin-left: 4px;
+      }
+
+      .score-bar-track {
+        height: 4px;
+        background: #e8e5e0;
+        border-radius: 2px;
+        margin: 0.75rem 0 1rem;
+        overflow: hidden;
+      }
+
+      .score-bar-fill {
+        height: 100%;
+        width: 0%;
+        border-radius: 2px;
+        transition: none;
       }
 
       .divider { border: none; border-top: 1px solid #e8e5e0; margin: 1rem 0; }

@@ -1,3 +1,7 @@
+# netlify.toml
+# Add this to your korbonits.com root if it doesn't already exist,
+# or merge the [functions] block into your existing config.
+
 [build]
   command = "npm run build"
   publish = "dist"
@@ -5,16 +9,18 @@
 [build.environment]
   NODE_VERSION = "22"
 
-# Route /api/track → the serverless function
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Redirect /api/* to Netlify Functions
 [[redirects]]
-  from = "/api/track"
-  to = "/.netlify/functions/track"
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
   status = 200
 
 # Basic auth on the analytics page via edge function.
 # Set ANALYTICS_USER and ANALYTICS_PASSWORD in Netlify environment variables.
-# Only guard /analytics/ (the canonical path). Netlify redirects /analytics →
-# /analytics/ before the edge function runs, so no auth-on-redirect loop.
 [[edge_functions]]
   path = "/analytics/"
   function = "analytics-auth"

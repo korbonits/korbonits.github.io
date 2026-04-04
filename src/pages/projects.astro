@@ -1,0 +1,264 @@
+---
+// src/pages/projects.astro
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { projects } from "../data/projects";
+import type { ProjectTag } from "../data/projects";
+
+// Sort newest first
+const sorted = [...projects].sort(
+  (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+);
+
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+}
+
+const tagLabels: Record<ProjectTag, string> = {
+  startup: "Startup",
+  ml: "ML",
+  oss: "OSS",
+  agents: "Agents",
+  "personal-brand": "Personal Brand",
+};
+
+const tagColors: Record<ProjectTag, string> = {
+  startup:        "tag--startup",
+  ml:             "tag--ml",
+  oss:            "tag--oss",
+  agents:         "tag--agents",
+  "personal-brand": "tag--brand",
+};
+---
+
+<html lang="en">
+  <head>
+    <BaseHead title="Projects" description="Things I've built: ML systems, startups, OSS tools, and AI agents." />
+  </head>
+  <body>
+    <Header />
+    <main class="page">
+      <header class="page-header">
+          <h1 class="page-title">Projects</h1>
+        <p class="page-subtitle">
+          Things I've built — ML systems, startups, OSS tools, AI agents.
+        </p>
+      </header>
+
+      <section class="project-list" aria-label="Project list">
+        {
+          sorted.map((project) => (
+            <article class="project-card" aria-label={project.name}>
+              <div class="project-meta">
+                <time class="project-date" datetime={project.date}>
+                  {formatDate(project.date)}
+                </time>
+                <div class="project-tags">
+                  {project.tags.map((tag) => (
+                    <span class={`tag ${tagColors[tag]}`}>
+                      {tagLabels[tag]}
+                    </span>
+                  ))}
+                  {project.status === "coming-soon" && (
+                    <span class="tag tag--soon">Coming soon</span>
+                  )}
+                </div>
+              </div>
+
+              <div class="project-body">
+                <h2 class="project-name">{project.name}</h2>
+                <p class="project-description">{project.description}</p>
+
+                <div class="project-links">
+                  {project.links.primary && (
+                    <a
+                      href={project.links.primary.url}
+                      class="link-primary"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {project.links.primary.label} ↗
+                    </a>
+                  )}
+                  {project.links.repo && (
+                    <a
+                      href={project.links.repo}
+                      class="link-secondary"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      GitHub ↗
+                    </a>
+                  )}
+                </div>
+              </div>
+            </article>
+          ))
+        }
+      </section>
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  /* ── Reset & base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Lora", Georgia, serif;
+    background: #faf9f7;
+    color: #1a1a1a;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── Page layout ── */
+  .page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 6rem;
+  }
+
+  /* ── Header ── */
+  .page-title {
+    font-family: "Lora", serif;
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 0.75rem;
+  }
+
+  .page-subtitle {
+    font-size: 1rem;
+    color: #666;
+    font-style: italic;
+    margin-bottom: 3.5rem;
+    border-bottom: 1px solid #e8e5e0;
+    padding-bottom: 2rem;
+  }
+
+  /* ── Project list ── */
+  .project-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* ── Project card ── */
+  .project-card {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 0 2rem;
+    padding: 2rem 0;
+    border-bottom: 1px solid #e8e5e0;
+    transition: background 0.15s;
+  }
+
+  .project-card:first-child {
+    border-top: 1px solid #e8e5e0;
+  }
+
+  @media (max-width: 560px) {
+    .project-card {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+  }
+
+  /* ── Meta column (date + tags) ── */
+  .project-meta {
+    padding-top: 0.15rem;
+  }
+
+  .project-date {
+    display: block;
+    font-family: "DM Mono", monospace;
+    font-size: 0.75rem;
+    color: #999;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.6rem;
+  }
+
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+
+  .tag {
+    font-family: "DM Mono", monospace;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    padding: 0.2rem 0.5rem;
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+
+  .tag--startup  { background: #eef2ff; color: #4338ca; }
+  .tag--ml       { background: #f0fdf4; color: #15803d; }
+  .tag--oss      { background: #fff7ed; color: #c2410c; }
+  .tag--agents   { background: #fdf4ff; color: #7e22ce; }
+  .tag--brand    { background: #fefce8; color: #854d0e; }
+  .tag--soon     { background: #f1f5f9; color: #94a3b8; }
+
+  /* ── Body column ── */
+  .project-body {}
+
+  .project-name {
+    font-family: "Lora", serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.4rem;
+    line-height: 1.3;
+  }
+
+  .project-description {
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.65;
+    margin-bottom: 0.9rem;
+  }
+
+  /* ── Links ── */
+  .project-links {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .link-primary {
+    font-family: "DM Mono", monospace;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: #1a1a1a;
+    text-decoration: none;
+    border-bottom: 1.5px solid #1a1a1a;
+    padding-bottom: 1px;
+    letter-spacing: 0.02em;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .link-primary:hover {
+    color: #555;
+    border-color: #555;
+  }
+
+  .link-secondary {
+    font-family: "DM Mono", monospace;
+    font-size: 0.78rem;
+    color: #aaa;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: color 0.15s;
+  }
+
+  .link-secondary:hover { color: #555; }
+</style>

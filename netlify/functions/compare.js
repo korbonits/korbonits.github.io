@@ -19,7 +19,7 @@ export default async function handler(req, context) {
     });
   }
 
-  const { textA, textB } = body;
+  const { textA, textB, embeddingScore } = body;
 
   if (!textA?.trim() || !textB?.trim()) {
     return new Response(JSON.stringify({ error: "Both textA and textB are required" }), {
@@ -36,11 +36,15 @@ export default async function handler(req, context) {
     });
   }
 
+  const embeddingContext = embeddingScore != null
+    ? `\nFor reference, a nomic-embed-text-v1.5 embedding model scored these texts at ${embeddingScore}/100 using cosine similarity. If your score differs by more than 15 points, briefly explain why in your explanation (e.g. shared vocabulary without shared meaning, or same concept in very different phrasing).`
+    : "";
+
   const prompt = `You are an expert in natural language processing and text embeddings.
 
 A user has provided two text snippets. Your job:
-1. Estimate a cosine similarity score between 0 and 100 (integer), where 0 = completely unrelated, 50 = topically related but semantically distinct, 100 = essentially identical in meaning.
-2. Write a 2–3 sentence plain-English explanation of WHY they score that way. Explain what they share and what differs. Do not use jargon — imagine explaining this to a business executive who has never heard of embeddings.
+1. Estimate a semantic similarity score between 0 and 100 (integer), where 0 = completely unrelated, 50 = topically related but semantically distinct, 100 = essentially identical in meaning.
+2. Write a 2–3 sentence plain-English explanation of WHY they score that way. Explain what they share and what differs. Do not use jargon — imagine explaining this to a business executive who has never heard of embeddings.${embeddingContext}
 
 Text A: """${textA}"""
 Text B: """${textB}"""

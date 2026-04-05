@@ -63,22 +63,36 @@ import Footer from "../../components/Footer.astro";
 
       <!-- Result -->
       <section id="result" class="result-card" hidden aria-label="Similarity result">
-        <div class="score-row">
-          <span class="score-num" id="scoreNum">—</span>
-          <span class="score-denom">/ 100</span>
-          <span class="score-label" id="scoreLabel"></span>
+        <div class="scores">
+          <div class="score-row">
+            <span class="row-label">Embedding</span>
+            <span class="score-num" id="embedNum">—</span>
+            <span class="score-denom">/ 100</span>
+            <span class="score-label" id="embedLabel"></span>
+          </div>
+          <div class="score-bar-track">
+            <div class="score-bar-fill" id="embedBar"></div>
+          </div>
+          <div class="score-row" style="margin-top:1rem">
+            <span class="row-label">Claude's take</span>
+            <span class="score-num" id="claudeNum">—</span>
+            <span class="score-denom">/ 100</span>
+            <span class="score-label" id="claudeLabel"></span>
+          </div>
+          <div class="score-bar-track">
+            <div class="score-bar-fill" id="claudeBar"></div>
+          </div>
         </div>
-        <div class="score-bar-track">
-          <div class="score-bar-fill" id="scoreBar"></div>
-        </div>
+        <p class="divergence" id="divergence" hidden></p>
         <hr class="divider" />
         <p class="explanation" id="explanation"></p>
       </section>
 
       <p class="page-note">
-        Built by <a href="/">Alex Korbonits</a>. Powered by the
-        <a href="https://anthropic.com" target="_blank" rel="noopener">Anthropic API</a>.
-        Scores are Claude's semantic judgment, not exact cosine distance.
+        Built by <a href="/">Alex Korbonits</a>. Embedding score uses
+        <a href="https://huggingface.co/nomic-ai/nomic-embed-text-v1.5" target="_blank" rel="noopener">nomic-embed-text-v1.5</a>
+        via <a href="https://modal.com" target="_blank" rel="noopener">Modal</a> + cosine similarity.
+        Claude's take is a semantic judgment — the two scores often disagree, and that's the interesting part.
       </p>
     </main>
 
@@ -128,12 +142,39 @@ import Footer from "../../components/Footer.astro";
         return "var(--score-low)";
       }
 
+      function cosineSim(a, b) {
+        let dot = 0, na = 0, nb = 0;
+        for (let i = 0; i < a.length; i++) {
+          dot += a[i] * b[i];
+          na += a[i] * a[i];
+          nb += b[i] * b[i];
+        }
+        return dot / (Math.sqrt(na) * Math.sqrt(nb));
+      }
+
+      function animateScore(numEl, barEl, target, duration = 600) {
+        const color = scoreColor(target);
+        const start = performance.now();
+        function frame(now) {
+          const t = Math.min((now - start) / duration, 1);
+          const ease = 1 - Math.pow(1 - t, 3);
+          const current = Math.round(ease * target);
+          numEl.textContent = current;
+          numEl.style.color = color;
+          barEl.style.width = (ease * target) + "%";
+          barEl.style.background = color;
+          if (t < 1) requestAnimationFrame(frame);
+        }
+        requestAnimationFrame(frame);
+      }
+
       document.getElementById("runBtn").addEventListener("click", async () => {
         const textA = document.getElementById("textA").value.trim();
         const textB = document.getElementById("textB").value.trim();
         const status = document.getElementById("status");
         const result = document.getElementById("result");
         const btn = document.getElementById("runBtn");
+        const divergenceEl = document.getElementById("divergence");
 
         if (!textA || !textB) {
           status.textContent = "Both fields are required.";
@@ -143,46 +184,67 @@ import Footer from "../../components/Footer.astro";
 
         btn.disabled = true;
         result.hidden = true;
-        document.getElementById("scoreBar").style.width = "0%";
-        document.getElementById("scoreNum").textContent = "—";
-        status.textContent = "Analyzing…";
+        ["embedNum", "claudeNum"].forEach(id => document.getElementById(id).textContent = "—");
+        ["embedBar", "claudeBar"].forEach(id => document.getElementById(id).style.width = "0%");
+        divergenceEl.hidden = true;
+        status.textContent = "Embedding…";
         status.className = "status status--info";
 
         try {
-          const res = await fetch("/api/compare", {
+          // Step 1: embed both texts in parallel
+          const [resA, resB] = await Promise.all([
+            fetch("/api/embed-query", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ text: textA }),
+            }),
+            fetch("/api/embed-query", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ text: textB }),
+            }),
+          ]);
+
+          if (!resA.ok || !resB.ok) throw new Error("Embedding failed");
+          const [{ embedding: embA }, { embedding: embB }] = await Promise.all([resA.json(), resB.json()]);
+          const embeddingScore = Math.round(cosineSim(embA, embB) * 100);
+
+          // Animate embedding bar immediately
+          animateScore(
+            document.getElementById("embedNum"),
+            document.getElementById("embedBar"),
+            embeddingScore,
+          );
+          document.getElementById("embedLabel").textContent = scoreLabel(embeddingScore);
+          result.hidden = false;
+
+          // Step 2: call Claude with the embedding score for context
+          status.textContent = "Asking Claude…";
+          const compareRes = await fetch("/api/compare", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ textA, textB }),
+            body: JSON.stringify({ textA, textB, embeddingScore }),
           });
 
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
+          if (!compareRes.ok) throw new Error(`HTTP ${compareRes.status}`);
+          const data = await compareRes.json();
 
-          const scoreEl = document.getElementById("scoreNum");
-          const barEl = document.getElementById("scoreBar");
-          const color = scoreColor(data.score);
-          const target = data.score;
-          const duration = 600;
-          const start = performance.now();
-
-          function animate(now) {
-            const t = Math.min((now - start) / duration, 1);
-            const ease = 1 - Math.pow(1 - t, 3);
-            const current = Math.round(ease * target);
-            scoreEl.textContent = current;
-            scoreEl.style.color = color;
-            barEl.style.width = (ease * target) + "%";
-            barEl.style.background = color;
-            if (t < 1) requestAnimationFrame(animate);
-          }
-          requestAnimationFrame(animate);
-
-          document.getElementById("scoreLabel").textContent = scoreLabel(data.score);
+          animateScore(
+            document.getElementById("claudeNum"),
+            document.getElementById("claudeBar"),
+            data.score,
+          );
+          document.getElementById("claudeLabel").textContent = scoreLabel(data.score);
           document.getElementById("explanation").textContent = data.explanation;
+
+          const diff = Math.abs(data.score - embeddingScore);
+          if (diff >= 15) {
+            divergenceEl.textContent = `Scores diverge by ${diff} points — see Claude's explanation for why.`;
+            divergenceEl.hidden = false;
+          }
 
           status.textContent = "";
           status.className = "status";
-          result.hidden = false;
         } catch (e) {
           status.textContent = "Something went wrong. Please try again.";
           status.className = "status status--error";
@@ -321,7 +383,17 @@ import Footer from "../../components/Footer.astro";
         display: flex;
         align-items: baseline;
         gap: 8px;
-        margin-bottom: 1rem;
+        margin-bottom: 0.4rem;
+      }
+
+      .row-label {
+        font-family: "DM Mono", monospace;
+        font-size: 0.7rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #aaa;
+        width: 110px;
+        flex-shrink: 0;
       }
 
       .score-num {
@@ -359,6 +431,13 @@ import Footer from "../../components/Footer.astro";
         width: 0%;
         border-radius: 2px;
         transition: none;
+      }
+
+      .divergence {
+        font-family: "DM Mono", monospace;
+        font-size: 0.75rem;
+        color: #b45309;
+        margin: 0.5rem 0 0;
       }
 
       .divider { border: none; border-top: 1px solid #e8e5e0; margin: 1rem 0; }
@@ -425,8 +504,10 @@ import Footer from "../../components/Footer.astro";
           border-color: #2a2f3d;
         }
 
+        .row-label { color: #4b5563; }
         .score-denom { color: #6b7280; }
         .score-label { color: #6b7280; }
+        .divergence { color: #fbbf24; }
 
         .score-bar-track { background: #2a2f3d; }
 

@@ -50,10 +50,22 @@ export const projects: Project[] = [
   //   },
   // },
   {
+    name: "Semantic Blog Search",
+    slug: "semantic-blog-search",
+    description:
+      "Keyword search misses posts that use different words for the same idea. This uses nomic-embed-text-v1.5 on Modal to embed all posts at build time, then runs cosine similarity in the browser at query time — no search index, no database.",
+    date: "2026-04-05",
+    tags: ["ml", "oss"],
+    status: "active",
+    links: {
+      primary: { label: "Try it", url: "/search" },
+    },
+  },
+  {
     name: "Embedding Similarity",
     slug: "embedding-similarity",
     description:
-      "Semantic similarity is invisible to most people — a score between 0 and 1 means nothing. Paste any two snippets and get a plain-English explanation of how and why they're related, powered by Claude.",
+      "Paste any two snippets and see how a real embedding model (nomic-embed-text-v1.5 via Modal) and Claude's judgment compare — they often disagree, and the gap is where the interesting explanation lives.",
     date: "2026-04-04",
     tags: ["ml", "agents"],
     status: "active",

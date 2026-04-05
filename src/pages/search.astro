@@ -27,11 +27,6 @@ import Header from '../components/Header.astro';
       }
 
       /* Semantic search input */
-      .semantic-input-wrap {
-        position: relative;
-        margin-bottom: 1rem;
-      }
-
       #semanticQuery {
         width: 100%;
         font-family: "Lora", serif;
@@ -43,10 +38,10 @@ import Header from '../components/Header.astro';
         color: #1a1a1a;
         box-sizing: border-box;
         transition: border-color 0.15s;
+        margin-bottom: 1rem;
       }
       #semanticQuery:focus { outline: none; border-color: #888; }
 
-      /* Status */
       #semanticStatus {
         font-family: "DM Mono", monospace;
         font-size: 0.78rem;
@@ -90,6 +85,26 @@ import Header from '../components/Header.astro';
         margin-left: 0.5rem;
       }
 
+      /* Scatter plot */
+      .scatter-hint {
+        font-size: 0.85rem;
+        color: #aaa;
+        font-family: "DM Mono", monospace;
+        margin-bottom: 1rem;
+      }
+
+      .scatter-wrap {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        border: 1px solid #e8e5e0;
+        border-radius: 6px;
+        overflow: hidden;
+        background: #faf9f7;
+      }
+
+      #scatterPlot { display: block; width: 100%; height: 100%; }
+
       /* Dark mode */
       @media (prefers-color-scheme: dark) {
         .section-label { color: #4b5563; }
@@ -112,6 +127,9 @@ import Header from '../components/Header.astro';
 
         .sem-result-excerpt { color: #9ca3af; }
         .sem-result-score { color: #374151; }
+
+        .scatter-hint { color: #4b5563; }
+        .scatter-wrap { background: #0f1219; border-color: #2a2f3d; }
       }
     </style>
   </head>
@@ -126,22 +144,30 @@ import Header from '../components/Header.astro';
       <hr class="divider" />
 
       <p class="section-label">Semantic</p>
-      <div class="semantic-input-wrap">
-        <input
-          id="semanticQuery"
-          type="text"
-          placeholder="Describe what you're looking for…"
-          autocomplete="off"
-          spellcheck="false"
-        />
-      </div>
+      <input
+        id="semanticQuery"
+        type="text"
+        placeholder="Describe what you're looking for…"
+        autocomplete="off"
+        spellcheck="false"
+      />
       <p id="semanticStatus"></p>
       <div id="semanticResults"></div>
+
+      <hr class="divider" />
+
+      <p class="section-label">Embedding space</p>
+      <p class="scatter-hint">Each dot is a post — similar writing clusters together. Click to open.</p>
+      <div class="scatter-wrap">
+        <canvas id="scatterPlot"></canvas>
+      </div>
     </main>
 
     <Footer />
 
     <script src="/pagefind/pagefind-ui.js" is:inline></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js" is:inline></script>
+
     <script is:inline>
       function initPagefind() {
         const el = document.getElementById('search');
@@ -151,7 +177,43 @@ import Header from '../components/Header.astro';
     </script>
 
     <script>
-      // ── Cosine similarity ──────────────────────────────────────────
+      // ── State ────────────────────────────────────────────────────────
+      let corpusPosts = null;
+      let corpusPCA = null;
+      let scatterChart = null;
+      const isDark = () => window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+      // ── Corpus ───────────────────────────────────────────────────────
+      async function loadCorpus() {
+        if (corpusPosts) return;
+        try {
+          const res = await fetch('/embeddings.json');
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+          // Support both old flat-array format and new {pca, posts} format
+          if (Array.isArray(data)) {
+            corpusPosts = data;
+            corpusPCA = null;
+          } else {
+            corpusPosts = data.posts;
+            corpusPCA = data.pca;
+          }
+        } catch {
+          corpusPosts = [];
+          corpusPCA = null;
+        }
+      }
+
+      // ── PCA projection ───────────────────────────────────────────────
+      function projectPoint(embedding, pca) {
+        if (!pca) return null;
+        const centered = embedding.map((v, i) => v - pca.mean[i]);
+        return pca.components.map(comp =>
+          comp.reduce((sum, c, i) => sum + c * centered[i], 0)
+        );
+      }
+
+      // ── Cosine similarity ────────────────────────────────────────────
       function cosineSim(a, b) {
         let dot = 0, na = 0, nb = 0;
         for (let i = 0; i < a.length; i++) {
@@ -162,28 +224,95 @@ import Header from '../components/Header.astro';
         return dot / (Math.sqrt(na) * Math.sqrt(nb));
       }
 
-      // ── Load corpus once ───────────────────────────────────────────
-      let corpus = null;
+      // ── Scatter plot ─────────────────────────────────────────────────
+      function initScatter(posts) {
+        const canvas = document.getElementById('scatterPlot');
+        if (!canvas || !window.Chart) return;
+        if (!posts.length || posts[0].x == null) return; // no PCA coords yet
 
-      async function loadCorpus() {
-        if (corpus) return corpus;
-        try {
-          const res = await fetch('/embeddings.json');
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          corpus = await res.json();
-        } catch {
-          corpus = [];
-        }
-        return corpus;
+        if (scatterChart) scatterChart.destroy();
+
+        const dark = isDark();
+        const gridColor = dark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)';
+
+        scatterChart = new Chart(canvas.getContext('2d'), {
+          type: 'scatter',
+          data: {
+            datasets: [
+              {
+                label: 'posts',
+                data: posts.map(p => ({ x: p.x, y: p.y, title: p.title, url: p.url })),
+                backgroundColor: dark ? 'rgba(139,148,255,0.5)' : 'rgba(99,102,241,0.45)',
+                borderColor: dark ? 'rgba(139,148,255,0.8)' : 'rgba(99,102,241,0.7)',
+                borderWidth: 1,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+              },
+              {
+                label: 'results',
+                data: [],
+                backgroundColor: 'rgba(16,185,129,0.85)',
+                borderColor: 'rgba(16,185,129,1)',
+                borderWidth: 1.5,
+                pointRadius: 8,
+                pointHoverRadius: 10,
+              },
+              {
+                label: 'query',
+                data: [],
+                backgroundColor: 'rgba(239,68,68,0.9)',
+                borderColor: 'rgba(239,68,68,1)',
+                borderWidth: 2,
+                pointRadius: 10,
+                pointHoverRadius: 12,
+                pointStyle: 'crossRot',
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 250 },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: ctx => ctx.raw.title || (ctx.datasetIndex === 2 ? 'query' : ''),
+                },
+              },
+            },
+            scales: {
+              x: { display: false },
+              y: { display: false },
+            },
+            onClick(e, elements) {
+              if (!elements.length) return;
+              const { datasetIndex, index } = elements[0];
+              const pt = scatterChart.data.datasets[datasetIndex].data[index];
+              if (pt?.url) window.location.href = pt.url;
+            },
+            onHover(e, elements) {
+              e.native.target.style.cursor = elements.length ? 'pointer' : 'default';
+            },
+          },
+        });
       }
 
-      // ── Render results ─────────────────────────────────────────────
+      function updateScatter(queryCoord, topPosts) {
+        if (!scatterChart) return;
+        scatterChart.data.datasets[1].data = topPosts
+          .filter(p => p.x != null)
+          .map(p => ({ x: p.x, y: p.y, title: p.title, url: p.url }));
+        scatterChart.data.datasets[2].data = queryCoord
+          ? [{ x: queryCoord[0], y: queryCoord[1], title: 'query', url: null }]
+          : [];
+        scatterChart.update();
+      }
+
+      // ── Render results ────────────────────────────────────────────────
       function renderResults(results) {
         const el = document.getElementById('semanticResults');
-        if (!results.length) {
-          el.innerHTML = '';
-          return;
-        }
+        if (!results.length) { el.innerHTML = ''; return; }
         el.innerHTML = results.map(({ title, url, excerpt, score }) => `
           <div class="sem-result">
             <p class="sem-result-title">
@@ -195,21 +324,23 @@ import Header from '../components/Header.astro';
         `).join('');
       }
 
-      // ── Search ─────────────────────────────────────────────────────
+      // ── Semantic search ───────────────────────────────────────────────
       async function semanticSearch(query) {
         const status = document.getElementById('semanticStatus');
 
         if (!query.trim()) {
           status.textContent = '';
           document.getElementById('semanticResults').innerHTML = '';
+          updateScatter(null, []);
           return;
         }
 
         status.textContent = 'Searching…';
 
         try {
-          const [posts, embedRes] = await Promise.all([
-            loadCorpus(),
+          await loadCorpus();
+
+          const [embedRes] = await Promise.all([
             fetch('/api/embed-query', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -220,10 +351,13 @@ import Header from '../components/Header.astro';
           if (!embedRes.ok) throw new Error(`embed-query HTTP ${embedRes.status}`);
           const { embedding } = await embedRes.json();
 
-          const scored = posts
+          const scored = corpusPosts
             .map(post => ({ ...post, score: cosineSim(embedding, post.embedding) }))
             .sort((a, b) => b.score - a.score)
             .slice(0, 5);
+
+          const queryCoord = projectPoint(embedding, corpusPCA);
+          updateScatter(queryCoord, scored);
 
           status.textContent = `${scored.length} results`;
           renderResults(scored);
@@ -233,15 +367,21 @@ import Header from '../components/Header.astro';
         }
       }
 
-      // ── Debounce + wire up ─────────────────────────────────────────
+      // ── Init ──────────────────────────────────────────────────────────
       let debounceTimer;
 
-      document.addEventListener('astro:page-load', () => {
+      document.addEventListener('astro:page-load', async () => {
+        // Wire up keyword search
+        const searchEl = document.getElementById('search');
+        if (searchEl) { searchEl.innerHTML = ''; new PagefindUI({ element: '#search', showSubResults: true }); }
+
+        // Load corpus and init scatter immediately
+        await loadCorpus();
+        if (corpusPosts?.length) initScatter(corpusPosts);
+
+        // Wire up semantic input
         const input = document.getElementById('semanticQuery');
         if (!input) return;
-
-        // Pre-warm corpus fetch on focus
-        input.addEventListener('focus', loadCorpus, { once: true });
 
         input.addEventListener('input', () => {
           clearTimeout(debounceTimer);

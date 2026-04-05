@@ -12,12 +12,16 @@ import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const BLOG_DIR = path.join(__dirname, "../src/content/blog");
 const OUT_FILE = path.join(__dirname, "../public/embeddings.json");
-const MODAL_URL = process.env.MODAL_EMBED_URL;
+// MODAL_EMBED_URL should now be the base URL (e.g. https://korbonits--korbonits-embed-api.modal.run)
+// For backwards compat with the old per-function URL, strip a trailing /embed if present.
+const MODAL_BASE = process.env.MODAL_EMBED_URL?.replace(/\/embed$/, "");
 
-if (!MODAL_URL) {
+if (!MODAL_BASE) {
   console.warn("[embeddings] MODAL_EMBED_URL not set — skipping. Search will use existing embeddings.json if present.");
   process.exit(0);
 }
+
+const MODAL_URL = `${MODAL_BASE}/embed`;
 
 function parseFrontmatter(raw) {
   const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
@@ -79,13 +83,33 @@ if (!res.ok) {
 
 const { embeddings } = await res.json();
 
-const output = posts.map((p, i) => ({
-  slug: p.slug,
-  title: p.title,
-  url: p.url,
-  excerpt: p.excerpt,
-  embedding: embeddings[i],
-}));
+// Project embeddings to 2D with PCA for the scatter plot
+console.log(`[embeddings] Projecting to 2D via Modal…`);
+const projRes = await fetch(`${MODAL_BASE}/project`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ embeddings }),
+});
+
+if (!projRes.ok) {
+  console.error("[embeddings] PCA projection failed:", await projRes.text());
+  process.exit(1);
+}
+
+const { coords, mean, components } = await projRes.json();
+
+const output = {
+  pca: { mean, components },
+  posts: posts.map((p, i) => ({
+    slug: p.slug,
+    title: p.title,
+    url: p.url,
+    excerpt: p.excerpt,
+    embedding: embeddings[i],
+    x: coords[i][0],
+    y: coords[i][1],
+  })),
+};
 
 fs.writeFileSync(OUT_FILE, JSON.stringify(output));
-console.log(`[embeddings] Wrote ${output.length} entries → public/embeddings.json`);
+console.log(`[embeddings] Wrote ${output.posts.length} entries → public/embeddings.json`);

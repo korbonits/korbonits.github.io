@@ -28,7 +28,8 @@ export default async function handler(req) {
     });
   }
 
-  const modalUrl = process.env.MODAL_EMBED_URL;
+  const modalBase = process.env.MODAL_EMBED_URL?.replace(/\/embed$/, "");
+  const modalUrl = modalBase ? `${modalBase}/embed` : null;
   if (!modalUrl) {
     return new Response(JSON.stringify({ error: "Embedding service not configured" }), {
       status: 500,

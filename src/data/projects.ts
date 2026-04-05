@@ -29,10 +29,10 @@ export const projects: Project[] = [
     name: "Priorly.ai",
     slug: "priorly",
     description:
-      "Trademark visual similarity search using CLIP and DINOv2 embeddings with pgvector. Built to surface visually conflicting marks that text-based search misses.",
+      "Text-based trademark search misses visually conflicting marks — so I built one that doesn't. Uses CLIP and DINOv2 embeddings with pgvector to surface conflicts by appearance, not just name.",
     date: "2026-03-28",
     tags: ["startup", "ml"],
-    status: "coming-soon",
+    status: "active",
     links: {
       primary: { label: "Visit site", url: "https://priorly.ai" },
     },
@@ -53,7 +53,7 @@ export const projects: Project[] = [
     name: "Embedding Similarity",
     slug: "embedding-similarity",
     description:
-      "Paste any two text snippets and get a similarity score and plain-English explanation, powered by Claude. Built to make semantic similarity legible to non-technical users.",
+      "Semantic similarity is invisible to most people — a score between 0 and 1 means nothing. Paste any two snippets and get a plain-English explanation of how and why they're related, powered by Claude.",
     date: "2026-04-04",
     tags: ["ml", "agents"],
     status: "active",
@@ -62,10 +62,34 @@ export const projects: Project[] = [
     },
   },
   {
+    name: "Now Page — Living Data",
+    slug: "now-page",
+    description:
+      "Most /now pages go stale within weeks. This one stays current automatically — a nightly GitHub Actions cron triggers a Netlify rebuild that pulls live GitHub activity and Goodreads data at build time, no database needed.",
+    date: "2026-03-25",
+    tags: ["oss", "personal-brand"],
+    status: "active",
+    links: {
+      primary: { label: "View now page", url: "/now" },
+    },
+  },
+  {
+    name: "Blog Analytics Dashboard",
+    slug: "blog-analytics",
+    description:
+      "I wanted visibility into what people actually read without handing data to a third party. Built a Netlify serverless function that captures page views into Supabase, with a Chart.js dashboard behind basic auth.",
+    date: "2026-03-25",
+    tags: ["oss"],
+    status: "active",
+    links: {
+      primary: { label: "View dashboard", url: "/analytics" },
+    },
+  },
+  {
     name: "VIBE Token",
     slug: "vibe-token",
     description:
-      "An ERC-20 token deployed on Ethereum mainnet, written in Solidity from scratch with no frameworks. A first-principles exercise in how Ethereum actually works, documented in public.",
+      "Most people interact with blockchains through abstractions. I wanted to understand Ethereum from the ground up — so I wrote an ERC-20 token in Solidity from scratch, no frameworks, deployed to mainnet, and documented it publicly.",
     date: "2026-03-26",
     tags: ["oss"],
     status: "archived",
@@ -78,7 +102,7 @@ export const projects: Project[] = [
     name: "korbonits.com",
     slug: "korbonits-com",
     description:
-      "Personal site and writing hub. Built with Astro, deployed on Netlify, with blog analytics via Supabase and Netlify Functions.",
+      "A home for writing and thinking in public — built to own the stack end to end. Astro + Netlify with self-hosted analytics, a living /now page, and no dependencies on third-party platforms.",
     date: "2015-03-01",
     tags: ["personal-brand"],
     status: "active",

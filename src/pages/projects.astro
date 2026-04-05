@@ -33,6 +33,9 @@ const tagColors: Record<ProjectTag, string> = {
   agents:         "tag--agents",
   "personal-brand": "tag--brand",
 };
+
+const activeCount = projects.filter(p => p.status === "active").length;
+const summary = `${projects.length} projects · ${activeCount} active`;
 ---
 
 <html lang="en">
@@ -47,6 +50,7 @@ const tagColors: Record<ProjectTag, string> = {
         <p class="page-subtitle">
           Things I've built — ML systems, startups, OSS tools, AI agents.
         </p>
+        <p class="page-summary">{summary}</p>
       </header>
 
       <section class="project-list" aria-label="Project list">
@@ -141,6 +145,15 @@ const tagColors: Record<ProjectTag, string> = {
     margin-bottom: 3.5rem;
     border-bottom: 1px solid #e8e5e0;
     padding-bottom: 2rem;
+  }
+
+  .page-summary {
+    font-family: "DM Mono", monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: #aaa;
+    margin-top: -1.75rem;
+    margin-bottom: 3.5rem;
   }
 
   /* ── Project list ── */
@@ -272,6 +285,8 @@ const tagColors: Record<ProjectTag, string> = {
       color: #9ca3af;
       border-bottom-color: #2a2f3d;
     }
+
+    .page-summary { color: #4b5563; }
 
     .project-card {
       border-bottom-color: #2a2f3d;

@@ -380,6 +380,67 @@ import Footer from "../../components/Footer.astro";
       }
       .page-note a { color: #888; }
       .page-note a:hover { color: #1a1a1a; }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --score-high: #4ade80;
+          --score-mid: #fbbf24;
+          --score-low: #f87171;
+        }
+
+        body {
+          background: #0f1219;
+          color: #e8eaf0;
+        }
+
+        .page-subtitle {
+          color: #9ca3af;
+          border-bottom-color: #2a2f3d;
+        }
+
+        .field-label { color: #6b7280; }
+
+        select {
+          background: #1a1f2e;
+          border-color: #2a2f3d;
+          color: #e8eaf0;
+        }
+
+        textarea {
+          background: #1a1f2e;
+          border-color: #2a2f3d;
+          color: #e8eaf0;
+        }
+        textarea:focus { border-color: #6b7280; }
+
+        .run-btn {
+          background: #e8eaf0;
+          border-color: #e8eaf0;
+          color: #0f1219;
+        }
+        .run-btn:hover { background: #c8cad0; border-color: #c8cad0; }
+
+        .result-card {
+          background: #1a1f2e;
+          border-color: #2a2f3d;
+        }
+
+        .score-denom { color: #6b7280; }
+        .score-label { color: #6b7280; }
+
+        .score-bar-track { background: #2a2f3d; }
+
+        .divider { border-top-color: #2a2f3d; }
+
+        .explanation { color: #d1d5db; }
+
+        .page-note {
+          border-top-color: #2a2f3d;
+          color: #6b7280;
+        }
+        .page-note a { color: #9ca3af; }
+        .page-note a:hover { color: #e8eaf0; }
+      }
     </style>
     <Footer />
   </body>

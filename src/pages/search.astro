@@ -8,21 +8,246 @@ import Header from '../components/Header.astro';
   <head>
     <BaseHead title="Search" description="Search all posts on korbonits.com" />
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+    <style>
+      main { width: 720px; max-width: calc(100% - 2em); margin: auto; padding: 3em 1em; }
+
+      .section-label {
+        font-family: "DM Mono", monospace;
+        font-size: 0.7rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #aaa;
+        margin-bottom: 0.75rem;
+      }
+
+      .divider {
+        border: none;
+        border-top: 1px solid #e8e5e0;
+        margin: 3rem 0;
+      }
+
+      /* Semantic search input */
+      .semantic-input-wrap {
+        position: relative;
+        margin-bottom: 1rem;
+      }
+
+      #semanticQuery {
+        width: 100%;
+        font-family: "Lora", serif;
+        font-size: 1rem;
+        padding: 0.65rem 0.85rem;
+        border: 1px solid #d4d0c8;
+        border-radius: 4px;
+        background: #fff;
+        color: #1a1a1a;
+        box-sizing: border-box;
+        transition: border-color 0.15s;
+      }
+      #semanticQuery:focus { outline: none; border-color: #888; }
+
+      /* Status */
+      #semanticStatus {
+        font-family: "DM Mono", monospace;
+        font-size: 0.78rem;
+        color: #aaa;
+        min-height: 1.2rem;
+        margin-bottom: 1rem;
+      }
+
+      /* Results */
+      .sem-result {
+        padding: 1rem 0;
+        border-bottom: 1px solid #e8e5e0;
+      }
+      .sem-result:first-child { border-top: 1px solid #e8e5e0; }
+
+      .sem-result-title {
+        font-family: "Lora", serif;
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+      }
+      .sem-result-title a {
+        color: #1a1a1a;
+        text-decoration: none;
+        border-bottom: 1px solid #1a1a1a;
+        padding-bottom: 1px;
+      }
+      .sem-result-title a:hover { color: #555; border-color: #555; }
+
+      .sem-result-excerpt {
+        font-size: 0.88rem;
+        color: #666;
+        line-height: 1.6;
+        margin: 0;
+      }
+
+      .sem-result-score {
+        font-family: "DM Mono", monospace;
+        font-size: 0.68rem;
+        color: #ccc;
+        margin-left: 0.5rem;
+      }
+
+      /* Dark mode */
+      @media (prefers-color-scheme: dark) {
+        .section-label { color: #4b5563; }
+        .divider { border-top-color: #2a2f3d; }
+
+        #semanticQuery {
+          background: #1a1f2e;
+          border-color: #2a2f3d;
+          color: #e8eaf0;
+        }
+        #semanticQuery:focus { border-color: #6b7280; }
+
+        #semanticStatus { color: #4b5563; }
+
+        .sem-result { border-bottom-color: #2a2f3d; }
+        .sem-result:first-child { border-top-color: #2a2f3d; }
+
+        .sem-result-title a { color: #e8eaf0; border-bottom-color: #e8eaf0; }
+        .sem-result-title a:hover { color: #9ca3af; border-color: #9ca3af; }
+
+        .sem-result-excerpt { color: #9ca3af; }
+        .sem-result-score { color: #374151; }
+      }
+    </style>
   </head>
   <body>
     <Header />
     <main>
       <h1>Search</h1>
+
+      <p class="section-label">Keyword</p>
       <div id="search"></div>
+
+      <hr class="divider" />
+
+      <p class="section-label">Semantic</p>
+      <div class="semantic-input-wrap">
+        <input
+          id="semanticQuery"
+          type="text"
+          placeholder="Describe what you're looking for…"
+          autocomplete="off"
+          spellcheck="false"
+        />
+      </div>
+      <p id="semanticStatus"></p>
+      <div id="semanticResults"></div>
     </main>
+
     <Footer />
+
     <script src="/pagefind/pagefind-ui.js" is:inline></script>
     <script is:inline>
-      function initSearch() {
+      function initPagefind() {
         const el = document.getElementById('search');
         if (el) { el.innerHTML = ''; new PagefindUI({ element: '#search', showSubResults: true }); }
       }
-      document.addEventListener('astro:page-load', initSearch);
+      document.addEventListener('astro:page-load', initPagefind);
+    </script>
+
+    <script>
+      // ── Cosine similarity ──────────────────────────────────────────
+      function cosineSim(a, b) {
+        let dot = 0, na = 0, nb = 0;
+        for (let i = 0; i < a.length; i++) {
+          dot += a[i] * b[i];
+          na += a[i] * a[i];
+          nb += b[i] * b[i];
+        }
+        return dot / (Math.sqrt(na) * Math.sqrt(nb));
+      }
+
+      // ── Load corpus once ───────────────────────────────────────────
+      let corpus = null;
+
+      async function loadCorpus() {
+        if (corpus) return corpus;
+        try {
+          const res = await fetch('/embeddings.json');
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          corpus = await res.json();
+        } catch {
+          corpus = [];
+        }
+        return corpus;
+      }
+
+      // ── Render results ─────────────────────────────────────────────
+      function renderResults(results) {
+        const el = document.getElementById('semanticResults');
+        if (!results.length) {
+          el.innerHTML = '';
+          return;
+        }
+        el.innerHTML = results.map(({ title, url, excerpt, score }) => `
+          <div class="sem-result">
+            <p class="sem-result-title">
+              <a href="${url}">${title}</a>
+              <span class="sem-result-score">${Math.round(score * 100)}%</span>
+            </p>
+            <p class="sem-result-excerpt">${excerpt}</p>
+          </div>
+        `).join('');
+      }
+
+      // ── Search ─────────────────────────────────────────────────────
+      async function semanticSearch(query) {
+        const status = document.getElementById('semanticStatus');
+
+        if (!query.trim()) {
+          status.textContent = '';
+          document.getElementById('semanticResults').innerHTML = '';
+          return;
+        }
+
+        status.textContent = 'Searching…';
+
+        try {
+          const [posts, embedRes] = await Promise.all([
+            loadCorpus(),
+            fetch('/api/embed-query', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ text: query }),
+            }),
+          ]);
+
+          if (!embedRes.ok) throw new Error(`embed-query HTTP ${embedRes.status}`);
+          const { embedding } = await embedRes.json();
+
+          const scored = posts
+            .map(post => ({ ...post, score: cosineSim(embedding, post.embedding) }))
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 5);
+
+          status.textContent = `${scored.length} results`;
+          renderResults(scored);
+        } catch (e) {
+          console.error('semantic search error:', e);
+          status.textContent = 'Something went wrong.';
+        }
+      }
+
+      // ── Debounce + wire up ─────────────────────────────────────────
+      let debounceTimer;
+
+      document.addEventListener('astro:page-load', () => {
+        const input = document.getElementById('semanticQuery');
+        if (!input) return;
+
+        // Pre-warm corpus fetch on focus
+        input.addEventListener('focus', loadCorpus, { once: true });
+
+        input.addEventListener('input', () => {
+          clearTimeout(debounceTimer);
+          debounceTimer = setTimeout(() => semanticSearch(input.value), 400);
+        });
+      });
     </script>
   </body>
 </html>

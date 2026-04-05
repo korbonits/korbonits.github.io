@@ -3,7 +3,7 @@
 # or merge the [functions] block into your existing config.
 
 [build]
-  command = "npm run build"
+  command = "node scripts/build-embeddings.js && npm run build"
   publish = "dist"
 
 [build.environment]

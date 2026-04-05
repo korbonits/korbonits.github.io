@@ -261,4 +261,55 @@ const tagColors: Record<ProjectTag, string> = {
   }
 
   .link-secondary:hover { color: #555; }
+
+  @media (prefers-color-scheme: dark) {
+    body {
+      background: #0f1219;
+      color: #e8eaf0;
+    }
+
+    .page-subtitle {
+      color: #9ca3af;
+      border-bottom-color: #2a2f3d;
+    }
+
+    .project-card {
+      border-bottom-color: #2a2f3d;
+    }
+
+    .project-card:first-child {
+      border-top-color: #2a2f3d;
+    }
+
+    .project-date {
+      color: #6b7280;
+    }
+
+    .project-description {
+      color: #9ca3af;
+    }
+
+    .link-primary {
+      color: #e8eaf0;
+      border-bottom-color: #e8eaf0;
+    }
+
+    .link-primary:hover {
+      color: #9ca3af;
+      border-color: #9ca3af;
+    }
+
+    .link-secondary {
+      color: #6b7280;
+    }
+
+    .link-secondary:hover { color: #9ca3af; }
+
+    .tag--startup  { background: #1e1b4b; color: #a5b4fc; }
+    .tag--ml       { background: #14291e; color: #86efac; }
+    .tag--oss      { background: #2c1a0e; color: #fb923c; }
+    .tag--agents   { background: #2e1065; color: #d8b4fe; }
+    .tag--brand    { background: #2d2006; color: #fde047; }
+    .tag--soon     { background: #1e2530; color: #64748b; }
+  }
 </style>

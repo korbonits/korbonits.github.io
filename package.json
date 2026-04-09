@@ -14,7 +14,7 @@
     "cms:dev": "npm run cms:proxy & astro dev"
   },
   "dependencies": {
-    "@astrojs/rss": "^4.0.17",
+    "@astrojs/rss": "^4.0.18",
     "@astrojs/sitemap": "^3.7.1",
     "@resvg/resvg-js": "^2.6.2",
     "@supabase/supabase-js": "^2.49.4",

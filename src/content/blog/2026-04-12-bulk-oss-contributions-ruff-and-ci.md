@@ -1,0 +1,110 @@
+---
+title: "19 Open Source Pull Requests in One Afternoon"
+date: 2026-04-12
+draft: true
+description: "How I used Claude Code to systematically add Ruff linting and CI to 19 high-starred research repos — and what the process revealed about the state of ML research tooling."
+tags:
+  - open-source
+  - python
+  - ruff
+  - ci
+  - claude
+  - ai-tools
+  - ml
+---
+
+It started with a single question: *what if we added Ruff to this repo?*
+
+The repo in question was [rethink_sft_generalization](https://github.com/Nebularaid2000/rethink_sft_generalization), a paper release from ByteDance/NVIDIA. My first instinct was to look at the existing tooling. `.pre-commit-config.yaml` already had Ruff v0.12.2. The `pyproject.toml` had the lint configuration. Everything was there — it just wasn't wired to CI, and nobody would ever run it.
+
+That gap — tooling declared but not enforced — turned out to be everywhere.
+
+## The Pattern
+
+After working through a handful of repos manually, the pattern became clear enough to systematize. ML research repositories tend to fall into one of three categories:
+
+1. **Nothing** — no pyproject.toml, no linting config, no CI beyond a release pipeline
+2. **Half-done** — Ruff declared in dev dependencies or pyproject.toml, but no pre-commit hooks, no lint job in CI
+3. **Done** — Ruff configured, enforced, wired to PRs (rare)
+
+The third category is mostly larger, more mature projects with dedicated infra teams. The first two are the vast majority of paper repos — even high-starred ones from top labs.
+
+What made this tractable with Claude Code was that the check-and-fix loop became nearly mechanical:
+
+1. Fetch `pyproject.toml` and `.pre-commit-config.yaml` — does Ruff already exist?
+2. Clone, run `uvx ruff check . --statistics` — what's the violation count and how many are auto-fixable?
+3. Apply `--fix` with a conservative ignore list
+4. Investigate what remains — are they systematic patterns or genuine bugs?
+5. Write the config, pre-commit, and CI workflow, open the PR
+
+The interesting work was in step 4. That's where judgment still matters.
+
+## Edge Cases Worth Noting
+
+**jaxtyping annotations.** Google DeepMind's [alphagenome](https://github.com/google-deepmind/alphagenome) and [timesfm](https://github.com/google-research/timesfm) both use jaxtyping, which annotates array shapes inline: `Float[Array, "b n h d"]`. Ruff's F722 and F821 rules flag these as syntax errors and undefined names respectively — they're not. They're a domain-specific annotation language. Adding `F722` and `F821` to the global ignore list was the right call; explaining *why* in the PR description mattered.
+
+**Existing formatters.** Meta's [vjepa2](https://github.com/facebookresearch/vjepa2) uses black at 119 characters. Google's [alphagenome](https://github.com/google-deepmind/alphagenome) uses pyink at 80 characters with 2-space indentation. Running `ruff format` on either would produce a massive diff fighting their existing formatter. The right answer: lint-only pre-commit hooks, lint-only CI step, match their line-length in the Ruff config. Don't colonize their formatting choices.
+
+**Gitignored configs.** Both [VibeVoice](https://github.com/microsoft/VibeVoice) and [InfiniteYou](https://github.com/bytedance/InfiniteYou) had `.pre-commit-config.yaml` in their `.gitignore`. This is a deliberate signal. I didn't force-add the file — I just wired up the CI workflow and noted in the PR description that pre-commit was excluded. Respecting what maintainers have explicitly opted out of is basic PR hygiene.
+
+**Dead code.** Apple's [ml-simplefold](https://github.com/apple/ml-simplefold) had 11 F821 violations (undefined names) and 1 F601 (duplicate dictionary key) — all in code that sits after an early `return` statement and can never execute. I didn't delete the dead code (too invasive for a tooling PR), noted it in the description, and added the rule codes to the ignore list.
+
+**Committed debug statements.** Microsoft's [Magma](https://github.com/microsoft/Magma) had four live `import pdb; pdb.set_trace()` calls across three files — not commented out, not guarded, just sitting there in production paths. I added `# noqa: I001` rather than removing them; that's the maintainers' call. But I flagged it explicitly in the PR body.
+
+## The Numbers
+
+By the end of the afternoon, 19 PRs were open across repos from Apple, ByteDance, Google, Google DeepMind, HuggingFace, Meta, Microsoft, and others:
+
+| Repo | PR | Stars |
+|---|---|---|
+| opendatalab/MinerU | [#4773](https://github.com/opendatalab/MinerU/pull/4773) | 26k |
+| TauricResearch/TradingAgents | [#536](https://github.com/TauricResearch/TradingAgents/pull/536) | 7k |
+| facebookresearch/lingua | [#100](https://github.com/facebookresearch/lingua/pull/100) | 4.8k |
+| huggingface/nanoVLM | [#205](https://github.com/huggingface/nanoVLM/pull/205) | 4.8k |
+| facebookresearch/vjepa2 | [#152](https://github.com/facebookresearch/vjepa2/pull/152) | 3.6k |
+| google-research/timesfm | [#403](https://github.com/google-research/timesfm/pull/403) | 3k |
+| bytedance/InfiniteYou | [#50](https://github.com/bytedance/InfiniteYou/pull/50) | 2.7k |
+| microsoft/MoGe | [#150](https://github.com/microsoft/MoGe/pull/150) | 2.4k |
+| huggingface/picotron | [#38](https://github.com/huggingface/picotron/pull/38) | 2.1k |
+| google-deepmind/alphagenome | [#43](https://github.com/google-deepmind/alphagenome/pull/43) | 1.9k |
+| microsoft/Magma | [#92](https://github.com/microsoft/Magma/pull/92) | 1.9k |
+| microsoft/mattergen | [#242](https://github.com/microsoft/mattergen/pull/242) | 1.7k |
+| bytedance/pasa | [#50](https://github.com/bytedance/pasa/pull/50) | 1.5k |
+| microsoft/rStar | [#66](https://github.com/microsoft/rStar/pull/66) | 1.4k |
+| apple/ml-clara | [#10](https://github.com/apple/ml-clara/pull/10) | 1.1k |
+| apple/ml-simplefold | [#52](https://github.com/apple/ml-simplefold/pull/52) | 960 |
+| microsoft/VibeVoice | [#338](https://github.com/microsoft/VibeVoice/pull/338) | — |
+| AMAP-ML/SkillClaw | [#2](https://github.com/AMAP-ML/SkillClaw/pull/2) | — |
+| Osilly/Interleaving-Reasoning-Generation | [#7](https://github.com/Osilly/Interleaving-Reasoning-Generation/pull/7) | — |
+
+That's roughly 55,000 stars worth of repos, across five major AI labs, in a single afternoon session.
+
+There are also a handful of older open PRs doing similar work: replacing black/isort with Ruff in [allenai/OLMo](https://github.com/allenai/OLMo/pull/909), [facebookresearch/dinov2](https://github.com/facebookresearch/dinov2/pull/595), and [microsoft/markitdown](https://github.com/microsoft/markitdown/pull/1718).
+
+## What This Isn't
+
+It's worth being clear about what these PRs are not.
+
+They're not clever. Adding Ruff to a repo that's missing it is a five-minute task if you know what you're doing — I just did it nineteen times. The value is in doing it consistently, at scale, with enough judgment to handle the edge cases without breaking things.
+
+They're also not guaranteed to get merged. Research repos from academic labs can be slow to respond to external PRs, especially infrastructure ones with no obvious connection to the paper. Some of these will sit for months. A few will get closed with a polite "we're not prioritizing tooling right now." That's fine. The PRs are correct, the work is done, and if even half get merged that's a meaningful improvement to the Python ecosystem around ML research.
+
+What they *are* is a proof of concept for something I want to do at larger scale: a systematic pass over ICLR/NeurIPS/ICML accepted paper repos, identifying the ones missing basic tooling, and opening PRs automatically. The methodology is solid. The pipeline mostly works. Next step is building the intake — scraping paper repos from conference proceedings, filtering by language and star count, batching the checks.
+
+## The Deeper Point
+
+The constraint used to be time. Adding Ruff to nineteen repos in an afternoon would have been a tedious manual grind — clone, check, fix, commit, PR, repeat, nineteen times. Claude Code compressed that into something I could do while thinking about other things.
+
+But the judgment layer didn't compress. Knowing that jaxtyping produces F722/F821 false positives, knowing not to fight an existing formatter, knowing when dead code is a flag worth raising vs. an issue to silently suppress — that's all still human. The model executes; I decide what execution means.
+
+This is the same thing I noticed when I [shipped a dashboard from my phone during lunch](/blog/2026-03-25-i-shipped-a-feature-from-my-phone-during-lunch): execution is getting cheaper. Judgment isn't. If anything, the value of good judgment goes up as the cost of acting on it goes down.
+
+The McDonald's fry analogy I used in the session that produced these PRs: asking if vLLM needs Ruff is like asking if McDonald's needs help with their french fry process. They don't. The question is finding the repos that do — and having enough taste to know the difference.
+
+---
+
+*Next up: building the ICLR pipeline. Watch this space.*
+
+---
+
+*korbonits.com is my personal blog. I write about ML, software, and books.*

@@ -54,22 +54,23 @@ The name comes from category theory: a sheaf tracks locally-defined data that gl
 Install it:
 
 ```bash
-pip install "sheaf-serve[time-series]"
+pip install "sheaf-serve[time-series]"         # Chronos2 / TimesFM
+pip install "sheaf-serve[tabular]"             # TabPFN
 ```
 
 ## What works today
 
-Time series is the first supported type, backed by [Chronos-Bolt](https://github.com/amazon-science/chronos-forecasting). This is a deliberate choice: the API contract is clearest, Chronos-Bolt runs on CPU (no GPU required), and it downloads in under a minute.
+Two model types are supported as of today.
+
+### Time series — Chronos-Bolt
+
+[Chronos-Bolt](https://github.com/amazon-science/chronos-forecasting) runs on CPU, downloads in under a minute, and returns probabilistic forecasts with quantile intervals.
 
 ```python
 from sheaf.api.time_series import Frequency, OutputMode, TimeSeriesRequest
 from sheaf.backends.chronos import Chronos2Backend
 
-backend = Chronos2Backend(
-    model_id="amazon/chronos-bolt-tiny",
-    device_map="cpu",
-    torch_dtype="float32",
-)
+backend = Chronos2Backend(model_id="amazon/chronos-bolt-tiny", device_map="cpu")
 backend.load()
 
 req = TimeSeriesRequest(
@@ -107,9 +108,42 @@ Forecast: next 12 hours
    12    369.5    440.1    492.5
 ```
 
-That's real output, run on a laptop, no GPU. The full quickstart is [in the repo](https://github.com/korbonits/sheaf/blob/main/examples/quickstart.py).
+### Tabular — TabPFN
 
-Alternatively, pass a Feast feature reference instead of raw history — the framework resolves it before the model call:
+[TabPFN](https://github.com/automl/TabPFN) is an in-context learner: you pass context examples alongside the rows you want to predict. No training step — a single forward pass handles everything. Requires a free [PriorLabs](https://ux.priorlabs.ai) account for local inference.
+
+```python
+from sheaf.api.tabular import TabularRequest
+from sheaf.backends.tabpfn import TabPFNBackend
+
+backend = TabPFNBackend(device="cpu")
+backend.load()
+
+req = TabularRequest(
+    model_name="tabpfn",
+    context_X=[[5.1, 3.5, 1.4, 0.2], [6.3, 3.3, 4.7, 1.6], [7.1, 3.0, 5.9, 2.1], ...],
+    context_y=[0, 1, 2, ...],
+    query_X=[[5.0, 3.4, 1.5, 0.2], [6.0, 2.9, 4.5, 1.5], [6.8, 3.0, 5.5, 2.1]],
+    task="classification",
+    output_mode="probabilities",
+)
+
+response = backend.predict(req)
+```
+
+Output:
+
+```
+Query    Prediction   P(setosa)   P(versicolor)   P(virginica)
+-----------------------------------------------------------------
+    1        setosa       0.986           0.011          0.003
+    2    versicolor       0.010           0.877          0.113
+    3     virginica       0.005           0.103          0.892
+```
+
+Regression with quantile intervals works the same way — swap `task="regression"` and `output_mode="quantiles"`. Full examples for both are [in the repo](https://github.com/korbonits/sheaf/tree/main/examples).
+
+Alternatively, for time series, pass a Feast feature reference instead of raw history:
 
 ```python
 req = TimeSeriesRequest(
@@ -125,7 +159,7 @@ req = TimeSeriesRequest(
 | Type | Status | Backends |
 |---|---|---|
 | Time series | ✅ v0.1 | Chronos2, TimesFM |
-| Tabular | 🔜 v0.2 | TabPFN |
+| Tabular | ✅ v0.1 | TabPFN |
 | Molecular / biological | 🔜 v0.2 | ESM-3, AlphaFold |
 | Audio | 🔜 v0.3 | Whisper, MusicGen |
 | Embeddings | 🔜 v0.3 | CLIP, ColBERT |
@@ -137,7 +171,7 @@ The V1 boundary is deliberately narrow: stateless, frozen models with synchronou
 
 ## What this isn't
 
-Sheaf v0.1 is not a performance story yet. The Chronos-Bolt backend runs requests sequentially by default. The batching policy exists but the scheduler isn't built. The Feast integration is wired at the contract level but not implemented end-to-end.
+Sheaf v0.1 is not a performance story yet. Both backends run requests sequentially by default. The batching policy exists but the scheduler isn't built. The Feast integration is wired at the contract level but not implemented end-to-end.
 
 What it *is* is the API layer — the contracts that everything else builds on. That's the right thing to ship first, because the contracts are what drive adoption. If the time series request schema is wrong, no amount of batching optimization will fix it.
 
@@ -145,7 +179,7 @@ The bet is that standardizing the API layer now creates the surface area for the
 
 ---
 
-The repo is at [github.com/korbonits/sheaf](https://github.com/korbonits/sheaf). `pip install sheaf-serve`. Issues and PRs welcome — especially from anyone who has strong opinions about what the tabular or molecular contracts should look like.
+The repo is at [github.com/korbonits/sheaf](https://github.com/korbonits/sheaf). `pip install sheaf-serve`. Issues and PRs welcome — especially from anyone who has strong opinions about what the molecular or geospatial contracts should look like.
 
 ---
 

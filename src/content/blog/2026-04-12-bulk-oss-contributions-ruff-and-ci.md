@@ -1,8 +1,8 @@
 ---
 title: "19 Open Source Pull Requests in One Afternoon"
 date: 2026-04-12
-draft: true
-description: "How I used Claude Code to systematically add Ruff linting and CI to 19 high-starred research repos — and what the process revealed about the state of ML research tooling."
+draft: false
+description: "How I used Claude Code to systematically add Ruff linting and CI to 19 high-starred research repos — and what the week that followed revealed about the difference between correctness and value."
 tags:
   - open-source
   - python
@@ -53,33 +53,54 @@ The interesting work was in step 4. That's where judgment still matters.
 
 ## The Numbers
 
-By the end of the afternoon, 19 PRs were open across repos from Apple, ByteDance, Google, Google DeepMind, HuggingFace, Meta, Microsoft, and others:
+By the end of the afternoon, 19 PRs were open across repos from Apple, ByteDance, Google, Google DeepMind, HuggingFace, Meta, Microsoft, and others. Three more followed the next morning. As of this writing:
 
-| Repo | PR | Stars |
-|---|---|---|
-| opendatalab/MinerU | [#4773](https://github.com/opendatalab/MinerU/pull/4773) | 26k |
-| TauricResearch/TradingAgents | [#536](https://github.com/TauricResearch/TradingAgents/pull/536) | 7k |
-| facebookresearch/lingua | [#100](https://github.com/facebookresearch/lingua/pull/100) | 4.8k |
-| huggingface/nanoVLM | [#205](https://github.com/huggingface/nanoVLM/pull/205) | 4.8k |
-| facebookresearch/vjepa2 | [#152](https://github.com/facebookresearch/vjepa2/pull/152) | 3.6k |
-| google-research/timesfm | [#403](https://github.com/google-research/timesfm/pull/403) | 3k |
-| bytedance/InfiniteYou | [#50](https://github.com/bytedance/InfiniteYou/pull/50) | 2.7k |
-| microsoft/MoGe | [#150](https://github.com/microsoft/MoGe/pull/150) | 2.4k |
-| huggingface/picotron | [#38](https://github.com/huggingface/picotron/pull/38) | 2.1k |
-| google-deepmind/alphagenome | [#43](https://github.com/google-deepmind/alphagenome/pull/43) | 1.9k |
-| microsoft/Magma | [#92](https://github.com/microsoft/Magma/pull/92) | 1.9k |
-| microsoft/mattergen | [#242](https://github.com/microsoft/mattergen/pull/242) | 1.7k |
-| bytedance/pasa | [#50](https://github.com/bytedance/pasa/pull/50) | 1.5k |
-| microsoft/rStar | [#66](https://github.com/microsoft/rStar/pull/66) | 1.4k |
-| apple/ml-clara | [#10](https://github.com/apple/ml-clara/pull/10) | 1.1k |
-| apple/ml-simplefold | [#52](https://github.com/apple/ml-simplefold/pull/52) | 960 |
-| microsoft/VibeVoice | [#338](https://github.com/microsoft/VibeVoice/pull/338) | — |
-| AMAP-ML/SkillClaw | [#2](https://github.com/AMAP-ML/SkillClaw/pull/2) | — |
-| Osilly/Interleaving-Reasoning-Generation | [#7](https://github.com/Osilly/Interleaving-Reasoning-Generation/pull/7) | — |
+| Repo | PR | Stars | Status |
+|---|---|---|---|
+| opendatalab/MinerU | [#4773](https://github.com/opendatalab/MinerU/pull/4773) | 26k | closed |
+| TauricResearch/TradingAgents | [#536](https://github.com/TauricResearch/TradingAgents/pull/536) | 7k | open |
+| facebookresearch/lingua | [#100](https://github.com/facebookresearch/lingua/pull/100) | 4.8k | open |
+| huggingface/nanoVLM | [#205](https://github.com/huggingface/nanoVLM/pull/205) | 4.8k | open |
+| facebookresearch/vjepa2 | [#152](https://github.com/facebookresearch/vjepa2/pull/152) | 3.6k | open |
+| google-research/timesfm | [#403](https://github.com/google-research/timesfm/pull/403) | 3k | open |
+| bytedance/InfiniteYou | [#50](https://github.com/bytedance/InfiniteYou/pull/50) | 2.7k | open |
+| microsoft/MoGe | [#150](https://github.com/microsoft/MoGe/pull/150) | 2.4k | open |
+| huggingface/picotron | [#38](https://github.com/huggingface/picotron/pull/38) | 2.1k | open |
+| google-deepmind/alphagenome | [#43](https://github.com/google-deepmind/alphagenome/pull/43) | 1.9k | open |
+| microsoft/Magma | [#92](https://github.com/microsoft/Magma/pull/92) | 1.9k | open |
+| microsoft/mattergen | [#242](https://github.com/microsoft/mattergen/pull/242) | 1.7k | open |
+| bytedance/pasa | [#50](https://github.com/bytedance/pasa/pull/50) | 1.5k | open |
+| microsoft/rStar | [#66](https://github.com/microsoft/rStar/pull/66) | 1.4k | open |
+| apple/ml-clara | [#10](https://github.com/apple/ml-clara/pull/10) | 1.1k | open |
+| apple/ml-simplefold | [#52](https://github.com/apple/ml-simplefold/pull/52) | 960 | open |
+| microsoft/VibeVoice | [#338](https://github.com/microsoft/VibeVoice/pull/338) | — | open |
+| AMAP-ML/SkillClaw | [#2](https://github.com/AMAP-ML/SkillClaw/pull/2) | — | open |
+| Osilly/Interleaving-Reasoning-Generation | [#7](https://github.com/Osilly/Interleaving-Reasoning-Generation/pull/7) | — | open |
+| lmgame-org/GamingAgent | [#80](https://github.com/lmgame-org/GamingAgent/pull/80) | — | open |
+| zjunlp/LightMem | [#58](https://github.com/zjunlp/LightMem/pull/58) | — | open |
+| yyfz/Pi3 | [#145](https://github.com/yyfz/Pi3/pull/145) | — | open |
 
-That's roughly 55,000 stars worth of repos, across five major AI labs, in a single afternoon session.
+That's roughly 55,000 stars worth of repos, across five major AI labs. Twenty-one of the twenty-two are still open. MinerU closed theirs.
 
 There are also a handful of older open PRs doing similar work: replacing black/isort with Ruff in [allenai/OLMo](https://github.com/allenai/OLMo/pull/909), [facebookresearch/dinov2](https://github.com/facebookresearch/dinov2/pull/595), and [microsoft/markitdown](https://github.com/microsoft/markitdown/pull/1718).
+
+## The Week After
+
+While the linting PRs sat in maintainer queues, a week of real contributions accumulated — and most of those moved.
+
+The one I'm most proud of: [HKUDS/LightRAG#2941](https://github.com/HKUDS/LightRAG/pull/2941). LightRAG (28k stars) had a production bug where graph edge counts drifted above VDB relation counts — 372 orphan edges reported on a live instance. The root cause was a partial failure during entity merging: edges were written to the graph before being upserted into the relationships VDB. If the VDB upsert failed partway through — embedder crash, context-length exceeded with a high-degree hub entity, network timeout — the graph held new edges with no VDB counterpart. A subsequent delete then cleaned up the source entities, orphaning the edges permanently.
+
+The fix: wrap each per-edge VDB upsert in a try/except, collect failures, roll back the corresponding graph writes. Graph and VDB stay in sync: either both have the edge, or neither does. I also added `check_graph_consistency()` and `repair_graph_consistency()` utilities for existing deployments with accumulated drift.
+
+Over in [milvus-io/milvus](https://github.com/milvus-io/milvus/pull/49004) (the core C++/Go service), `BloomFilterSet.PkCandidateExist` was reading `currentStat` and `historyStats` without holding `statsMutex` — while every other read method in the same struct took the lock. A concurrent write produces a data race detectable by `-race`. Two lines added, data race closed. The bot greeted me: *"Welcome to milvus-io/milvus 🎉"*
+
+On the pymilvus client side, three API-fix PRs address friction that bites users quietly: `filter=` not accepted as an alias for `expr=` in `AnnSearchRequest`, `consistency_level` returned as an opaque integer instead of its string name, and `uuid.UUID` / `os.PathLike` not inferred as `VARCHAR` in dtype inference. None of these are flashy. All of them are the kind of thing that makes a client library a joy vs. a grind.
+
+In Feast, three PRs merged this week — sphinx API docs, dead code removal, and an ongoing fix for five bugs in the Milvus online store. The most hazardous of the five: `update()` was replacing the entire `_collections` cache with a single-entry dict on every call, corrupting all subsequent lookups for any other collection in the same store.
+
+And then there was [Kronos#238](https://github.com/shiyu-coder/Kronos/pull/238) — three silent bugs in sampling and quantization, found via `ty` during a tooling audit. One of them: calling `sample_from_logits(top_p=0.9, top_k=None)` raised a `TypeError` at runtime because the guard let you enter the block, then immediately hit `top_k > 0` on a `None`. The type checker flagged it in five seconds. The fix was three lines. These bugs were invisible in testing because they only surface when exactly one of the two optional sampling params is passed — which is the most natural way to call the function.
+
+The pattern: linting PRs are mostly still open. The real contributions are mostly moving.
 
 ## What This Isn't
 
@@ -87,23 +108,27 @@ It's worth being clear about what these PRs are not.
 
 They're not clever. Adding Ruff to a repo that's missing it is a five-minute task if you know what you're doing — I just did it nineteen times. The value is in doing it consistently, at scale, with enough judgment to handle the edge cases without breaking things.
 
-They're also not guaranteed to get merged. Research repos from academic labs can be slow to respond to external PRs, especially infrastructure ones with no obvious connection to the paper. Some of these will sit for months. A few will get closed with a polite "we're not prioritizing tooling right now." That's fine. The PRs are correct, the work is done, and if even half get merged that's a meaningful improvement to the Python ecosystem around ML research.
+They're also not guaranteed to get merged — and that turns out to matter more than I initially gave it credit for. The MinerU PR was closed. I couldn't even comment on it. When I followed up with a discussion ticket to ask why, the answer was clear: they didn't want it. That's a meaningful signal. Linting PRs from strangers are easy to decline, and the maintainers' calculus is reasonable — they didn't ask for the PR, it doesn't fix a bug they care about, and merging it means owning the tooling going forward.
 
-What they *are* is a proof of concept for something I want to do at larger scale: a systematic pass over ICLR/NeurIPS/ICML accepted paper repos, identifying the ones missing basic tooling, and opening PRs automatically. The methodology is solid. The pipeline mostly works. Next step is building the intake — scraping paper repos from conference proceedings, filtering by language and star count, batching the checks.
+In contrast, my most consistently merged contributions have been to [Feast](https://github.com/feast-dev/feast) and [pymilvus](https://github.com/milvus-io/pymilvus) (more traction there than in [Milvus](https://github.com/milvus-io/milvus) itself) — real contributions fixing actual issues, not infrastructure hygiene. Those get merged because they solve a problem someone already had. There's no asymmetry between what the contributor wants and what the maintainer needs.
+
+That gap — between what's *correct* and what's *wanted* — is where unsolicited linting PRs live. The PRs are correct, the work is done, but "correct" isn't the threshold for a healthy open source contribution. *Wanted* is.
 
 ## The Deeper Point
 
-The constraint used to be time. Adding Ruff to nineteen repos in an afternoon would have been a tedious manual grind — clone, check, fix, commit, PR, repeat, nineteen times. Claude Code compressed that into something I could do while thinking about other things.
+The constraint used to be time. Adding Ruff to nineteen repos in an afternoon would have been a tedious manual grind — clone, check, fix, commit, PR, repeat, nineteen times. Claude Code compressed that into something I could do while thinking about other things. Call it *vibe contributing* — the open source equivalent of vibe coding. You're not grinding through the mechanics; you're directing.
 
 But the judgment layer didn't compress. Knowing that jaxtyping produces F722/F821 false positives, knowing not to fight an existing formatter, knowing when dead code is a flag worth raising vs. an issue to silently suppress — that's all still human. The model executes; I decide what execution means.
 
 This is the same thing I noticed when I [shipped a dashboard from my phone during lunch](/blog/2026-03-25-i-shipped-a-feature-from-my-phone-during-lunch): execution is getting cheaper. Judgment isn't. If anything, the value of good judgment goes up as the cost of acting on it goes down.
 
+The week's data makes the thesis cleaner: the 22 linting PRs are mostly still open. The real contributions — LightRAG, Feast, pymilvus, milvus core — are mostly merging or actively moving. Same tools, same afternoon energy, very different outcomes depending on whether you're solving a problem someone already had.
+
 The McDonald's fry analogy I used in the session that produced these PRs: asking if vLLM needs Ruff is like asking if McDonald's needs help with their french fry process. They don't. The question is finding the repos that do — and having enough taste to know the difference.
 
 ---
 
-*Next up: building the ICLR pipeline. Watch this space.*
+*Meanwhile, I've been building [Sheaf](https://github.com/korbonits/sheaf) — a unified serving layer for non-text foundation models. Separate post [here](/blog/2026-04-14-sheaf-vllm-for-non-text-foundation-models).*
 
 ---
 

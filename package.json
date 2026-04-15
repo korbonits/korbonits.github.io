@@ -24,5 +24,8 @@
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
     "satori": "^0.26.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.5.0"
   }
 }

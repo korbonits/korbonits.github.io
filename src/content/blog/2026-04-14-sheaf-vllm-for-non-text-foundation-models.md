@@ -108,6 +108,27 @@ Forecast: next 12 hours
    12    369.5    440.1    492.5
 ```
 
+TimesFM (Google's 200M parameter model) is also supported — same `TimeSeriesRequest`, different backend. Both models agree on the shape (trough around hour 5-6, rising back through the morning), but differ on uncertainty width:
+
+```
+ Hour   Chronos P10   Chronos P50   Chronos P90   TimesFM P10   TimesFM P50   TimesFM P90
+-------------------------------------------------------------------------------------------
+    1         278.4         303.3         323.4         308.5         306.2         316.4
+    2         257.5         290.2         317.5         284.9         283.5         296.4
+    3         241.1         278.8         312.2         270.7         265.7         284.0
+    4         229.1         270.3         308.9         261.2         255.1         274.8
+    5         224.2         268.8         311.3         253.7         247.5         269.7
+    6         228.4         277.4         324.2         260.3         250.1         276.9
+    7         244.8         298.7         350.1         280.7         272.0         302.7
+    8         278.7         339.4         394.3         318.3         308.1         347.4
+    9         309.5         370.9         424.1         358.7         346.1         389.3
+   10         336.1         399.5         451.3         382.7         370.4         411.5
+   11         356.4         423.6         475.7         393.2         389.3         419.5
+   12         369.5         440.1         492.5         409.6         407.9         432.6
+```
+
+Chronos has wider intervals; TimesFM is tighter and tracks slightly lower. Switching backends is one argument — the contract doesn't change.
+
 ### Tabular — TabPFN
 
 [TabPFN](https://github.com/automl/TabPFN) is an in-context learner: you pass context examples alongside the rows you want to predict. No training step — a single forward pass handles everything. Requires a free [PriorLabs](https://ux.priorlabs.ai) account for local inference.
@@ -158,7 +179,7 @@ req = TimeSeriesRequest(
 
 | Type | Status | Backends |
 |---|---|---|
-| Time series | ✅ v0.1 | Chronos2, TimesFM |
+| Time series | ✅ v0.1 | Chronos, Chronos-Bolt, TimesFM |
 | Tabular | ✅ v0.1 | TabPFN |
 | Molecular / biological | 🔜 v0.2 | ESM-3, AlphaFold |
 | Audio | 🔜 v0.3 | Whisper, MusicGen |

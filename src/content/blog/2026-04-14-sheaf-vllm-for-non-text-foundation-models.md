@@ -54,13 +54,25 @@ The name comes from category theory: a sheaf tracks locally-defined data that gl
 Install it:
 
 ```bash
-pip install "sheaf-serve[time-series]"         # Chronos2 / TimesFM
+pip install "sheaf-serve[time-series]"         # Chronos2 / TimesFM / Moirai
 pip install "sheaf-serve[tabular]"             # TabPFN
+pip install "sheaf-serve[molecular]"           # ESM-3  (Python 3.12+)
+pip install "sheaf-serve[genomics]"            # Nucleotide Transformer
+pip install "sheaf-serve[small-molecule]"      # MolFormer-XL
+pip install "sheaf-serve[materials]"           # MACE-MP-0
+pip install "sheaf-serve[audio]"               # Whisper / faster-whisper
+pip install "sheaf-serve[audio-generation]"    # MusicGen
+pip install "sheaf-serve[tts]"                 # Bark
+pip install "sheaf-serve[vision]"              # DINOv2 / OpenCLIP / SAM2 / Depth Anything / DETR
+pip install "sheaf-serve[earth-observation]"   # Prithvi (IBM/NASA)
+pip install "sheaf-serve[weather]"             # GraphCast
 ```
 
 ## What works today
 
-Two model types are supported as of today.
+*This section describes the original v0.1 backends. The full v0.3 backend list is in the [roadmap](#the-roadmap) below.*
+
+Two model types shipped in v0.1.
 
 ### Time series — Chronos-Bolt
 
@@ -179,22 +191,32 @@ req = TimeSeriesRequest(
 
 | Type | Status | Backends |
 |---|---|---|
-| Time series | ✅ v0.1 | Chronos, Chronos-Bolt, TimesFM |
-| Tabular | ✅ v0.1 | TabPFN |
-| Molecular / biological | 🔜 v0.2 | ESM-3, AlphaFold |
-| Audio | 🔜 v0.3 | Whisper, MusicGen |
-| Embeddings | 🔜 v0.3 | CLIP, ColBERT |
-| Geospatial / Earth science | 🔜 v0.3 | GraphCast, Clay |
-| Diffusion | 🔜 v0.4 | Flux, Stable Diffusion |
+| Time series | ✅ v0.1 | Chronos2, Chronos-Bolt, TimesFM, Moirai |
+| Tabular | ✅ v0.1 | TabPFN v2 |
+| Audio transcription | ✅ v0.3 | Whisper, faster-whisper |
+| Audio generation | ✅ v0.3 | MusicGen |
+| Text-to-speech | ✅ v0.3 | Bark |
+| Vision embeddings | ✅ v0.3 | OpenCLIP, DINOv2 |
+| Segmentation | ✅ v0.3 | SAM2 |
+| Depth estimation | ✅ v0.3 | Depth Anything v2 |
+| Object detection | ✅ v0.3 | DETR / RT-DETR |
+| Protein / molecular | ✅ v0.3 | ESM-3 (Python 3.12+) |
+| Genomics | ✅ v0.3 | Nucleotide Transformer |
+| Small molecule | ✅ v0.3 | MolFormer-XL |
+| Materials science | ✅ v0.3 | MACE-MP-0 |
+| Earth observation | ✅ v0.3 | Prithvi (IBM/NASA) |
+| Weather forecasting | ✅ v0.3 | GraphCast |
+| Diffusion / image gen | 🔜 v0.4 | FLUX |
+| Video understanding | 🔜 v0.4 | VideoMAE, TimeSformer |
 | Neural operators | 🔜 v0.4 | FNO, DeepONet |
 
 The V1 boundary is deliberately narrow: stateless, frozen models with synchronous or streaming responses. Session management (RL policy serving) and mutable weights (continual learning) are v2 problems — I'd rather ship something useful now than design for everything upfront.
 
 ## What this isn't
 
-Sheaf v0.1 is not a performance story yet. Both backends run requests sequentially by default. The batching policy exists but the scheduler isn't built. The Feast integration is wired at the contract level but not implemented end-to-end.
+Sheaf v0.3 is not a performance story yet. All backends run requests sequentially by default; the per-model-type batching optimizations (bucket-by-horizon for time series, shared-context batching for TabPFN) are still ahead. The Feast integration is wired at the contract level but the resolver isn't implemented end-to-end.
 
-What it *is* is the API layer — the contracts that everything else builds on. That's the right thing to ship first, because the contracts are what drive adoption. If the time series request schema is wrong, no amount of batching optimization will fix it.
+What it *is* is the API layer — nineteen backends, typed contracts for every model class, Ray Serve wired up end-to-end, and a test suite that runs fully mocked (no weights required). That's the right thing to ship first, because the contracts are what drive adoption. If the time series request schema is wrong, no amount of batching optimization will fix it.
 
 The bet is that standardizing the API layer now creates the surface area for the performance work to follow. That's how vLLM worked too: the API came first, the optimizations accreted around it.
 

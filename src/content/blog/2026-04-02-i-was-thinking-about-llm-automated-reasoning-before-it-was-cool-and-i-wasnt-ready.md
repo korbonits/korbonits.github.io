@@ -2,7 +2,7 @@
 title: "I Was Thinking About LLM + Automated Reasoning Before It Was Cool (And
   I Wasn’t Ready)"
 date: 2026-04-02
-draft: true
+draft: false
 tags: ["machine-learning", "ai", "automated-reasoning", "llm", "formal-verification", "personal"]
 description: "A November 2023 notebook entry about grounding LLMs with SMT solvers — why formal verification might be the right fix for hallucination, and what it took to finally say it out loud."
 ---

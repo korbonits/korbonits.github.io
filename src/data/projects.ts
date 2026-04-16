@@ -26,6 +26,19 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    name: "Sheaf",
+    slug: "sheaf",
+    description:
+      "vLLM solved inference for text LLMs. The same gap exists for every other class of foundation model — time series, tabular, molecular, and more. Sheaf fills it: a unified serving layer with standard batching contracts across model classes.",
+    date: "2026-04-14",
+    tags: ["ml", "oss"],
+    status: "active",
+    links: {
+      primary: { label: "Read the post", url: "/blog/2026-04-14-sheaf-vllm-for-non-text-foundation-models" },
+      repo: "https://github.com/korbonits/sheaf",
+    },
+  },
+  {
     name: "Priorly.ai",
     slug: "priorly",
     description:

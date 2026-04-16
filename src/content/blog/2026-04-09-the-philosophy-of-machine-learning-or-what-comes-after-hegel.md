@@ -1,7 +1,7 @@
 ---
 title: "The Philosophy of Machine Learning, or: What Comes After Hegel?"
 date: 2026-04-09
-draft: true
+draft: false
 tags: ["machine-learning", "ai", "philosophy", "llm", "personal"]
 description: "A notebook entry that maps AI paradigms onto the history of Western philosophy — from scholasticism to Hegel — and asks what comes next when the current moment exhausts itself."
 ---

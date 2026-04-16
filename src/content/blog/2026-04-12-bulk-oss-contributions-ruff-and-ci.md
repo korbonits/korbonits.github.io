@@ -66,7 +66,7 @@ By the end of the afternoon, 19 PRs were open across repos from Apple, ByteDance
 | bytedance/InfiniteYou | [#50](https://github.com/bytedance/InfiniteYou/pull/50) | 2.7k | open |
 | microsoft/MoGe | [#150](https://github.com/microsoft/MoGe/pull/150) | 2.4k | open |
 | huggingface/picotron | [#38](https://github.com/huggingface/picotron/pull/38) | 2.1k | open |
-| google-deepmind/alphagenome | [#43](https://github.com/google-deepmind/alphagenome/pull/43) | 1.9k | open |
+| google-deepmind/alphagenome | [#43](https://github.com/google-deepmind/alphagenome/pull/43) | 1.9k | closed |
 | microsoft/Magma | [#92](https://github.com/microsoft/Magma/pull/92) | 1.9k | open |
 | microsoft/mattergen | [#242](https://github.com/microsoft/mattergen/pull/242) | 1.7k | open |
 | bytedance/pasa | [#50](https://github.com/bytedance/pasa/pull/50) | 1.5k | open |
@@ -80,7 +80,7 @@ By the end of the afternoon, 19 PRs were open across repos from Apple, ByteDance
 | zjunlp/LightMem | [#58](https://github.com/zjunlp/LightMem/pull/58) | — | open |
 | yyfz/Pi3 | [#145](https://github.com/yyfz/Pi3/pull/145) | — | open |
 
-That's roughly 55,000 stars worth of repos, across five major AI labs. Twenty-one of the twenty-two are still open. MinerU closed theirs.
+That's roughly 55,000 stars worth of repos, across five major AI labs. Twenty of the twenty-two are still open. MinerU and alphagenome closed theirs — both without merging.
 
 There are also a handful of older open PRs doing similar work: replacing black/isort with Ruff in [allenai/OLMo](https://github.com/allenai/OLMo/pull/909), [facebookresearch/dinov2](https://github.com/facebookresearch/dinov2/pull/595), and [microsoft/markitdown](https://github.com/microsoft/markitdown/pull/1718).
 
@@ -96,11 +96,11 @@ Over in [milvus-io/milvus](https://github.com/milvus-io/milvus/pull/49004) (the 
 
 On the pymilvus client side, three API-fix PRs address friction that bites users quietly: `filter=` not accepted as an alias for `expr=` in `AnnSearchRequest`, `consistency_level` returned as an opaque integer instead of its string name, and `uuid.UUID` / `os.PathLike` not inferred as `VARCHAR` in dtype inference. None of these are flashy. All of them are the kind of thing that makes a client library a joy vs. a grind.
 
-In Feast, three PRs merged this week — sphinx API docs, dead code removal, and an ongoing fix for five bugs in the Milvus online store. The most hazardous of the five: `update()` was replacing the entire `_collections` cache with a single-entry dict on every call, corrupting all subsequent lookups for any other collection in the same store.
+In Feast, four PRs merged — sphinx API docs ([#6271](https://github.com/feast-dev/feast/pull/6271)), dead code removal ([#6266](https://github.com/feast-dev/feast/pull/6266)), a fix for five bugs in the Milvus online store ([#6275](https://github.com/feast-dev/feast/pull/6275)), and support for SQL strings as `entity_df` in the remote offline store ([#6265](https://github.com/feast-dev/feast/pull/6265)). The most hazardous of the Milvus five: `update()` was replacing the entire `_collections` cache with a single-entry dict on every call, corrupting all subsequent lookups for any other collection in the same store.
 
 And then there was [Kronos#238](https://github.com/shiyu-coder/Kronos/pull/238) — three silent bugs in sampling and quantization, found via `ty` during a tooling audit. One of them: calling `sample_from_logits(top_p=0.9, top_k=None)` raised a `TypeError` at runtime because the guard let you enter the block, then immediately hit `top_k > 0` on a `None`. The type checker flagged it in five seconds. The fix was three lines. These bugs were invisible in testing because they only surface when exactly one of the two optional sampling params is passed — which is the most natural way to call the function.
 
-The pattern: linting PRs are mostly still open. The real contributions are mostly moving.
+The pattern: linting PRs are mostly still open. The real contributions are mostly moving — four of four Feast PRs merged, the pymilvus and milvus core PRs still in review.
 
 ## What This Isn't
 

@@ -66,6 +66,8 @@ pip install "sheaf-serve[tts]"                 # Bark
 pip install "sheaf-serve[vision]"              # DINOv2 / OpenCLIP / SAM2 / Depth Anything / DETR
 pip install "sheaf-serve[earth-observation]"   # Prithvi (IBM/NASA)
 pip install "sheaf-serve[weather]"             # GraphCast
+pip install "sheaf-serve[feast]"               # Feast feature store integration
+pip install "sheaf-serve[modal]"               # Modal serverless deployment
 ```
 
 ## The serving layer
@@ -82,7 +84,7 @@ server = ModelServer(
         ModelSpec(
             name="chronos",
             model_type=ModelType.TIME_SERIES,
-            backend="chronos",
+            backend="chronos2",
             backend_kwargs={"model_id": "amazon/chronos-bolt-small"},
             resources=ResourceConfig(num_gpus=1, replicas=2),
         ),
@@ -275,16 +277,32 @@ Query    Prediction   P(setosa)   P(versicolor)   P(virginica)
     3     virginica       0.005           0.103          0.892
 ```
 
-Or, pass a Feast feature reference instead of raw history:
+Or, pull history directly from a Feast online feature store instead of passing raw values. Set `feast_repo_path` on the `ModelSpec` and the serving layer resolves the feature before it reaches the backend — the backend always sees `history`, never `feature_ref`:
 
 ```python
+spec = ModelSpec(
+    name="chronos",
+    model_type=ModelType.TIME_SERIES,
+    backend="chronos2",
+    feast_repo_path="/feast/feature_repo",
+)
+
+# Client sends feature_ref instead of raw history
 req = TimeSeriesRequest(
-    model_name="chronos-bolt-tiny",
-    feature_ref={"feature_view": "asset_prices", "entity_id": "AAPL"},
-    horizon=24,
-    frequency=Frequency.HOURLY,
+    model_name="chronos",
+    feature_ref=FeatureRef(
+        feature_view="asset_prices",
+        feature_name="close_history_30d",
+        entity_key="ticker",
+        entity_value="AAPL",
+    ),
+    horizon=7,
+    frequency=Frequency.DAILY,
+    output_mode=OutputMode.QUANTILES,
 )
 ```
+
+Feast errors (store unavailable, feature missing) return 502 and don't crash the deployment. A misconfigured spec — `feature_ref` sent to a deployment without `feast_repo_path` — returns 422. See `examples/quickstart_feast.py` for a full end-to-end example with a local SQLite store.
 
 ## The roadmap
 
@@ -305,6 +323,9 @@ req = TimeSeriesRequest(
 | Materials science | ✅ v0.3 | MACE-MP-0 |
 | Earth observation | ✅ v0.3 | Prithvi (IBM/NASA) |
 | Weather forecasting | ✅ v0.3 | GraphCast |
+| Cross-modal embeddings | ✅ v0.3 | ImageBind (text, vision, audio, depth, thermal) |
+| Feast feature store | ✅ v0.3 | Any Feast online store (SQLite, Redis, DynamoDB, …) |
+| Modal serverless | ✅ v0.3 | `ModalServer` — zero-infra GPU deployment |
 | Diffusion / image gen | 🔜 v0.4 | FLUX |
 | Video understanding | 🔜 v0.4 | VideoMAE, TimeSformer |
 | Neural operators | 🔜 v0.4 | FNO, DeepONet |
@@ -313,14 +334,20 @@ The V1 boundary is deliberately narrow: stateless, frozen models with synchronou
 
 ## What's next
 
-The contracts are done. Nineteen backends, every major non-text model class, one unified serving layer. What the current version doesn't have is model-type-aware batching optimizations behind those contracts — the per-model-type work that's analogous to what PagedAttention and continuous batching are for text:
+v0.3.0 is on PyPI. The contracts are done — nineteen backends, every major non-text model class, Feast integration, Modal serverless deployment, one unified serving layer.
+
+What v0.4 adds is generation and video:
+
+- **FLUX** — diffusion/image generation via `diffusers`, new `ImageGenerationRequest/Response`
+- **VideoMAE / TimeSformer** — video understanding and classification, base64-encoded input frames
+
+And what's still missing are the model-type-aware batching optimizations behind the existing contracts — the per-model-type work that's analogous to what PagedAttention and continuous batching are for text:
 
 - **Time series**: bucket-by-horizon so 24-step and 96-step requests don't block each other
 - **Tabular**: shared-context batching so ten concurrent requests against the same context table run one forward pass instead of ten
 - **Molecular/genomics**: length-bucketed batching to stop short sequences from paying the padding cost of long ones
-- **Feast resolver**: the `feature_ref` field exists in the contract; the resolver that fetches history from a feature store isn't implemented yet
 
-That's the v0.4 roadmap. The bet was that getting the contracts right first was worth more than shipping half-baked optimizations behind the wrong abstractions. So far, that bet looks right.
+The bet was that getting the contracts right first was worth more than shipping half-baked optimizations behind the wrong abstractions. So far, that bet looks right.
 
 ---
 

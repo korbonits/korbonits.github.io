@@ -68,11 +68,57 @@ pip install "sheaf-serve[earth-observation]"   # Prithvi (IBM/NASA)
 pip install "sheaf-serve[weather]"             # GraphCast
 ```
 
-## What works today
+## The serving layer
 
-*This section describes the original v0.1 backends. The full v0.3 backend list is in the [roadmap](#the-roadmap) below.*
+The point isn't the backends individually — it's that they all share the same serving infrastructure. You declare what you want to run with a `ModelSpec`, and `ModelServer` handles the rest: Ray Serve deployment, HTTP endpoints, request validation, batching, and health probes.
 
-Two model types shipped in v0.1.
+```python
+from sheaf.server import ModelServer
+from sheaf.spec import ModelSpec, ResourceConfig
+from sheaf.api.base import ModelType
+
+server = ModelServer(
+    models=[
+        ModelSpec(
+            name="chronos",
+            model_type=ModelType.TIME_SERIES,
+            backend="chronos",
+            backend_kwargs={"model_id": "amazon/chronos-bolt-small"},
+            resources=ResourceConfig(num_gpus=1, replicas=2),
+        ),
+        ModelSpec(
+            name="molformer",
+            model_type=ModelType.SMALL_MOLECULE,
+            backend="molformer",
+            resources=ResourceConfig(num_gpus=1),
+        ),
+        ModelSpec(
+            name="esm3",
+            model_type=ModelType.MOLECULAR,
+            backend="esm3",
+            resources=ResourceConfig(num_gpus=1),
+        ),
+    ]
+)
+server.run()
+```
+
+Each model is live at `/<name>/predict`, `/<name>/health`, and `/<name>/ready`. Concurrent requests are batched automatically via `@serve.batch` with per-deployment `max_batch_size` and timeout. Rolling hot-swap with no downtime:
+
+```python
+server.update(ModelSpec(
+    name="chronos",
+    backend="chronos",
+    backend_kwargs={"model_id": "amazon/chronos-bolt-base"},  # upgrade weights
+    resources=ResourceConfig(num_gpus=1, replicas=4),          # scale up
+))
+```
+
+Ray Serve handles the transition — new replicas come up with the new spec while old ones drain in-flight requests. The route and URL don't change.
+
+## What the contracts look like
+
+Every model type has a typed request/response pair. Here's a sample across a few:
 
 ### Time series — Chronos-Bolt
 
@@ -141,6 +187,61 @@ TimesFM (Google's 200M parameter model) is also supported — same `TimeSeriesRe
 
 Chronos has wider intervals; TimesFM is tighter and tracks slightly lower. Switching backends is one argument — the contract doesn't change.
 
+### Small molecule — MolFormer
+
+IBM's MolFormer-XL embeds SMILES strings into a 768-dimensional space useful for molecular property prediction, similarity search, and retrieval.
+
+```python
+from sheaf.api.small_molecule import SmallMoleculeRequest
+from sheaf.backends.molformer import MolFormerBackend
+
+backend = MolFormerBackend(model_name="ibm/MoLFormer-XL-both-10pct", device="cpu")
+backend.load()
+
+req = SmallMoleculeRequest(
+    model_name="molformer",
+    smiles=[
+        "CC(=O)OC1=CC=CC=C1C(=O)O",       # aspirin
+        "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",   # caffeine
+        "CC12CCC3C(C1CCC2O)CCC4=CC(=O)CCC34C",  # testosterone
+    ],
+    pooling="mean",
+    normalize=False,
+)
+
+response = backend.predict(req)
+# response.embeddings: list of 3 vectors, each length 768
+# response.dim: 768
+```
+
+### Materials science — MACE-MP
+
+[MACE-MP-0](https://github.com/ACEsuit/mace) is a universal interatomic potential. Give it an atomic structure, get back energy and forces without DFT.
+
+```python
+import base64
+import numpy as np
+from sheaf.api.materials import MaterialsRequest
+from sheaf.backends.mace import MACEBackend
+
+backend = MACEBackend(model="medium", device="cpu")
+backend.load()
+
+# CO2: C at origin, two O atoms at ±1.16 Å
+positions = np.array([[0., 0., 0.], [0., 0., 1.16], [0., 0., -1.16]], dtype=np.float32)
+
+req = MaterialsRequest(
+    model_name="mace",
+    atomic_numbers=[6, 8, 8],
+    positions_b64=base64.b64encode(positions.tobytes()).decode(),
+    compute_forces=True,
+)
+
+response = backend.predict(req)
+# response.energy: float (eV)
+# response.forces_b64: base64-encoded (3, 3) float32 array (eV/Å)
+```
+
 ### Tabular — TabPFN
 
 [TabPFN](https://github.com/automl/TabPFN) is an in-context learner: you pass context examples alongside the rows you want to predict. No training step — a single forward pass handles everything. Requires a free [PriorLabs](https://ux.priorlabs.ai) account for local inference.
@@ -174,9 +275,7 @@ Query    Prediction   P(setosa)   P(versicolor)   P(virginica)
     3     virginica       0.005           0.103          0.892
 ```
 
-Regression with quantile intervals works the same way — swap `task="regression"` and `output_mode="quantiles"`. Full examples for both are [in the repo](https://github.com/korbonits/sheaf/tree/main/examples).
-
-Alternatively, for time series, pass a Feast feature reference instead of raw history:
+Or, pass a Feast feature reference instead of raw history:
 
 ```python
 req = TimeSeriesRequest(
@@ -212,17 +311,20 @@ req = TimeSeriesRequest(
 
 The V1 boundary is deliberately narrow: stateless, frozen models with synchronous or streaming responses. Session management (RL policy serving) and mutable weights (continual learning) are v2 problems — I'd rather ship something useful now than design for everything upfront.
 
-## What this isn't
+## What's next
 
-Sheaf v0.3 is not a performance story yet. All backends run requests sequentially by default; the per-model-type batching optimizations (bucket-by-horizon for time series, shared-context batching for TabPFN) are still ahead. The Feast integration is wired at the contract level but the resolver isn't implemented end-to-end.
+The contracts are done. Nineteen backends, every major non-text model class, one unified serving layer. What the current version doesn't have is model-type-aware batching optimizations behind those contracts — the per-model-type work that's analogous to what PagedAttention and continuous batching are for text:
 
-What it *is* is the API layer — nineteen backends, typed contracts for every model class, Ray Serve wired up end-to-end, and a test suite that runs fully mocked (no weights required). That's the right thing to ship first, because the contracts are what drive adoption. If the time series request schema is wrong, no amount of batching optimization will fix it.
+- **Time series**: bucket-by-horizon so 24-step and 96-step requests don't block each other
+- **Tabular**: shared-context batching so ten concurrent requests against the same context table run one forward pass instead of ten
+- **Molecular/genomics**: length-bucketed batching to stop short sequences from paying the padding cost of long ones
+- **Feast resolver**: the `feature_ref` field exists in the contract; the resolver that fetches history from a feature store isn't implemented yet
 
-The bet is that standardizing the API layer now creates the surface area for the performance work to follow. That's how vLLM worked too: the API came first, the optimizations accreted around it.
+That's the v0.4 roadmap. The bet was that getting the contracts right first was worth more than shipping half-baked optimizations behind the wrong abstractions. So far, that bet looks right.
 
 ---
 
-The repo is at [github.com/korbonits/sheaf](https://github.com/korbonits/sheaf). `pip install sheaf-serve`. Issues and PRs welcome — especially from anyone who has strong opinions about what the molecular or geospatial contracts should look like.
+The repo is at [github.com/korbonits/sheaf](https://github.com/korbonits/sheaf). `pip install sheaf-serve`. Issues and PRs welcome.
 
 ---
 

@@ -2,7 +2,7 @@
 title: "Sheaf: vLLM for Non-Text Foundation Models"
 date: 2026-04-14
 draft: false
-description: "vLLM solved inference for text LLMs. The same gap exists for every other class of foundation model — time series, tabular, molecular, diffusion, and more. I built Sheaf to fill it."
+description: "vLLM solved inference for text LLMs. The same gap exists for every other class of foundation model — time series, tabular, molecular, diffusion, and more. Sheaf fills it: typed contracts, model-type-aware batching, streaming, caching, observability, and 21 backends on PyPI."
 tags:
   - open-source
   - mlops
@@ -326,26 +326,38 @@ Feast errors (store unavailable, feature missing) return 502 and don't crash the
 | Cross-modal embeddings | ✅ v0.3 | ImageBind (text, vision, audio, depth, thermal) |
 | Feast feature store | ✅ v0.3 | Any Feast online store (SQLite, Redis, DynamoDB, …) |
 | Modal serverless | ✅ v0.3 | `ModalServer` — zero-infra GPU deployment |
-| Diffusion / image gen | 🔜 v0.4 | FLUX |
-| Video understanding | 🔜 v0.4 | VideoMAE, TimeSformer |
-| Neural operators | 🔜 v0.4 | FNO, DeepONet |
+| Diffusion / image gen | ✅ v0.4 | FLUX.1-schnell / FLUX.1-dev |
+| Video understanding | ✅ v0.4 | VideoMAE, TimeSformer |
+| Streaming responses | ✅ v0.5 | `POST /{name}/stream` → SSE; FLUX emits per-step progress |
+| Request caching | ✅ v0.5 | In-process LRU + TTL, `CacheConfig` on `ModelSpec` |
+| `bucket_by` batching | ✅ v0.5 | Group requests by field before `@serve.batch` |
+| Observability | ✅ v0.5 | Prometheus metrics, structured logging, OpenTelemetry traces |
+| Offline batch inference | 🔜 v0.6 | `BatchRunner` — Ray Data substrate, S3/Delta/BigQuery sinks |
+| Async job queue | 🔜 v0.6 | `SheafWorker` — Redis/SQS/Kafka; priority lanes, webhooks |
+| Adapter multiplexing | 🔜 v0.7 | LoRA hot-swap per request; one deployment, many fine-tunes |
+| Client SDK | 🔜 v0.7 | Typed Python client + OpenAPI spec |
 
 The V1 boundary is deliberately narrow: stateless, frozen models with synchronous or streaming responses. Session management (RL policy serving) and mutable weights (continual learning) are v2 problems — I'd rather ship something useful now than design for everything upfront.
 
 ## What's next
 
-v0.3.0 is on PyPI. The contracts are done — nineteen backends, every major non-text model class, Feast integration, Modal serverless deployment, one unified serving layer.
+v0.5.0 is on PyPI. The serving layer is complete — twenty-one backends, every major non-text model class, Feast integration, Modal serverless deployment, full observability, streaming SSE, and model-type-aware batching.
 
-What v0.4 adds is generation and video:
+v0.4 shipped generation and video: FLUX for diffusion image generation and VideoMAE / TimeSformer for video understanding and classification.
 
-- **FLUX** — diffusion/image generation via `diffusers`, new `ImageGenerationRequest/Response`
-- **VideoMAE / TimeSformer** — video understanding and classification, base64-encoded input frames
+v0.5 shipped the production ops layer:
 
-And what's still missing are the model-type-aware batching optimizations behind the existing contracts — the per-model-type work that's analogous to what PagedAttention and continuous batching are for text:
+- **Streaming** — `POST /{name}/stream` returns a `text/event-stream` response. FLUX emits one progress event per denoising step. Any backend can override `stream_predict()` for chunked output. The default fallback yields a single result event, so every backend gets SSE for free.
+- **Request caching** — `CacheConfig` on `ModelSpec` attaches an in-process LRU cache. SHA-256 keyed, TTL optional, `SHEAF_CACHE_DISABLED=1` for integration tests. Computed after Feast resolution so the key reflects actual input values, not feature references.
+- **`bucket_by` batching** — the time series problem from the original design: 24-step and 96-step requests landing in the same Ray Serve batch window no longer force each other to pad. `batch_policy.bucket_by = "horizon"` routes them into homogeneous sub-batches before the backend sees them.
+- **Observability** — Prometheus metrics (`sheaf_requests_total`, `sheaf_request_duration_seconds`), structured JSON logging with request IDs, and OpenTelemetry traces with `sheaf.predict` / `sheaf.feast.resolve` / `sheaf.backend.infer` spans.
 
-- **Time series**: bucket-by-horizon so 24-step and 96-step requests don't block each other
-- **Tabular**: shared-context batching so ten concurrent requests against the same context table run one forward pass instead of ten
-- **Molecular/genomics**: length-bucketed batching to stop short sequences from paying the padding cost of long ones
+What v0.6 adds is the deployment patterns that real production pipelines actually use — the ones that HTTP request/response is the wrong shape for:
+
+- **`BatchRunner`** — same backend, same typed contract, offline batch mode. Ray Data as the substrate: distributed execution, checkpointing, S3/Delta/BigQuery sinks. The goal is that nightly scoring jobs and backfills use identical backend code to the real-time API.
+- **`SheafWorker`** — queue-consumer pattern for long-running inference. FLUX at 50 steps, GraphCast multi-day rollouts, VideoMAE on long clips — these don't belong in an HTTP request. Enqueue, process, webhook on completion. Redis Streams, SQS, Kafka.
+
+And v0.7 is the economics argument: LoRA adapter multiplexing (one GPU deployment serves many fine-tunes, per-request adapter hot-swap) and a typed client SDK so Sheaf is consumable from anywhere, not just Python services.
 
 The bet was that getting the contracts right first was worth more than shipping half-baked optimizations behind the wrong abstractions. So far, that bet looks right.
 

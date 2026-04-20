@@ -2,7 +2,7 @@
 title: "Sheaf: vLLM for Non-Text Foundation Models"
 date: 2026-04-14
 draft: false
-description: "vLLM solved inference for text LLMs. The same gap exists for every other class of foundation model — time series, tabular, molecular, diffusion, and more. Sheaf fills it: typed contracts, model-type-aware batching, streaming, caching, observability, and 21 backends on PyPI."
+description: "vLLM solved inference for text LLMs. The same gap exists for every other class of foundation model — time series, tabular, molecular, diffusion, and more. Sheaf fills it: typed contracts, model-type-aware batching, streaming, caching, observability, offline batch inference, and 27 backends on PyPI."
 tags:
   - open-source
   - mlops
@@ -68,6 +68,7 @@ pip install "sheaf-serve[earth-observation]"   # Prithvi (IBM/NASA)
 pip install "sheaf-serve[weather]"             # GraphCast
 pip install "sheaf-serve[feast]"               # Feast feature store integration
 pip install "sheaf-serve[modal]"               # Modal serverless deployment
+pip install "sheaf-serve[batch]"               # Offline batch inference (Ray Data)
 ```
 
 ## The serving layer
@@ -312,7 +313,7 @@ Feast errors (store unavailable, feature missing) return 502 and don't crash the
 | Tabular | ✅ v0.1 | TabPFN v2 |
 | Audio transcription | ✅ v0.3 | Whisper, faster-whisper |
 | Audio generation | ✅ v0.3 | MusicGen |
-| Text-to-speech | ✅ v0.3 | Bark |
+| Text-to-speech | ✅ v0.3 | Bark, Kokoro (v0.5) |
 | Vision embeddings | ✅ v0.3 | OpenCLIP, DINOv2 |
 | Segmentation | ✅ v0.3 | SAM2 |
 | Depth estimation | ✅ v0.3 | Depth Anything v2 |
@@ -332,7 +333,11 @@ Feast errors (store unavailable, feature missing) return 502 and don't crash the
 | Request caching | ✅ v0.5 | In-process LRU + TTL, `CacheConfig` on `ModelSpec` |
 | `bucket_by` batching | ✅ v0.5 | Group requests by field before `@serve.batch` |
 | Observability | ✅ v0.5 | Prometheus metrics, structured logging, OpenTelemetry traces |
-| Offline batch inference | 🔜 v0.6 | `BatchRunner` — Ray Data substrate, S3/Delta/BigQuery sinks |
+| Pose estimation | ✅ v0.5 | ViTPose — COCO 17-keypoint skeleton, optional person bboxes |
+| Optical flow | ✅ v0.5 | RAFT (`raft_large` / `raft_small`) via torchvision |
+| Multimodal generation | ✅ v0.5 | SDXL — img2img + inpainting via diffusers pipelines |
+| LiDAR / 3D point cloud | ✅ v0.5 | PointNet — embed + ModelNet40 classify (pure-PyTorch) |
+| Offline batch inference | ✅ v0.6 | `BatchRunner` — Ray Data `map_batches` substrate, JSONL source/sink in v1 |
 | Async job queue | 🔜 v0.6 | `SheafWorker` — Redis/SQS/Kafka; priority lanes, webhooks |
 | Adapter multiplexing | 🔜 v0.7 | LoRA hot-swap per request; one deployment, many fine-tunes |
 | Client SDK | 🔜 v0.7 | Typed Python client + OpenAPI spec |
@@ -341,7 +346,7 @@ The V1 boundary is deliberately narrow: stateless, frozen models with synchronou
 
 ## What's next
 
-v0.5.0 is on PyPI. The serving layer is complete — twenty-one backends, every major non-text model class, Feast integration, Modal serverless deployment, full observability, streaming SSE, and model-type-aware batching.
+v0.6.0 is on PyPI. The serving layer is complete — every major non-text model class, Feast integration, Modal serverless deployment, full observability, streaming SSE, model-type-aware batching, and offline batch inference.
 
 v0.4 shipped generation and video: FLUX for diffusion image generation and VideoMAE / TimeSformer for video understanding and classification.
 
@@ -352,9 +357,12 @@ v0.5 shipped the production ops layer:
 - **`bucket_by` batching** — the time series problem from the original design: 24-step and 96-step requests landing in the same Ray Serve batch window no longer force each other to pad. `batch_policy.bucket_by = "horizon"` routes them into homogeneous sub-batches before the backend sees them.
 - **Observability** — Prometheus metrics (`sheaf_requests_total`, `sheaf_request_duration_seconds`), structured JSON logging with request IDs, and OpenTelemetry traces with `sheaf.predict` / `sheaf.feast.resolve` / `sheaf.backend.infer` spans.
 
-What v0.6 adds is the deployment patterns that real production pipelines actually use — the ones that HTTP request/response is the wrong shape for:
+v0.6 track 1 shipped offline batch inference — one of the two deployment patterns that HTTP request/response is the wrong shape for:
 
-- **`BatchRunner`** — same backend, same typed contract, offline batch mode. Ray Data as the substrate: distributed execution, checkpointing, S3/Delta/BigQuery sinks. The goal is that nightly scoring jobs and backfills use identical backend code to the real-time API.
+- **`BatchRunner`** — same backend, same typed contract, offline batch mode. Ray Data `map_batches` is the substrate; stateless tasks with a worker-local backend cache so `load()` fires once per worker process, not once per batch. `BatchSpec` mirrors `ModelSpec` for backend selection and adds `source` / `sink` / `batch_size` / `num_cpus` / `num_gpus`. Rows are pre-validated against the same Pydantic contract on the driver before Ray dispatch, so schema errors surface up-front rather than halfway through a distributed run. v1 ships `JsonlSource` / `JsonlSink`; S3, Parquet, and Delta slot in as additional `BatchSource`/`BatchSink` subclasses without changing the runner API. Resumable checkpointing and actor-pool execution mode (for warm loads on expensive `load()` — FLUX, GraphCast, SDXL) are tracked as follow-up issues.
+
+The next track is the other deployment pattern:
+
 - **`SheafWorker`** — queue-consumer pattern for long-running inference. FLUX at 50 steps, GraphCast multi-day rollouts, VideoMAE on long clips — these don't belong in an HTTP request. Enqueue, process, webhook on completion. Redis Streams, SQS, Kafka.
 
 And v0.7 is the economics argument: LoRA adapter multiplexing (one GPU deployment serves many fine-tunes, per-request adapter hot-swap) and a typed client SDK so Sheaf is consumable from anywhere, not just Python services.

@@ -2,7 +2,7 @@
 title: "Sheaf: vLLM for Non-Text Foundation Models"
 date: 2026-04-14
 draft: false
-description: "vLLM solved inference for text LLMs. The same gap exists for every other class of foundation model — time series, tabular, molecular, diffusion, and more. Sheaf fills it: typed contracts, model-type-aware batching, streaming, caching, observability, offline batch inference, and 27 backends on PyPI."
+description: "vLLM solved inference for text LLMs. The same gap exists for every other class of foundation model — time series, tabular, molecular, diffusion, and more. Sheaf fills it: typed contracts, model-type-aware batching, streaming, caching, observability, offline batch inference, an async-job worker, and 27 backends on PyPI."
 tags:
   - open-source
   - mlops
@@ -63,12 +63,20 @@ pip install "sheaf-serve[materials]"           # MACE-MP-0
 pip install "sheaf-serve[audio]"               # Whisper / faster-whisper
 pip install "sheaf-serve[audio-generation]"    # MusicGen
 pip install "sheaf-serve[tts]"                 # Bark
+pip install "sheaf-serve[kokoro]"              # Kokoro TTS — voice + speed per request
 pip install "sheaf-serve[vision]"              # DINOv2 / OpenCLIP / SAM2 / Depth Anything / DETR
+pip install "sheaf-serve[pose]"                # ViTPose top-down pose estimation
+pip install "sheaf-serve[optical-flow]"        # RAFT optical flow (torchvision)
+pip install "sheaf-serve[lidar]"               # PointNet 3D point cloud
 pip install "sheaf-serve[earth-observation]"   # Prithvi (IBM/NASA)
 pip install "sheaf-serve[weather]"             # GraphCast
+pip install "sheaf-serve[diffusion]"           # FLUX.1-schnell / FLUX.1-dev
+pip install "sheaf-serve[multimodal-generation]"  # SDXL img2img + inpainting
+pip install "sheaf-serve[video]"               # VideoMAE / TimeSformer
 pip install "sheaf-serve[feast]"               # Feast feature store integration
 pip install "sheaf-serve[modal]"               # Modal serverless deployment
 pip install "sheaf-serve[batch]"               # Offline batch inference (Ray Data)
+pip install "sheaf-serve[worker]"              # Async-job worker (Redis Streams)
 ```
 
 ## The serving layer
@@ -338,15 +346,16 @@ Feast errors (store unavailable, feature missing) return 502 and don't crash the
 | Multimodal generation | ✅ v0.5 | SDXL — img2img + inpainting via diffusers pipelines |
 | LiDAR / 3D point cloud | ✅ v0.5 | PointNet — embed + ModelNet40 classify (pure-PyTorch) |
 | Offline batch inference | ✅ v0.6 | `BatchRunner` — Ray Data `map_batches` substrate, JSONL source/sink in v1 |
-| Async job queue | 🔜 v0.6 | `SheafWorker` — Redis/SQS/Kafka; priority lanes, webhooks |
-| Adapter multiplexing | 🔜 v0.7 | LoRA hot-swap per request; one deployment, many fine-tunes |
-| Client SDK | 🔜 v0.7 | Typed Python client + OpenAPI spec |
+| Actor-pool batch mode | ✅ v0.6.1 | Opt-in `compute="actors"` on `BatchSpec` — warm `load()` per actor for FLUX / GraphCast / SDXL |
+| Async job queue | ✅ v0.7 | `SheafWorker` — Redis Streams + consumer groups; at-least-once + dead-letter; per-job webhook on completion |
+| Adapter multiplexing | 🔜 v0.8 | LoRA hot-swap per request; one deployment, many fine-tunes |
+| Client SDK | 🔜 v0.8 | Typed Python client + OpenAPI spec |
 
 The V1 boundary is deliberately narrow: stateless, frozen models with synchronous or streaming responses. Session management (RL policy serving) and mutable weights (continual learning) are v2 problems — I'd rather ship something useful now than design for everything upfront.
 
 ## What's next
 
-v0.6.0 is on PyPI. The serving layer is complete — every major non-text model class, Feast integration, Modal serverless deployment, full observability, streaming SSE, model-type-aware batching, and offline batch inference.
+v0.7.0 is on PyPI. The serving layer is complete — every major non-text model class, Feast integration, Modal serverless deployment, full observability, streaming SSE, model-type-aware batching, *and* both deployment shapes that HTTP request/response is the wrong fit for: offline batch and async job queue.
 
 v0.4 shipped generation and video: FLUX for diffusion image generation and VideoMAE / TimeSformer for video understanding and classification.
 
@@ -357,15 +366,16 @@ v0.5 shipped the production ops layer:
 - **`bucket_by` batching** — the time series problem from the original design: 24-step and 96-step requests landing in the same Ray Serve batch window no longer force each other to pad. `batch_policy.bucket_by = "horizon"` routes them into homogeneous sub-batches before the backend sees them.
 - **Observability** — Prometheus metrics (`sheaf_requests_total`, `sheaf_request_duration_seconds`), structured JSON logging with request IDs, and OpenTelemetry traces with `sheaf.predict` / `sheaf.feast.resolve` / `sheaf.backend.infer` spans.
 
-v0.6 track 1 shipped offline batch inference — one of the two deployment patterns that HTTP request/response is the wrong shape for:
+v0.6 shipped offline batch inference and the warm-load actor-pool variant:
 
-- **`BatchRunner`** — same backend, same typed contract, offline batch mode. Ray Data `map_batches` is the substrate; stateless tasks with a worker-local backend cache so `load()` fires once per worker process, not once per batch. `BatchSpec` mirrors `ModelSpec` for backend selection and adds `source` / `sink` / `batch_size` / `num_cpus` / `num_gpus`. Rows are pre-validated against the same Pydantic contract on the driver before Ray dispatch, so schema errors surface up-front rather than halfway through a distributed run. v1 ships `JsonlSource` / `JsonlSink`; S3, Parquet, and Delta slot in as additional `BatchSource`/`BatchSink` subclasses without changing the runner API. Resumable checkpointing and actor-pool execution mode (for warm loads on expensive `load()` — FLUX, GraphCast, SDXL) are tracked as follow-up issues.
+- **`BatchRunner`** — same backend, same typed contract, offline batch mode. Ray Data `map_batches` is the substrate. `BatchSpec` mirrors `ModelSpec` for backend selection and adds `source` / `sink` / `batch_size` / `num_cpus` / `num_gpus`. Rows are pre-validated against the same Pydantic contract on the driver before Ray dispatch, so schema errors surface up-front rather than halfway through a distributed run. v1 ships `JsonlSource` / `JsonlSink`; S3, Parquet, and Delta slot in as additional `BatchSource`/`BatchSink` subclasses without changing the runner API. Output order is deterministic — the runner injects a row-index sentinel and sorts on the way out, since Ray Data's streaming executor doesn't preserve order on its own.
+- **Actor-pool execution mode** (v0.6.1) — opt-in `compute="actors"` on `BatchSpec` plus `num_actors=N` switches dispatch to a Ray Data actor pool. Each actor calls `backend.load()` once at `__init__`; the loaded model persists for the actor's lifetime. Eliminates per-batch cold-start cost on FLUX (~30-60s `load()`), GraphCast, and SDXL — the backends where the stateless task path's worker-cache fallback would otherwise dominate total job time.
 
-The next track is the other deployment pattern:
+v0.7 shipped the other deployment shape — async jobs:
 
-- **`SheafWorker`** — queue-consumer pattern for long-running inference. FLUX at 50 steps, GraphCast multi-day rollouts, VideoMAE on long clips — these don't belong in an HTTP request. Enqueue, process, webhook on completion. Redis Streams, SQS, Kafka.
+- **`SheafWorker`** — queue-consumer pattern for inference where HTTP request/response is the wrong shape. FLUX at 50 steps, GraphCast multi-day rollouts, large-batch SDXL — clients enqueue a typed request, the worker dequeues, runs inference, persists the result, optionally POSTs a webhook on completion. v1 ships Redis Streams + consumer groups (so multiple workers split the work horizontally) and a Redis hash result store with optional TTL. `JobQueue` and `ResultStore` are ABCs; SQS, Kafka, and Postgres slot in as additional subclasses without changing the worker loop. At-least-once delivery — XACK fires only after the result is persisted, so a worker crash mid-job causes redelivery to another consumer. Jobs that exceed `max_retries` go to a dead-letter stream *and* get a `status="failed"` `JobResult` written to the store, so `JobQueueClient.wait_for_result(job_id, timeout)` doesn't hang on poison pills.
 
-And v0.7 is the economics argument: LoRA adapter multiplexing (one GPU deployment serves many fine-tunes, per-request adapter hot-swap) and a typed client SDK so Sheaf is consumable from anywhere, not just Python services.
+And v0.8 is the economics argument: LoRA adapter multiplexing (one GPU deployment serves many fine-tunes, per-request adapter hot-swap) and a typed client SDK so Sheaf is consumable from anywhere, not just Python services.
 
 The bet was that getting the contracts right first was worth more than shipping half-baked optimizations behind the wrong abstractions. So far, that bet looks right.
 

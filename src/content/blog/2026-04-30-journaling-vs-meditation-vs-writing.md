@@ -1,7 +1,7 @@
 ---
 title: "Journaling vs Meditation vs Writing"
 date: 2026-04-30
-draft: true
+draft: false
 description: "Three practices that look similar from the outside but make different demands. Meditation is non-judgmental of arising thoughts; writing is the most judgmental form of selection there is; journaling is the third thing that lives in between. A notebook entry from April 2024 trying to draw the lines."
 tags:
   - personal
@@ -13,8 +13,6 @@ tags:
 ![Notebook page on journaling, in red ink, dated April 9 2024](/images/notebook-journaling-7037.jpg)
 
 *Switched to red ink for this entry, which I take as evidence that the writer wanted to mark it as a different kind of thinking than the technical pages it sits between. The post is a transcription of the distinction the page is reaching for.*
-
-<!-- CANDIDATE OPENER — written 2026-04-30, swap or cut as needed -->
 
 The desk has three things on it: a notebook open to a blank page, a pen, and the laptop closed. Behind me, a meditation cushion that I sat on for twenty minutes before I came over here. The question I keep failing to answer cleanly is: of the three things I just did or am about to do — sit, write, journal — which one am I doing right now? They look the same from the outside. They feel similar in the muscles of attention. But the demand each one makes on me is different, and the failure mode of each is different too, and I keep mixing them up.
 
@@ -52,8 +50,6 @@ Knowing which one you're doing matters because the failure mode of each is diffe
 
 The most common failure I make personally is mistaking *failed writing* for *successful journaling* — using the notebook as a place to grind on a draft because the laptop felt too judgmental, then ending the session disappointed that the draft isn't done. The session was fine. I just labeled it wrong.
 
-## TODO before publish
+---
 
-- [x] Open with a concrete scene — candidate opener drafted above the "The thread" header (swap or cut)
-- [x] Define each practice in terms of the writer's *attention budget*, not the activity itself — added as its own section after "The real axis is goal-directedness"
-- [x] Tighten — current draft over-explains the binary that the notebook already moved past — restructured: lead now with goal-directedness as the real axis; the three-practices framing falls out of that lens; "The thread" / "The frame" / "Why this matters" merged into three tighter sections; closes with a personal-failure note
+*korbonits.com is my personal blog. I write about ML, software, and books.*

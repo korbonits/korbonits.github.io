@@ -1,7 +1,7 @@
 ---
 title: "Planning an ML Survey Paper: Notes from a Notebook"
 date: 2026-04-30
-draft: true
+draft: false
 description: "An operational artifact, not a polished essay. The numbered checklist I worked out across three notebook entries in April 2024 — what venue, what topic, how to find the bibliography, solo or co-author, milestones — when I was deciding whether to write an ML survey paper. Useful for anyone in a similar spot."
 tags:
   - machine-learning
@@ -88,9 +88,6 @@ With the benefit of two years of hindsight (the missed AMLC deadline, the venue 
 
 The pattern across all five is the same: *commit to the constraints early so the discretionary work is robust to the non-discretionary work that will inevitably show up.*  The original notebook plan was none of this.  It was "topic, then bibliography, then submission."  That order works for someone with a research group and a clear runway.  For someone planning a side-project survey on personal time, it's exactly backwards.
 
-## TODO before publish
+---
 
-- [x] Honest framing for the body — opening section now names the real failure mode: started in Overleaf, missed the AMLC internal deadline, then return-to-team forced an internal-transfer search to take priority over the survey
-- [x] Pull the actual JMLR / JAIR / IEEE submission guidelines and link to them — done above
-- [x] Cut the meta-commentary — deleted "What I learned" section entirely; salvaged the solo-vs-co-author insight into the new "What I'd do differently" closing section
-- [x] Add "What I'd do differently if I started today" closing section — five-point hindsight that uses the venue check (framework before topic, write a position essay first, cross JMLR off, decide solo-vs-co-author early, never scope a side-project against a non-discretionary deadline you don't control)
+*korbonits.com is my personal blog. I write about ML, software, and books.*

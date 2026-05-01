@@ -1,7 +1,7 @@
 ---
 title: "A Room of One's Own, in a Bleak House"
 date: 2026-04-30
-draft: true
+draft: false
 description: "A personal arc through writing classes I never finished, the temptation of the word processor, social media as voyeurism, and the late realization that 'who am I writing for' has a real answer — and it's mostly not the public. Dickens's Bleak House (1852-53) for the audience question, Woolf's A Room of One's Own (1929) for the conditions question, restated for a generation that has the room and the money but not the silence."
 tags:
   - personal
@@ -14,8 +14,6 @@ tags:
 ![Notebook page titled "Bleak House: who is the public", dense flowing prose, April 2024](/images/notebook-writing-7041.jpg)
 
 *The page that gives the post its title. The handwriting is denser than the surrounding entries — the writer trying to keep up with a thought that almost got away. The flow itself is part of the argument the post is making about why this medium produces different writing than a word processor.*
-
-<!-- CANDIDATE OPENER — written 2026-04-30, swap or cut as needed -->
 
 There's a shelf in my apartment with about fifteen books on writing. Strunk and White. Anne Lamott. Stephen King. Annie Dillard. Mary Karr. Two different Steven Pressfields. A copy of *Bird by Bird* with the receipt still tucked inside as a bookmark, page 42. I bought all of them between 2018 and 2024, and I have read approximately one and a half of them.
 
@@ -71,11 +69,6 @@ When you write on a word processor for "the public," the audience is imaginary, 
 
 The Renaissance of writing — long-form essays, Substack, blogs — is, to a first approximation, people rediscovering that the *audience* part of writing was the broken thing, not the prose part. Woolf's room, restated for a generation that has the room and the money but not the silence.
 
-## TODO before publish
+---
 
-- [x] Open with the scene from page 7039: the writer holding a notebook, looking at the bookshelf full of books on writing they didn't read — candidate opener drafted above "The thread" header (swap or cut)
-- [x] Cut the social-media tangent — deleted Section 3 entirely (was a 2-sentence stub gesturing at the notebook's aside).  The argument survives where it earns its keep: the "A room from the feed" bullet inside the Woolf "rooms" list.  Bonus fix: "Three movements in the original notebook entry" is now accurate (it had been listing four).
-- [x] Bleak House publication facts verified against Wikipedia: 19 monthly numbers (final XIX–XX a double issue, 20 installments total) by Bradbury & Evans, March 12 1852 – September 12 1853, single-volume edition same day as final issue
-- [x] Woolf citation verified against Wikipedia: lectures October 20 1928 at Newnham, October 26 1928 at Girton, *A Room of One's Own* published September 28 1929 by Hogarth Press (UK) and Harcourt Brace (US)
-- [x] Title set to **"A Room of One's Own, in a Bleak House"** — names both references, commits to the thesis (a private room from the public-facing house Dickens built), reads as the kind of title you click.  Filename kept as `writing-by-hand-who-is-the-public.md` since renaming would break any links already pointing to it.
-- [x] Decide: stands alone, not paired as a two-part series with [Journaling vs Meditation vs Writing](/blog/2026-04-30-journaling-vs-meditation-vs-writing).  The two share notebook ink and date range but argue different shapes (this is an argument post; that one is a taxonomy post), and a two-part series framing would commit to a third and fourth.  Cross-link in closing instead.
+*korbonits.com is my personal blog. I write about ML, software, and books.*

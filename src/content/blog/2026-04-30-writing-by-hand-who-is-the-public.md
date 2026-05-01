@@ -15,19 +15,21 @@ tags:
 
 *The page that gives the post its title. The handwriting is denser than the surrounding entries — the writer trying to keep up with a thought that almost got away. The flow itself is part of the argument the post is making about why this medium produces different writing than a word processor.*
 
-There's a shelf in my apartment with about fifteen books on writing. Strunk and White. Anne Lamott. Stephen King. Annie Dillard. Mary Karr. Two different Steven Pressfields. A copy of *Bird by Bird* with the receipt still tucked inside as a bookmark, page 42. I bought all of them between 2018 and 2024, and I have read approximately one and a half of them.
+Between 2018 and 2024 I read a lot of books *about* writing.  Strunk and White. Anne Lamott. Stephen King's *On Writing* — still one of my favorites.  Annie Dillard.  The classics, the recommendations, the ones everyone tells you to start with.  I made it through about half of the stack, underlined as I went, recommended them to other people in turn.
 
-The notebook in my hand cost six dollars at a stationery store in Greenpoint and weighs less than any one of those books. I have written more in it in the last six months than I have read in any of them, ever.
+I also wrote, but not often.  A draft here, a started essay there, nothing finished.
 
-That's the thing I want to talk about — and the slightly embarrassing fact that the lesson took me about a hundred years and a five-figure stack of unread paperbacks to learn.
+The notebook I'm writing this post in has carried more of my actual writing than any of those books, however good, ever produced *for me.*  That's not their fault.  Reading about writing isn't writing.  That's the thing I want to talk about.
 
 ## The thread
 
-Three movements in the original notebook entry, lightly summarized:
+Three movements in the original notebook entry:
 
 ### 1. Personal history of trying to write
 
-A 2018-2024 lapse. Writing classes — academy of selling, fiction workshops, a non-fiction college class in NYC, a contest submission. A library of books on writing that mostly went unread. Half-starts at fiction, novel-craft, essays. None of it finished.
+A long, intermittent stretch between 2018 and 2024 in which the buying-of-books and the actual-writing never quite kept pace with each other.  About half the writing books got read; the writing itself happened occasionally — a draft here, a started essay there, nothing finished.
+
+The decisive change was that we became parents — first in 2023, then again in 2024.  Between full-time work and two small kids, "discretionary cycles for writing" stopped being a phrase that mapped to any actual time on the calendar.  The shape of the lapse, especially in the back half of that stretch, is the shape of two competing constraints — both real, both non-negotiable, neither of them the books' fault.
 
 ### 2. Word processors made everything worse
 

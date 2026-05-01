@@ -74,13 +74,13 @@ By the end of the afternoon, 19 PRs were open across repos from Apple, ByteDance
 | apple/ml-clara | [#10](https://github.com/apple/ml-clara/pull/10) | 1.1k | open |
 | apple/ml-simplefold | [#52](https://github.com/apple/ml-simplefold/pull/52) | 960 | open |
 | microsoft/VibeVoice | [#338](https://github.com/microsoft/VibeVoice/pull/338) | — | open |
-| AMAP-ML/SkillClaw | [#2](https://github.com/AMAP-ML/SkillClaw/pull/2) | — | open |
+| AMAP-ML/SkillClaw | [#2](https://github.com/AMAP-ML/SkillClaw/pull/2) | — | merged |
 | Osilly/Interleaving-Reasoning-Generation | [#7](https://github.com/Osilly/Interleaving-Reasoning-Generation/pull/7) | — | open |
 | lmgame-org/GamingAgent | [#80](https://github.com/lmgame-org/GamingAgent/pull/80) | — | open |
 | zjunlp/LightMem | [#58](https://github.com/zjunlp/LightMem/pull/58) | — | open |
 | yyfz/Pi3 | [#145](https://github.com/yyfz/Pi3/pull/145) | — | open |
 
-That's roughly 55,000 stars worth of repos, across five major AI labs. Twenty of the twenty-two are still open. MinerU and alphagenome closed theirs — both without merging.
+That's roughly 55,000 stars worth of repos, across five major AI labs. Nineteen of the twenty-two are still open. MinerU and alphagenome closed theirs without merging; AMAP-ML/SkillClaw merged. The merge rate on cold linting PRs is roughly 5%, even with everything done correctly — which is exactly the thesis at the bottom of the post.
 
 There are also a handful of older open PRs doing similar work: replacing black/isort with Ruff in [allenai/OLMo](https://github.com/allenai/OLMo/pull/909), [facebookresearch/dinov2](https://github.com/facebookresearch/dinov2/pull/595), and [microsoft/markitdown](https://github.com/microsoft/markitdown/pull/1718).
 
@@ -94,13 +94,13 @@ The fix: wrap each per-edge VDB upsert in a try/except, collect failures, roll b
 
 Over in [milvus-io/milvus](https://github.com/milvus-io/milvus/pull/49004) (the core C++/Go service), `BloomFilterSet.PkCandidateExist` was reading `currentStat` and `historyStats` without holding `statsMutex` — while every other read method in the same struct took the lock. A concurrent write produces a data race detectable by `-race`. Two lines added, data race closed. The bot greeted me: *"Welcome to milvus-io/milvus 🎉"*
 
-On the pymilvus client side, three API-fix PRs address friction that bites users quietly: `filter=` not accepted as an alias for `expr=` in `AnnSearchRequest`, `consistency_level` returned as an opaque integer instead of its string name, and `uuid.UUID` / `os.PathLike` not inferred as `VARCHAR` in dtype inference. None of these are flashy. All of them are the kind of thing that makes a client library a joy vs. a grind.
+On the pymilvus client side, three API-fix PRs address friction that bites users quietly: [`filter=` not accepted as an alias for `expr=`](https://github.com/milvus-io/pymilvus/pull/3410) in `AnnSearchRequest`, [`consistency_level` returned as an opaque integer](https://github.com/milvus-io/pymilvus/pull/3409) instead of its string name, and [`uuid.UUID` / `os.PathLike` not inferred as `VARCHAR`](https://github.com/milvus-io/pymilvus/pull/3408) in dtype inference. None of these are flashy. All of them are the kind of thing that makes a client library a joy vs. a grind.
 
 In Feast, four PRs merged — sphinx API docs ([#6271](https://github.com/feast-dev/feast/pull/6271)), dead code removal ([#6266](https://github.com/feast-dev/feast/pull/6266)), a fix for five bugs in the Milvus online store ([#6275](https://github.com/feast-dev/feast/pull/6275)), and support for SQL strings as `entity_df` in the remote offline store ([#6265](https://github.com/feast-dev/feast/pull/6265)). The most hazardous of the Milvus five: `update()` was replacing the entire `_collections` cache with a single-entry dict on every call, corrupting all subsequent lookups for any other collection in the same store.
 
 And then there was [Kronos#238](https://github.com/shiyu-coder/Kronos/pull/238) — three silent bugs in sampling and quantization, found via `ty` during a tooling audit. One of them: calling `sample_from_logits(top_p=0.9, top_k=None)` raised a `TypeError` at runtime because the guard let you enter the block, then immediately hit `top_k > 0` on a `None`. The type checker flagged it in five seconds. The fix was three lines. These bugs were invisible in testing because they only surface when exactly one of the two optional sampling params is passed — which is the most natural way to call the function.
 
-The pattern: linting PRs are mostly still open. The real contributions are mostly moving — four of four Feast PRs merged, the pymilvus and milvus core PRs still in review.
+The pattern: linting PRs are mostly still open. The real contributions are mostly moving — four of four Feast PRs merged, two of three pymilvus PRs merged ([#3409](https://github.com/milvus-io/pymilvus/pull/3409) and [#3410](https://github.com/milvus-io/pymilvus/pull/3410)) with one closed without merging ([#3408](https://github.com/milvus-io/pymilvus/pull/3408)), and the milvus core PR still in review.
 
 ## What This Isn't
 

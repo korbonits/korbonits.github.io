@@ -11,13 +11,23 @@ tags:
   - notebook
 ---
 
-*Draft. Source material: handwritten notebook pages dated 2024-04-05, 2024-04-08, and 2024-04-10, photographed as IMG_7035, IMG_7036, IMG_7042.*
+![Notebook page on writing a survey paper, with the numbered process and small sketches of papers and journals, April 8 2024](/images/notebook-survey-7036.jpg)
 
-## Why this post exists
+*The middle of three sittings on the same question. The little sketches in the bottom right — a stack of papers, a process diagram, a "Profit?" label — are the writer trying to convert "I should write a survey" into a workflow. The post is the workflow.*
 
-Most writing-about-writing-ML-papers content is either (a) tactical advice from someone who's already done it twenty times, or (b) handwringing about why you haven't started. This is neither. This is the working notes from the *decision phase* — when you've identified that a survey paper might be the right next thing, and you're trying to figure out how to make it real.
+## I started it in Overleaf, missed the internal deadline, and got pulled into a transfer search
 
-If you're in that phase, the numbered list below might save you the three notebook pages I spent on it.
+That's the honest disclosure to lead with. Across April 2024 I spent three notebook sittings — five days apart — working out how I'd write an ML survey paper. The plan was to submit it to AMLC, Amazon's internal ML conference. I started a draft in Overleaf. I missed the internal submission deadline. And then return-to-team kicked in: I had to spend my discretionary cycles finding an internal transfer rather than finishing the paper. Between the missed deadline and the org pressure to land somewhere new, the survey stopped.
+
+That's a specific failure mode, and it's worth naming because a lot of people who plan papers will recognize at least one half of it:
+
+- The planning was real (three notebook sittings, an outline, a venue).
+- The drafting was real (Overleaf project, opening sections written).
+- The deadline was real and external (a fixed AMLC submission window).
+- The competing priority was real and non-negotiable (return-to-team meant the alternative to "find a transfer" wasn't "write a survey," it was "be without a team").
+- The discretionary work lost. As discretionary work usually does when something non-discretionary lands on top of it.
+
+What follows is the planning artifact — the numbered lists I worked out, the venue research I did *after* (not before) committing to a topic, and what I'd do differently if I started over. If you're in the same decision phase, this might save you a notebook of your own. If you're looking for a how-to from someone who shipped a survey, you're in the wrong post.
 
 ## The sequence (across three sittings)
 
@@ -56,14 +66,31 @@ The numbered list got tighter:
 5. **Etc.**
 6. **Aim milestones.** Plan to about — when? (Originally blank.)
 
-## What I learned
+## What the venues actually want (verified)
 
-- The numbered list got more specific each sitting. That's the real value of a multi-day notebook process: the list of steps gets less abstract.
-- The big shift between sitting 1 and sitting 3 was *committing to a venue before starting the bibliography*, which inverts the naïve approach (write first, find a home later).
-- "Solo or co-author" is the question that actually delays everything; deciding it on day one lets the rest of the plan resolve.
+The notebook listed JMLR, JAIR, and IEEE Transactions as candidates without checking what they said about surveys.  Now checked:
+
+- **JMLR** ([author info](https://www.jmlr.org/author-info.html); [submission portal](https://jmlr.csail.mit.edu/manudb/)).  Direct quote from their guidelines: *"JMLR occasionally publishes surveys by invitation from the editorial board; we do not consider unsolicited survey papers."*  This is the single most important fact the notebook missed — JMLR is **not** a venue for a self-initiated survey.  Cross JMLR off the list unless you can get an invitation first.
+- **JAIR** ([about/submissions](https://www.jair.org/index.php/jair/about/submissions); [submission wizard](https://jair.org/index.php/jair/submission/wizard)).  Accepts surveys, but with teeth: *"Surveys that merely summarise a selection of existing literature without providing new insights or conceptual contributions"* face a "high probability of summary rejection."  In practice this means the survey needs an analytical framework or a re-organization of the field, not just a literature scan.
+- **IEEE TPAMI** ([author info via CSDL](https://www.computer.org/csdl/journal/tp/write-for-us/author)).  Accepts both regular and survey papers.  Survey papers typically run longer and need pre-clearance with the editor; the canonical guidance lives behind the IEEE Computer Society portal which renders client-side, so verify the current page limits and category names directly before submitting.
+
+The bigger lesson: the venue's stance on *unsolicited* surveys is the gating constraint, and you find that out by reading their author info page, not by looking at what they've published.  JMLR has a beautiful catalog of surveys, all by invitation.  A new author has functionally zero shot.
+
+## What I'd do differently if I started today
+
+With the benefit of two years of hindsight (the missed AMLC deadline, the venue research the notebook didn't do, the org turbulence that killed the project), here's the plan I'd run instead:
+
+1. **Pick the framework before the topic.** The notebook treated "subject" as step 1 and bibliography as step 2.  JAIR's guidelines explicitly invert that: a survey without an analytical framework or conceptual contribution gets summary-rejected.  The framework *is* the contribution.  The topic is just where you apply it.
+2. **Write the position essay first.**  If the framework isn't crisp enough to defend in 2,000 words on a blog, it's not crisp enough to carry a 30-page survey.  The blog draft costs a weekend; the survey costs months.  Doing them in that order means you find out cheaply.
+3. **Cross JMLR off the list on day one.**  Invitation-only.  The catalog is gorgeous and irrelevant for an unsolicited submission.  Real candidate venues for a first survey: JAIR (with a defensible framework), IEEE TPAMI (with editor pre-clearance), or a strong workshop or conference survey track.
+4. **Decide solo-or-co-author before the bibliography, not after.**  Solo establishes a position; co-authored consolidates a community.  These are different problems with different bibliographies, different review styles, and different venues.  Picking later means redoing work.
+5. **Don't scope a side-project deadline against an internal-org deadline you don't control.**  AMLC was a real submission window; the return-to-team timeline was a non-discretionary one that landed on top of it.  If I'd started six weeks earlier — *or* picked an external venue with a flexible timeline (JAIR has rolling submissions) — the org turbulence wouldn't have killed the paper.  Don't put a discretionary side-project on the same critical path as a non-discretionary work obligation, ever.
+
+The pattern across all five is the same: *commit to the constraints early so the discretionary work is robust to the non-discretionary work that will inevitably show up.*  The original notebook plan was none of this.  It was "topic, then bibliography, then submission."  That order works for someone with a research group and a clear runway.  For someone planning a side-project survey on personal time, it's exactly backwards.
 
 ## TODO before publish
 
-- [ ] Did I actually write the survey? (No, not yet.) Honest framing: this is a planning artifact from someone who *didn't* finish, not a how-to from someone who did.
-- [ ] Pull the actual JMLR / JAIR / IEEE submission guidelines and link to them
-- [ ] Cut the meta-commentary — the post works better as the raw notebook list with light annotations
+- [x] Honest framing for the body — opening section now names the real failure mode: started in Overleaf, missed the AMLC internal deadline, then return-to-team forced an internal-transfer search to take priority over the survey
+- [x] Pull the actual JMLR / JAIR / IEEE submission guidelines and link to them — done above
+- [x] Cut the meta-commentary — deleted "What I learned" section entirely; salvaged the solo-vs-co-author insight into the new "What I'd do differently" closing section
+- [x] Add "What I'd do differently if I started today" closing section — five-point hindsight that uses the venue check (framework before topic, write a position essay first, cross JMLR off, decide solo-vs-co-author early, never scope a side-project against a non-discretionary deadline you don't control)

@@ -10,23 +10,37 @@ tags:
   - notebook
 ---
 
-*Draft. Source material: handwritten notebook pages dated 2024-04-09 and 2024-04-10, photographed as IMG_7037 and IMG_7038.*
+![Notebook page on journaling, in red ink, dated April 9 2024](/images/notebook-journaling-7037.jpg)
 
-## The thread
+*Switched to red ink for this entry, which I take as evidence that the writer wanted to mark it as a different kind of thinking than the technical pages it sits between. The post is a transcription of the distinction the page is reaching for.*
 
-Three practices, often confused:
+<!-- CANDIDATE OPENER — written 2026-04-30, swap or cut as needed -->
 
-- **Meditation** — sitting with thoughts as they arise, *non-judgmentally*. The mover is the breath. Thoughts come and go; the practice is to attend without grasping or pushing away.
-- **Writing** — the most *judgmental* form of selection there is. The writer chooses what gets into the page and what doesn't. Edits, revises, cuts. Goal-directed: persuade, explain, entertain.
-- **Journaling** — the third thing, in between. Has goals (catch a thought, mark a moment, work something out) but also captures. Less selective than writing, more selective than meditation. Open *and* closed.
+The desk has three things on it: a notebook open to a blank page, a pen, and the laptop closed. Behind me, a meditation cushion that I sat on for twenty minutes before I came over here. The question I keep failing to answer cleanly is: of the three things I just did or am about to do — sit, write, journal — which one am I doing right now? They look the same from the outside. They feel similar in the muscles of attention. But the demand each one makes on me is different, and the failure mode of each is different too, and I keep mixing them up.
 
-## The frame
+This is an attempt to draw the lines.
 
-Meditation says: *the only moment we have is this one, attend to it.*  Writing says: *select from the moments you've had and arrange them.* Journaling says: *let the moments arrive, and then catch the ones that won't survive without you.*
+## The real axis is goal-directedness
 
-The original notebook entry started as "journaling vs writing" — a binary — and ended with the realization that they're more synonymous than the writer thought, and that the real distinction is **whether there's a goal**. Meditation has no goal (or rather: the absence of a goal *is* the goal). Writing has a goal by definition. Journaling chooses, meal by meal, which it wants to be.
+The notebook entry this post is built on started as "journaling vs writing" — a binary — and ended a page later with the realization that *they're more synonymous than the writer thought*. Both involve attending to the page; both involve selecting what to put on it; both produce artifacts. The honest distinction isn't between them. It's between *practices that have a goal* and *practices that don't.*
 
-## Why this matters
+Three practices, sorted by where they land on that axis:
+
+- **Meditation has no goal.** Or rather: the absence of a goal *is* the goal. You sit, you attend to the breath, thoughts arise and pass, and the practice is not to do anything with them. Trying to *get something* out of meditation is the most reliable way to fail at it.
+- **Writing has a goal by definition.** The writer chooses what goes on the page in service of something — persuade, explain, entertain, settle a question, sell a thing. Selection is the central act. The page is an instrument.
+- **Journaling sits in between, and which way it leans is a per-session choice.** Some sessions are goal-directed (work something out, decide a thing, draft a passage). Some are capture (catch a thought before it leaves, mark a moment). Most are both. The practice is choosing, page by page, which it wants to be — and tolerating the ambiguity instead of forcing it into one of the other two boxes.
+
+## Attention budgets
+
+The cleaner way to read these three is by what they ask of the writer's *attention budget*:
+
+- **Meditation** spends attention on the present moment and asks for nothing back. Output: zero artifacts. Inventory: a slightly clearer mind.
+- **Writing** spends attention on the artifact and asks the writer to subordinate the present moment to it. Output: a finished thing. Inventory: a draft.
+- **Journaling** spends attention on the present moment *and* leaves a residue. Output: a page that wasn't planned. Inventory: a record of what you were paying attention to before you knew it mattered.
+
+That's the shape. The activity (sitting, typing, longhand) is incidental. What matters is what the practice is asking your attention to do, and whether it's asking for an artifact in return.
+
+## Why mixing them up matters
 
 Most advice about "writing every day" conflates these. Morning pages are journaling, not writing. Bullet journaling is record-keeping, not journaling. A lot of meditation-app journaling prompts are *therapy*, not meditation, and not really journaling either.
 
@@ -36,8 +50,10 @@ Knowing which one you're doing matters because the failure mode of each is diffe
 - **Failed writing** = no editing, no shape, no audience, no point.
 - **Failed journaling** = either becomes therapy (if too goal-directed) or becomes meditation that someone wrote down (if not selective enough).
 
+The most common failure I make personally is mistaking *failed writing* for *successful journaling* — using the notebook as a place to grind on a draft because the laptop felt too judgmental, then ending the session disappointed that the draft isn't done. The session was fine. I just labeled it wrong.
+
 ## TODO before publish
 
-- [ ] Open with a concrete scene — sitting at the desk, choosing which to do
-- [ ] Define each practice in terms of the writer's *attention budget*, not the activity itself
-- [ ] Tighten — current draft over-explains the binary that the notebook already moved past
+- [x] Open with a concrete scene — candidate opener drafted above the "The thread" header (swap or cut)
+- [x] Define each practice in terms of the writer's *attention budget*, not the activity itself — added as its own section after "The real axis is goal-directedness"
+- [x] Tighten — current draft over-explains the binary that the notebook already moved past — restructured: lead now with goal-directedness as the real axis; the three-practices framing falls out of that lens; "The thread" / "The frame" / "Why this matters" merged into three tighter sections; closes with a personal-failure note

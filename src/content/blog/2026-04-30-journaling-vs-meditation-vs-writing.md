@@ -14,7 +14,7 @@ tags:
 
 *Switched to red ink for this entry, which I take as evidence that the writer wanted to mark it as a different kind of thinking than the technical pages it sits between. The post is a transcription of the distinction the page is reaching for.*
 
-The desk has three things on it: a notebook open to a blank page, a pen, and the laptop closed. Behind me, a meditation cushion that I sat on for twenty minutes before I came over here. The question I keep failing to answer cleanly is: of the three things I just did or am about to do — sit, write, journal — which one am I doing right now? They look the same from the outside. They feel similar in the muscles of attention. But the demand each one makes on me is different, and the failure mode of each is different too, and I keep mixing them up.
+The desk has three things on it: a notebook open to a blank page, a pen, and the laptop closed. I sat for about ten minutes before I came over here. The question I keep failing to answer cleanly is: of the three things I just did or am about to do — sit, write, journal — which one am I doing right now? They look the same from the outside. They feel similar in the muscles of attention. But the demand each one makes on me is different, and the failure mode of each is different too, and I keep mixing them up.
 
 This is an attempt to draw the lines.
 

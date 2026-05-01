@@ -1,0 +1,7 @@
+# Netlify _headers — agent-discovery Link headers (RFC 8288 / RFC 9727).
+# Advertises the RSS feed and sitemap to crawlers and AI agents that
+# inspect response headers rather than (or in addition to) parsing HTML.
+
+/*
+  Link: </rss.xml>; rel="alternate"; type="application/rss+xml"; title="korbonits.com"
+  Link: </sitemap-index.xml>; rel="sitemap"

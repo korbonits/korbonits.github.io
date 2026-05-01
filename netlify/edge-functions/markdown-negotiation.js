@@ -16,30 +16,32 @@
 export default async (request, context) => {
   const url = new URL(request.url);
 
-  // Only intercept canonical post URLs — index, tags, etc. are out of scope.
-  // Match `/blog/<slug>` or `/blog/<slug>/` but not `/blog/<slug>.md`
-  // (avoid loops) and not `/blog/` (the index page).
-  const m = url.pathname.match(/^\/blog\/([^/]+)\/?$/);
-  if (!m) return context.next();
+  // Skip the .md artifacts themselves so we never loop back through.
   if (url.pathname.endsWith('.md')) return context.next();
 
-  // Decide whether the client prefers markdown.  We accept either an
-  // explicit `text/markdown` listing or `text/markdown` with a higher
-  // q-value than `text/html`.  Bare `*/*` is treated as "doesn't care"
-  // and falls through to HTML.
+  // Map canonical HTML URLs to their .md variants.  Two cases today:
+  //   `/`             -> `/index.md`
+  //   `/blog/<slug>`  -> `/blog/<slug>.md`
+  // Add new branches here as more pages get markdown variants.
+  const mdPath = mapToMarkdown(url.pathname);
+  if (!mdPath) return context.next();
+
+  // Decide whether the client prefers markdown.  Accept either an explicit
+  // `text/markdown` listing or `text/markdown` with q-value at least as
+  // high as `text/html`.  Bare `*/*` falls through to HTML.
   const accept = request.headers.get('accept') ?? '';
   if (!prefersMarkdown(accept)) {
-    // Still surface the Vary so caches store the HTML variant correctly.
+    // Still surface Vary so caches store the HTML variant correctly.
     const response = await context.next();
     response.headers.set('Vary', 'Accept');
     return response;
   }
 
-  // Rewrite to the build-time `.md` artifact.  Use the rewrite primitive
-  // rather than a redirect so the agent gets the markdown in one round-trip
-  // and the URL it asked for stays in the address bar.
+  // Rewrite to the build-time `.md` artifact.  fetch() rather than redirect
+  // so the agent gets the markdown in one round-trip and the canonical URL
+  // stays in the address bar.
   const rewritten = new URL(url);
-  rewritten.pathname = `/blog/${m[1]}.md`;
+  rewritten.pathname = mdPath;
   const response = await fetch(rewritten, request);
 
   // Re-emit as a fresh response so we can normalize headers.
@@ -53,6 +55,13 @@ export default async (request, context) => {
     },
   });
 };
+
+function mapToMarkdown(pathname) {
+  if (pathname === '/' || pathname === '') return '/index.md';
+  const m = pathname.match(/^\/blog\/([^/]+)\/?$/);
+  if (m) return `/blog/${m[1]}.md`;
+  return null;
+}
 
 function prefersMarkdown(accept) {
   if (!accept) return false;

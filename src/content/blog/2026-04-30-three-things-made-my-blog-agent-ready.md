@@ -127,19 +127,3 @@ For a personal blog, "agent-ready" boils down to three additions: an explicit AI
 ---
 
 *korbonits.com is my personal blog. I write about ML, software, and books.*
-
----
-
-## TODO before publish
-
-- [x] Screenshot of the final 50 / Level 4 scan result embedded above the opener
-- [x] Vibe-coding tag kept (sits alongside the curriculum posts; matches the read-scan / ship-three-files / re-scan / write-up shape)
-- [x] Pre-publish pass (2026-04-30):
-  - Title count fixed: collapsed the two OAuth bullets into one ("OAuth metadata, two flavors"), so the body now lists the five it claims in the title
-  - Updated the "all six" callback in the same section to "all five" + softened "half the scanner's checks" to "a meaningful slice"
-  - Softened the Level claim: clarified that 2 categories cleared took the score to Level 2 and the third jumped it to Level 4 (Level 3 was skipped, presumably reserved for sites that clear at least one of the API/Auth checks)
-  - Scoped the Level 4 framing: "for a content site like this one, *appears* to be awarded for clearing applicable categories" rather than asserting it as a general rule
-  - Added the standard footer line for consistency with the bulk-OSS and SMT posts
-  - Verified the `prefersMarkdown` snippet matches the live edge function semantically (the post version uses one `.map` instead of two for readability — same logic)
-- [ ] Optional: also screenshot the original 25 / Level 1 result for a "before" image.  This is harder to reproduce; if no screenshot exists, the prose-only version stands fine.
-- [ ] **Follow-up (after publish): package the pattern as `astro-markdown-for-agents`.**  The build-time `.md` endpoint + edge-function negotiation are reusable across any Astro/Netlify site.  Shape: a one-line `npm install`, an Astro integration that auto-registers the `.md` endpoints for any content collection (defaulting to `blog`), and a generated edge function the user drops into `netlify/edge-functions/`.  Stretch: an adapter for Cloudflare Pages.  If shipped, this post gets a link to the package and a one-line "I extracted the pattern from this post into" callout.

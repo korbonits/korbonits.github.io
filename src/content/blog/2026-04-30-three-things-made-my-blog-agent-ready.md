@@ -1,7 +1,7 @@
 ---
 title: "Three Things Made My Blog Agent-Ready. Five I Skipped on Purpose."
 date: 2026-04-30
-draft: true
+draft: false
 description: "Cloudflare's isitagentready.com scored korbonits.com at 25 / Level 1 'Basic Web Presence.' Two hours and three small additions later it scored 50 / Level 4 'Agent-Integrated.' The other half of the points came from checks that don't apply to a personal blog — and shipping fake compliance for them would be theatre, not value."
 tags:
   - blog-development
@@ -33,9 +33,9 @@ The interesting part isn't the score change. It's the gap between *what the scan
 | Commerce | not checked | not checked |
 | **Overall** | **25 / Level 1** | **50 / Level 4** |
 
-The "Level 4" upgrade is the surprise. Even though the raw score moved by only 25 points (out of 100), the scanner promotes you when you fully clear *categories* — not when you accumulate raw points. Three categories at 100 unlocks Level 4 even when the API/Auth column stays at zero. That's a fair grading rubric for a content site.
+The "Level 4" upgrade is the surprise. Even though the raw score moved by only 25 points (out of 100), the scanner appears to promote you in larger jumps when you fully clear *categories* than when you accumulate raw points. Two categories at 100 took me from Level 1 to Level 2; the third category cleared jumped me from Level 2 to Level 4 (Level 3 was skipped — presumably reserved for sites that clear at least one of the API/Auth checks). Either way, three of the four scored categories at 100 was enough for "Agent-Integrated" with the API/Auth column still at zero. That's a fair grading rubric for a content site.
 
-## What I shipped (three things, ~2 hours)
+## What I shipped
 
 ### 1. Content Signals in robots.txt
 
@@ -102,18 +102,17 @@ The full code lives in [the commit history of korbonits.github.io](https://githu
 
 ## What I skipped on purpose (and why)
 
-The scanner reports six failing checks I did not address. Each one's a real spec. None of them apply to a personal blog:
+The scanner reports five failing checks I did not address. Each one's a real spec. None of them apply to a personal blog:
 
 - **API Catalog (RFC 9727)** — `/.well-known/api-catalog` advertises an OpenAPI spec, service docs, and a status endpoint. I don't have an API. I have a blog. Publishing an empty linkset to clear the check would be misleading.
-- **OAuth/OIDC discovery** — `/.well-known/openid-configuration` advertises an authorization server. I don't run one. There are no protected resources to authenticate against.
-- **OAuth Protected Resource Metadata (RFC 9728)** — same shape, same N/A.
+- **OAuth metadata, two flavors** — `/.well-known/openid-configuration` (OIDC discovery) and `/.well-known/oauth-protected-resource` (RFC 9728). The first advertises an authorization server; the second describes a protected resource that needs one. I run neither. Same N/A for the same reason: nothing on the site requires authentication.
 - **MCP Server Card (SEP-1649)** — `/.well-known/mcp/server-card.json` describes an MCP server you operate. I do not operate an MCP server. The blog is not a server.
 - **Agent Skills index** — `/.well-known/agent-skills/index.json` lists callable skills. The blog has no skills to call. Posts are content, not actions.
 - **WebMCP** — `navigator.modelContext.provideContext()` exposes JavaScript-callable tools to in-browser agents. The blog has no tools to expose. Reading is the entire interaction.
 
 Plus the four commerce protocols (x402, MPP, UCP, ACP) — also N/A, also explicitly listed by the scanner as "informational; not affecting score."
 
-The pattern across all six: they are gates for sites that **publish APIs, run protected services, or sell things.** A personal blog publishes content. Half the scanner's checks are simply not the right questions to ask of it.
+The pattern across all five: they are gates for sites that **publish APIs, run protected services, or sell things.** A personal blog publishes content. A meaningful slice of the scanner's checks are simply not the right questions to ask of it.
 
 This is the same lesson I wrote about [last week](/blog/2026-04-12-bulk-oss-contributions-ruff-and-ci): there's a difference between *correct* and *wanted*. The scanner gives you a checklist; clearing it without thinking is correctness theatre. The right move is to ship what your audience (in this case, AI agents reading prose) actually needs, and skip what they don't.
 
@@ -121,15 +120,26 @@ This is the same lesson I wrote about [last week](/blog/2026-04-12-bulk-oss-cont
 
 A 25 → 50 score change reads modest. A Level 1 → Level 4 designation reads heroic. Both are accurate. The difference is what gets weighted: a high raw score requires you to publish things you don't have, and a high level just requires you to fully address the things that apply to you.
 
-The scanner's design quietly endorses this. The "Level 4: Agent-Integrated" badge is awarded for clearing applicable categories, not for accumulating points. That's a smarter rubric than the headline number suggests.
+The scanner's design quietly endorses this. For a content site like this one, "Level 4: Agent-Integrated" appears to be awarded for clearing the applicable categories rather than for accumulating points across all of them. That's a smarter rubric than the headline number suggests, at least for the slice of the scanner that maps to a personal blog.
 
 For a personal blog, "agent-ready" boils down to three additions: an explicit AI stance in robots.txt, response headers that point at your feed, and a markdown variant of every page agents are likely to read. Two hours of work, one trap to avoid (test the path the scanner actually probes), one deploy. Everything else is for sites you don't have.
 
 ---
 
+*korbonits.com is my personal blog. I write about ML, software, and books.*
+
+---
+
 ## TODO before publish
 
-- [x] Add a screenshot of the final 50 / Level 4 scan result near the top — embedded as `/images/agent-readiness-after.png` above the opener
+- [x] Screenshot of the final 50 / Level 4 scan result embedded above the opener
+- [x] Vibe-coding tag kept (sits alongside the curriculum posts; matches the read-scan / ship-three-files / re-scan / write-up shape)
+- [x] Pre-publish pass (2026-04-30):
+  - Title count fixed: collapsed the two OAuth bullets into one ("OAuth metadata, two flavors"), so the body now lists the five it claims in the title
+  - Updated the "all six" callback in the same section to "all five" + softened "half the scanner's checks" to "a meaningful slice"
+  - Softened the Level claim: clarified that 2 categories cleared took the score to Level 2 and the third jumped it to Level 4 (Level 3 was skipped, presumably reserved for sites that clear at least one of the API/Auth checks)
+  - Scoped the Level 4 framing: "for a content site like this one, *appears* to be awarded for clearing applicable categories" rather than asserting it as a general rule
+  - Added the standard footer line for consistency with the bulk-OSS and SMT posts
+  - Verified the `prefersMarkdown` snippet matches the live edge function semantically (the post version uses one `.map` instead of two for readability — same logic)
 - [ ] Optional: also screenshot the original 25 / Level 1 result for a "before" image.  This is harder to reproduce; if no screenshot exists, the prose-only version stands fine.
-- [x] Vibe-coding tag kept.  Post sits alongside the curriculum posts (stocks dashboard, /now page) and the implementation pattern (read scan, ship three small files, re-scan, write up the lesson) is the curriculum's signature shape — even if the *content* is about agent-readiness rather than vibe-coding directly.
-- [ ] **Follow-up: package the pattern as `astro-markdown-for-agents`.**  The build-time `.md` endpoint + edge-function negotiation are reusable across any Astro/Netlify site.  Shape: a one-line `npm install`, an Astro integration that auto-registers the `.md` endpoints for any content collection (defaulting to `blog`), and a generated edge function the user drops into `netlify/edge-functions/`.  Stretch: an adapter for Cloudflare Pages.  If shipped, this post gets a link to the package and a one-line "I extracted the pattern from this post into" callout.
+- [ ] **Follow-up (after publish): package the pattern as `astro-markdown-for-agents`.**  The build-time `.md` endpoint + edge-function negotiation are reusable across any Astro/Netlify site.  Shape: a one-line `npm install`, an Astro integration that auto-registers the `.md` endpoints for any content collection (defaulting to `blog`), and a generated edge function the user drops into `netlify/edge-functions/`.  Stretch: an adapter for Cloudflare Pages.  If shipped, this post gets a link to the package and a one-line "I extracted the pattern from this post into" callout.

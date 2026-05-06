@@ -13,7 +13,7 @@ tags:
 
 ![Notebook page on writing a survey paper, with the numbered process and small sketches of papers and journals, April 8 2024](/images/notebook-survey-7036.jpg)
 
-*The middle of three sittings on the same question. The little sketches in the bottom right — a stack of papers, a process diagram, a "Profit?" label — are the writer trying to convert "I should write a survey" into a workflow. The post is the workflow.*
+*The middle of three sittings on the same question. The little sketches in the bottom right — a stack of papers, a process diagram, a "Profit?" label — are me trying to convert "I should write a survey" into a workflow. The post is the workflow.*
 
 ## I started it in Overleaf, missed the internal deadline, and got pulled into a transfer search
 
@@ -49,7 +49,7 @@ The five-step plan that emerged:
 4. *(blank)*
 5. **Profit.**
 
-(The blank step 4 is in the original notebook, deliberately left there. The honest step 4 is "submit and revise indefinitely," which the writer was clearly avoiding.)
+(The blank step 4 is in the original notebook, deliberately left there. The honest step 4 is "submit and revise indefinitely," which I was clearly avoiding.)
 
 A side-question that the notebook flags but doesn't resolve: **solo or co-author?** Both are legitimate; the answer probably depends on whether you're writing a survey to *establish a position* (solo, slower, more credit) or to *consolidate a community* (co-authored, faster, more political).
 

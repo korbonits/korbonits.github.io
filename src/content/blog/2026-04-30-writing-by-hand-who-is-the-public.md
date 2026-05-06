@@ -13,7 +13,7 @@ tags:
 
 ![Notebook page titled "Bleak House: who is the public", dense flowing prose, April 2024](/images/notebook-writing-7041.jpg)
 
-*The page that gives the post its title. The handwriting is denser than the surrounding entries — the writer trying to keep up with a thought that almost got away. The flow itself is part of the argument the post is making about why this medium produces different writing than a word processor.*
+*The page that gives the post its title. The handwriting is denser than the surrounding entries — me trying to keep up with a thought that almost got away. The flow itself is part of the argument the post is making about why this medium produces different writing than a word processor.*
 
 Between 2018 and 2024 I read a lot of books *about* writing.  Strunk and White. Anne Lamott. Stephen King's *On Writing* — still one of my favorites.  Annie Dillard.  The classics, the recommendations, the ones everyone tells you to start with.  I made it through about half of the stack, underlined as I went, recommended them to other people in turn.
 

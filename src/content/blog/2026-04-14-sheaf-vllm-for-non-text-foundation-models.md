@@ -2,7 +2,7 @@
 title: "Sheaf: vLLM for Non-Text Foundation Models"
 date: 2026-04-14
 draft: false
-description: "vLLM solved inference for text LLMs. The same gap exists for every other class of foundation model — time series, tabular, molecular, diffusion, and more. Sheaf fills it: typed contracts, model-type-aware batching, streaming, caching, observability, offline batch inference, an async-job worker, and 27 backends on PyPI."
+description: "vLLM solved inference for text LLMs. The same gap exists for every other class of foundation model — time series, tabular, molecular, diffusion, and more. Sheaf fills it: typed contracts, model-type-aware batching, streaming, caching, observability, offline batch inference, an async-job worker, LoRA adapter multiplexing, a typed Python client, and 27 backends on PyPI."
 tags:
   - open-source
   - mlops
@@ -348,14 +348,15 @@ Feast errors (store unavailable, feature missing) return 502 and don't crash the
 | Offline batch inference | ✅ v0.6 | `BatchRunner` — Ray Data `map_batches` substrate, JSONL source/sink in v1 |
 | Actor-pool batch mode | ✅ v0.6.1 | Opt-in `compute="actors"` on `BatchSpec` — warm `load()` per actor for FLUX / GraphCast / SDXL |
 | Async job queue | ✅ v0.7 | `SheafWorker` — Redis Streams + consumer groups; at-least-once + dead-letter; per-job webhook on completion |
-| Adapter multiplexing | 🔜 v0.8 | LoRA hot-swap per request; one deployment, many fine-tunes |
-| Client SDK | 🔜 v0.8 | Typed Python client + OpenAPI spec |
+| Adapter multiplexing | ✅ v0.8 | LoRA on FLUX + SDXL; per-deployment registry, per-request selection, bucket-by-resolved-adapter |
+| Client SDK | ✅ v0.9 | `sheaf.client` — sync + async + SSE streaming, retry + backoff, typed errors with `request_id`, OpenAPI export |
+| Container + Kubernetes | 🔜 v0.10 | Reference Dockerfile + KubeRay `RayService` example + GHCR publish on tag |
 
 The V1 boundary is deliberately narrow: stateless, frozen models with synchronous or streaming responses. Session management (RL policy serving) and mutable weights (continual learning) are v2 problems — I'd rather ship something useful now than design for everything upfront.
 
 ## What's next
 
-v0.7.0 is on PyPI. The serving layer is complete — every major non-text model class, Feast integration, Modal serverless deployment, full observability, streaming SSE, model-type-aware batching, *and* both deployment shapes that HTTP request/response is the wrong fit for: offline batch and async job queue.
+v0.9.0 is on PyPI. The serving layer is complete — every major non-text model class, Feast integration, Modal serverless deployment, full observability, streaming SSE, model-type-aware batching, *and* both deployment shapes that HTTP request/response is the wrong fit for: offline batch and async job queue. Plus LoRA adapter multiplexing for diffusion backends, and a typed Python client so Sheaf is consumable from anywhere.
 
 v0.4 shipped generation and video: FLUX for diffusion image generation and VideoMAE / TimeSformer for video understanding and classification.
 
@@ -375,9 +376,23 @@ v0.7 shipped the other deployment shape — async jobs:
 
 - **`SheafWorker`** — queue-consumer pattern for inference where HTTP request/response is the wrong shape. FLUX at 50 steps, GraphCast multi-day rollouts, large-batch SDXL — clients enqueue a typed request, the worker dequeues, runs inference, persists the result, optionally POSTs a webhook on completion. v1 ships Redis Streams + consumer groups (so multiple workers split the work horizontally) and a Redis hash result store with optional TTL. `JobQueue` and `ResultStore` are ABCs; SQS, Kafka, and Postgres slot in as additional subclasses without changing the worker loop. At-least-once delivery — XACK fires only after the result is persisted, so a worker crash mid-job causes redelivery to another consumer. Jobs that exceed `max_retries` go to a dead-letter stream *and* get a `status="failed"` `JobResult` written to the store, so `JobQueueClient.wait_for_result(job_id, timeout)` doesn't hang on poison pills.
 
-And v0.8 is the economics argument: LoRA adapter multiplexing (one GPU deployment serves many fine-tunes, per-request adapter hot-swap) and a typed client SDK so Sheaf is consumable from anywhere, not just Python services.
+v0.8 shipped the economics piece — LoRA adapter multiplexing for diffusion:
 
-The bet was that getting the contracts right first was worth more than shipping half-baked optimizations behind the wrong abstractions. So far, that bet looks right.
+- **LoRA on FLUX and SDXL** — `ModelSpec.lora = LoRAConfig(adapters={"sketch": LoRAAdapter(source="hf:user/repo")}, default="sketch")` declares a per-deployment adapter registry. Per-request selection happens via `DiffusionRequest.adapters` (single, fusion across multiple, or weight-override). Local paths and HuggingFace Hub references both work, parsed via the `hf:org/repo[:weight_file]` convention. One GPU deployment serves many fine-tunes — *the* economics argument for diffusion serving.
+- **Bucket-by-resolved-adapter** — `pipeline.set_adapters` is process-global state on the diffusers pipeline, so concurrent requests with different adapters would race inside the same Ray Serve batch window. The deployment groups requests by their resolved `(names, weights)` tuple before dispatch and calls `set_active_adapters` once per homogeneous sub-batch. Implicit when `spec.lora` is set; mutually exclusive with explicit `bucket_by` for v1.
+- **What unit tests can't catch** — the first end-to-end smoke ran FLUX-schnell + a real LoRA on Modal A100 against the actual diffusers wire-up — and discovered that `pipeline.set_adapters([], [])` (the call our deployment was making to deactivate adapters between sub-batches) raises `KeyError('transformer')` instead of disabling. The fix was three lines (route empty names through `pipeline.disable_lora()` instead). But our 39 LoRA unit tests, all with mocked diffusers pipelines, asserted only that we *made* the call — not that the call's shape was real. Mock-only tests can prove "we wrote the right code"; only real-deps tests prove "the right code does what we think." Worth keeping a real-GPU smoke around even when it costs $1 to run.
+
+v0.9 shipped the typed Python client:
+
+- **`SheafClient` / `AsyncSheafClient`** — `client.predict(deployment, request)` POSTs to `/<deployment>/predict` and decodes the response via the discriminated `AnyResponse` union, so callers get back a correctly-typed Pydantic class (`TimeSeriesResponse`, `DiffusionResponse`, …) rather than a raw dict. `httpx`-backed; sync + async share the same error mapping. SSE streaming via `AsyncSheafClient.stream(...)`.
+- **Errors are typed** — `ValidationError` (422), `ServerError` (5xx), `ClientError` (transport / decode), all subclasses of `SheafError`. Each carries `request_id` (the UUID minted on the request) so callers can log-correlate without holding the original request object.
+- **`RetryConfig`** — opt-in exponential backoff, configurable status codes (default 502/503/504), connection-error toggle. Streams bypass retry by design (re-running yields interleaved progress events).
+- **OpenAPI export** — `python -m sheaf.openapi --specs my_module:specs > openapi.json` emits the FastAPI schema without loading any backends, so it runs without a GPU. Multi-language clients can be generated via `openapi-python-client`, `openapi-generator`, etc.
+- **One package, not two** — ships as `sheaf.client` inside `sheaf-serve`, not as a separate `sheaf-client` PyPI package. Schemas stay in one tree; no codegen, no drift. Adding a new model type means registering its request/response in `sheaf.api.union` once and both server discrimination + client decoding pick it up automatically.
+
+v0.10 is the deployment-infra gap: a reference Dockerfile, a KubeRay `RayService` example under `examples/k8s/`, and a GHCR publish workflow on tag. Today Sheaf ships three deployment shapes — `ModelServer` (bring-your-own Ray), `ModalServer` (serverless), and `BatchRunner` / `SheafWorker` (offline / async) — and production K8s clusters running their own Ray have no first-class story. Every team rolls their own image. That's what v0.10 fixes.
+
+The bet was that getting the contracts right first was worth more than shipping half-baked optimizations behind the wrong abstractions. So far, that bet looks right — the LoRA bug above is a tiny piece of evidence: when the abstraction is right, the fix is three lines.
 
 ---
 

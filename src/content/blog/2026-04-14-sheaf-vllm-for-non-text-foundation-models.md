@@ -2,7 +2,7 @@
 title: "Sheaf: vLLM for Non-Text Foundation Models"
 date: 2026-04-14
 draft: false
-description: "vLLM solved inference for text LLMs. The same gap exists for every other class of foundation model — time series, tabular, molecular, diffusion, and more. Sheaf fills it: typed contracts, model-type-aware batching, streaming, caching, observability, offline batch inference, an async-job worker, LoRA adapter multiplexing, a typed Python client, and 27 backends on PyPI."
+description: "vLLM solved inference for text LLMs. The same gap exists for every other class of foundation model — time series, tabular, molecular, diffusion, and more. Sheaf fills it: typed contracts, model-type-aware batching, streaming, caching, observability, offline batch inference, an async-job worker, LoRA adapter multiplexing, a typed Python client, a Docker base image with KubeRay deployment, and 27 backends on PyPI."
 tags:
   - open-source
   - mlops
@@ -350,13 +350,13 @@ Feast errors (store unavailable, feature missing) return 502 and don't crash the
 | Async job queue | ✅ v0.7 | `SheafWorker` — Redis Streams + consumer groups; at-least-once + dead-letter; per-job webhook on completion |
 | Adapter multiplexing | ✅ v0.8 | LoRA on FLUX + SDXL; per-deployment registry, per-request selection, bucket-by-resolved-adapter |
 | Client SDK | ✅ v0.9 | `sheaf.client` — sync + async + SSE streaming, retry + backoff, typed errors with `request_id`, OpenAPI export |
-| Container + Kubernetes | 🔜 v0.10 | Reference Dockerfile + KubeRay `RayService` example + GHCR publish on tag |
+| Container + Kubernetes | ✅ v0.10 | Reference Dockerfile on `ghcr.io/korbonits/sheaf-serve` + KubeRay `RayService` example + GHCR publish on tag (gated by docker run + manifest schema smoke) |
 
 The V1 boundary is deliberately narrow: stateless, frozen models with synchronous or streaming responses. Session management (RL policy serving) and mutable weights (continual learning) are v2 problems — I'd rather ship something useful now than design for everything upfront.
 
 ## What's next
 
-v0.9.0 is on PyPI. The serving layer is complete — every major non-text model class, Feast integration, Modal serverless deployment, full observability, streaming SSE, model-type-aware batching, *and* both deployment shapes that HTTP request/response is the wrong fit for: offline batch and async job queue. Plus LoRA adapter multiplexing for diffusion backends, and a typed Python client so Sheaf is consumable from anywhere.
+v0.10.0 is on PyPI and GHCR. The serving layer is complete — every major non-text model class, Feast integration, Modal serverless deployment, full observability, streaming SSE, model-type-aware batching, *and* both deployment shapes that HTTP request/response is the wrong fit for: offline batch and async job queue. Plus LoRA adapter multiplexing for diffusion backends, a typed Python client so Sheaf is consumable from anywhere, and a Docker base image with a KubeRay deployment example so the Kubernetes story is first-class instead of every team rolling their own.
 
 v0.4 shipped generation and video: FLUX for diffusion image generation and VideoMAE / TimeSformer for video understanding and classification.
 
@@ -390,7 +390,13 @@ v0.9 shipped the typed Python client:
 - **OpenAPI export** — `python -m sheaf.openapi --specs my_module:specs > openapi.json` emits the FastAPI schema without loading any backends, so it runs without a GPU. Multi-language clients can be generated via `openapi-python-client`, `openapi-generator`, etc.
 - **One package, not two** — ships as `sheaf.client` inside `sheaf-serve`, not as a separate `sheaf-client` PyPI package. Schemas stay in one tree; no codegen, no drift. Adding a new model type means registering its request/response in `sheaf.api.union` once and both server discrimination + client decoding pick it up automatically.
 
-v0.10 is the deployment-infra gap: a reference Dockerfile, a KubeRay `RayService` example under `examples/k8s/`, and a GHCR publish workflow on tag. Today Sheaf ships three deployment shapes — `ModelServer` (bring-your-own Ray), `ModalServer` (serverless), and `BatchRunner` / `SheafWorker` (offline / async) — and production K8s clusters running their own Ray have no first-class story. Every team rolls their own image. That's what v0.10 fixes.
+v0.10 shipped the deployment-infra layer:
+
+- **Reference Dockerfile** at the repo root (multi-stage, uv-based; system-Python install — not a venv, since K8s tooling like KubeRay's injected `ray start` does PATH lookup expecting `/usr/local/bin/ray`).  Published to `ghcr.io/korbonits/sheaf-serve:vX.Y.Z` (and `:latest`) on every `v*` tag push.  Users extend it: `FROM ghcr.io/korbonits/sheaf-serve:v0.10.0`, `pip install 'sheaf-serve[your-extras]==0.10.0'`, `COPY server.py .`, `CMD ["python", "server.py"]`.  Worked example at `examples/docker/`.
+- **KubeRay `RayService` example** at `examples/k8s/`.  Uses a new public API, `sheaf.build_app(spec)`, that returns the same Ray Serve Application `ModelServer.run()` deploys internally — making it slot directly into KubeRay's `serveConfigV2.applications[].import_path`.  Same `ModelSpec` shape, K8s-native lifecycle.
+- **Smoke gating before publish.**  The GHCR workflow won't push the image to the registry until two tiers pass: a real `docker run` of the example image with a curl POST to `/chronos/predict` (Tier 1), plus `kubectl apply --dry-run=server` of the example RayService manifest against an installed KubeRay CRD (Tier 2, on a Kind cluster).  We never publish a base image that doesn't actually serve a request, or a manifest that doesn't satisfy KubeRay's schema.
+
+The smoke layer earned its keep: building it caught nine real bugs that would otherwise have shipped — a `pipeline.set_adapters([], [])` `KeyError` from diffusers (only the real-GPU smoke surfaced this; mocks all happily asserted "the call was made"), a venv-vs-K8s `ray` binary path mismatch that put the head pod in `CrashLoopBackOff`, a build-context bug in the example Dockerfile that would have failed for any real user, and several others.  Mock tests prove "we wrote the right code"; real-deps smoke tests prove "the right code does what we think."  Both are necessary; neither is sufficient.
 
 The bet was that getting the contracts right first was worth more than shipping half-baked optimizations behind the wrong abstractions. So far, that bet looks right — the LoRA bug above is a tiny piece of evidence: when the abstraction is right, the fix is three lines.
 

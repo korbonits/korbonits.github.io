@@ -1,11 +1,11 @@
 ---
 title: What If the Feature Store Had Git Built In?
-date: 2026-04-19
-draft: true
-description: A weekend spike exploring whether Dolt — the version-controlled SQL
-  database — could replace the ROW_NUMBER dedupe at the heart of every feature
-  store’s point-in-time join. Four lines of SQL instead of thirteen, and the gap
-  widens with every feature view you add.
+date: 2026-05-15
+draft: false
+description: A weekend spike asked whether Dolt’s AS OF reads could replace the
+  ROW_NUMBER dedupe at the heart of every feature store’s point-in-time join.
+  Four weeks later, the RFC is quiet and the plugin’s get_historical_features
+  works end-to-end against a live Dolt server. Notes on building anyway.
 tags:
   - mlops
   - feature-stores
@@ -17,7 +17,7 @@ A feature store spends most of its lifetime answering one question: *what did th
 
 It works. It’s also a pattern every offline-store backend has to re-implement, and a pattern that, if you get it wrong, silently produces training-serving skew.
 
-Last weekend I asked: *what if the database just did this?*
+A weekend in April I asked: *what if the database just did this?*
 
 ## The Observation
 
@@ -81,11 +81,20 @@ Dolt stayed at one join per feature view: each became one `LEFT JOIN customer_<f
 
 The gap doubled. Each additional feature view costs `ROW_NUMBER` a fresh 6-line CTE; it costs `AS OF` one extra line. Production retrievals touch five to twenty feature views, so the real gap at real scale is substantially larger than the toy numbers suggest.
 
-## What’s Already Built
+## What I Built
 
-Over the weekend: `feast-dolt` as a proper package — config, source, offline store, retrieval job, unit tests. `pull_latest_from_table_or_query` and `pull_all_from_table_or_query` are implemented; `get_historical_features` is stubbed as the primary RFC target.
+`feast-dolt` is now a proper Python package: config, source, offline store, retrieval job. `pull_latest_from_table_or_query`, `pull_all_from_table_or_query`, and — as of this week — `get_historical_features` are all implemented.
 
-I filed [an RFC discussion on feast-dev/feast](https://github.com/feast-dev/feast/discussions/6297) rather than opening a PR, because the shape of this plugin — naming, scope, how it relates to the existing registry — deserves community input before I commit to implementations that’ll be painful to change after a PyPI release.
+The headline implementation issues exactly one `LEFT JOIN <fv_table> AS OF '<revision>' <alias>` per feature view. `as_of` is **required** in the config; there is no silent fallback to per-row PIT. The reproducibility claim is *"the revision is the time,"* and the API enforces it — calling `get_historical_features` without a pinned revision raises rather than guessing.
+
+Two integration tests run against a real `dolt sql-server` loaded with the spike fixtures:
+
+1. End-to-end retrieval of three feature views as of `train_2026_04_01` returns the exact day-1 snapshot per the fixtures — not the drifted day-15 values.
+2. Byte-identical parity between AS OF and ROW_NUMBER on the same dataset.
+
+That second test is the empirical claim of this post, now backed by a passing test rather than a markdown table.
+
+I filed [an RFC discussion on feast-dev/feast](https://github.com/feast-dev/feast/discussions/6297) back in April, when I had the spike but not the implementation, hoping for community input on naming and scope before any upstream PR. That part of the plan didn't go the way I expected — which is the next section.
 
 ## What This Probably Is Not
 
@@ -99,15 +108,23 @@ A few things it’s important to say out loud:
 
 I think the answer is structural rather than technical. Feature stores and versioned databases grew up in different subcultures — one in ML infrastructure, one in data engineering — and the people thinking hard about one tend not to think hard about the other. Feast assumed its offline store was a warehouse and built warehouse-shaped abstractions. Dolt assumed its users were data engineers and built collaboration-shaped abstractions. The overlap — *a feature store that treats data version control as a database-level primitive* — fell in the gap between the two communities.
 
-It’s also possible I’m missing something obvious and the community will tell me so this week. That’s part of why the RFC exists before the code.
+When I filed the RFC, I half-expected someone to tell me what I was missing. The next section is what happened instead.
 
-## Where Next
+## On the Silence
 
-The RFC is live and awaiting feedback. If the direction holds, the headline implementation is `get_historical_features` using `AS OF` joins across feature views — the thing the spike has already proven out on paper. Phase two is a `DoltRegistry` that makes every `feast apply` a commit, with `git blame`-grade visibility into feature-view changes.
+The RFC went quiet. Three and a half weeks, no replies, no reactions. I filed it on April 19; I'm writing this on May 15.
 
-And if the feedback is *no, this is a bad fit* — that’s useful too. Much cheaper than finding out after 0.1.0 ships.
+Two readings, neither flattering, both useful.
 
-The spike, the RFC, and the plugin scaffold are all at [`korbonits/feast-dolt`](https://github.com/korbonits/feast-dolt).
+One: the Feast maintainers and community don't see a Dolt-shaped problem worth merging upstream. A versioned-data offline store is a niche, and the niche may not be theirs to court. That's a real answer; it means `feast-dolt` lives as a community plugin rather than something that eventually moves under `feast-dev/`. Fine.
+
+Two: the RFC asked too much at once. I led with a spike and a stub, and tacked on four open questions — naming, scope, commit granularity, registry packaging. Asking for community input on a stub is asking people to imagine the implementation alongside me. The thing they can actually react to is code.
+
+So I built the thing. `get_historical_features` is implemented, tested against a live Dolt, and demonstrates the empirical claim. I bumped the discussion this week with a link to the commit and the test, and narrowed the asks to two: naming, and `offline_write_batch` commit granularity. Smaller surface, real artifact, easier to push back on.
+
+If the bump goes quiet too, I'll take that as the first reading — keep the plugin as a community artifact and stop courting the upstream. Phase two there is a `DoltRegistry` that makes every `feast apply` a commit, with `git blame`-grade visibility into feature-view changes. Same approach as Phase one: build, then ask.
+
+The spike, the implementation, and the integration tests are all at [`korbonits/feast-dolt`](https://github.com/korbonits/feast-dolt).
 
 -----
 

@@ -1,0 +1,89 @@
+---
+import BlogPost from '../layouts/BlogPost.astro';
+---
+<BlogPost title="Uses" date={new Date('2026-05-17')} description="The tools, languages, and CLI I actually use day-to-day.">
+  <p>
+    A running list of what's on my machine. Inspired by <a href="https://wesbos.com/uses">wesbos.com/uses</a>
+    and the <a href="https://uses.tech">uses.tech</a> directory. For what I'm working on right now, see
+    my <a href="/now">now page</a>.
+  </p>
+
+  <h2>Hardware</h2>
+  <ul>
+    <li><strong>MacBook Air</strong> (M5, 32&nbsp;GB) — the late-2025 13" with the built-in Liquid Retina display (2560&nbsp;×&nbsp;1664).</li>
+    <li><strong>AirPods Pro</strong> for calls and music.</li>
+    <li>Otherwise I'm on the built-in keyboard and trackpad — no external peripherals at the moment.</li>
+  </ul>
+
+  <h2>Terminal</h2>
+  <ul>
+    <li><a href="https://iterm2.com/">iTerm2</a> with <a href="https://www.jetbrains.com/lp/mono/">JetBrains Mono Nerd Font</a> at 12pt.</li>
+    <li>Shell: <code>zsh</code> with <a href="https://starship.rs/">starship</a> as the prompt.</li>
+    <li>Plugins: <a href="https://github.com/zsh-users/zsh-autosuggestions">zsh-autosuggestions</a> and <a href="https://github.com/zsh-users/zsh-syntax-highlighting">zsh-syntax-highlighting</a>.</li>
+    <li>Shell activations: <code>starship</code>, <code>zoxide</code>, <code>mise</code>, <code>fzf</code>.</li>
+  </ul>
+
+  <h2>Browser</h2>
+  <ul>
+    <li><a href="https://www.google.com/chrome/">Chrome</a> as the default.</li>
+    <li><a href="https://arc.net/">Arc</a> and Safari around for cross-checks.</li>
+  </ul>
+
+  <h2>Languages &amp; runtimes</h2>
+  <ul>
+    <li><strong>Python</strong> — <a href="https://docs.astral.sh/uv/">uv</a> for everything. No pip, poetry, pyenv, or conda.</li>
+    <li><strong>Node</strong> — <a href="https://pnpm.io/">pnpm</a> only. Never npm or yarn unless a project pins it.</li>
+    <li><strong>Rust</strong> — <code>cargo</code> via <a href="https://rustup.rs/">rustup</a>, stable toolchain.</li>
+    <li><strong>Go</strong> — standard <code>go</code> toolchain.</li>
+    <li>Versions managed per-project with <a href="https://mise.jdx.dev/">mise</a>.</li>
+  </ul>
+
+  <h2>Editor</h2>
+  <ul>
+    <li><a href="https://code.visualstudio.com/">VS Code</a> is canonical (<code>$EDITOR=code -w</code>).</li>
+    <li><a href="https://cursor.com/">Cursor</a> alongside it for AI-heavy work.</li>
+    <li><a href="https://www.claude.com/product/claude-code">Claude Code</a> for agentic edits in the terminal — this site is largely maintained through it.</li>
+  </ul>
+
+  <h2>Shell &amp; CLI</h2>
+  <p>Default to the Rust-based replacements wherever possible:</p>
+  <ul>
+    <li><a href="https://github.com/BurntSushi/ripgrep">ripgrep</a> (<code>rg</code>) over <code>grep</code></li>
+    <li><a href="https://github.com/sharkdp/fd">fd</a> over <code>find</code></li>
+    <li><a href="https://github.com/sharkdp/bat">bat</a> for viewing files (aliased to <code>cat -p</code>)</li>
+    <li><a href="https://github.com/eza-community/eza">eza</a> for <code>ls</code>/<code>ll</code></li>
+    <li><a href="https://github.com/ajeetdsouza/zoxide">zoxide</a> for jumping around (<code>z &lt;partial&gt;</code>)</li>
+    <li><a href="https://github.com/junegunn/fzf">fzf</a> for fuzzy history (ctrl-r) and file pick (ctrl-t)</li>
+    <li><a href="https://github.com/jesseduffield/lazygit">lazygit</a> when I want a git TUI</li>
+    <li><a href="https://github.com/dandavison/delta">git-delta</a> as the git diff pager</li>
+  </ul>
+
+  <h2>Git</h2>
+  <ul>
+    <li>Commits are SSH-signed (<code>ed25519</code>). Signing stays on.</li>
+    <li>Default branch is <code>main</code>; <code>pull</code> rebases; <code>push</code> auto-sets upstream.</li>
+    <li>Prefer new commits over <code>--amend</code>. Never <code>--no-verify</code>.</li>
+  </ul>
+
+  <h2>Databases</h2>
+  <ul>
+    <li><a href="https://www.postgresql.org/">PostgreSQL 16</a> locally, with <a href="https://github.com/pgvector/pgvector">pgvector</a>.</li>
+    <li><a href="https://tableplus.com/">TablePlus</a> for the GUI when I need to poke at data.</li>
+  </ul>
+
+  <h2>Containers</h2>
+  <ul>
+    <li><a href="https://orbstack.dev/">OrbStack</a> provides the Docker daemon. The <code>docker</code> CLI works against it transparently.</li>
+  </ul>
+
+  <h2>Web3</h2>
+  <ul>
+    <li><a href="https://getfoundry.sh/">Foundry</a> — <code>forge</code>, <code>cast</code>, <code>anvil</code>. No Hardhat unless a project requires it.</li>
+  </ul>
+
+  <h2>This site</h2>
+  <ul>
+    <li>Built with <a href="https://astro.build/">Astro</a>, deployed via GitHub Pages.</li>
+    <li>Source: <a href="https://github.com/korbonits/korbonits.github.io">korbonits/korbonits.github.io</a>.</li>
+  </ul>
+</BlogPost>

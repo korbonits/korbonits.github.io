@@ -1,7 +1,7 @@
 ---
 title: "The Geometry of Language: Embeddings as Manifolds, Writing as Geodesics"
 date: 2026-04-30
-draft: true
+draft: false
 description: "What if 'good writing' is a direction in embedding space, and the model's job is to take the geodesic toward it? March 2024 notebook pages on Amazon Titan embeddings, question-manifolds, the curse of dimensionality, and a six-step experiment plan for treating strategic writing as a path-finding problem."
 tags:
   - machine-learning

@@ -1,7 +1,7 @@
 ---
 title: "Proofs and Essays Are Paths: An LLM ↔ Prover Loop for Falsifying Hallucinations"
 date: 2026-04-30
-draft: true
+draft: false
 description: "If a proof is a path through a formal space and an essay is a path through a semantic one, can we close the loop — translate LLM outputs into a theorem prover, build a knowledge graph of verifiable propositions, and use the gaps as a signal for hallucination? Notebook ideas from March 2024 expanding on the SMT-grounding piece."
 tags:
   - machine-learning
@@ -47,6 +47,8 @@ The hard form is fact-checking with source attribution — surface-area / "1/φ"
 > *Rather than hallucinating the next LLM output, the chatbot should output an action — a construction in a reasoning space.*
 
 The chatbot becomes a knowledge-graph builder, not a token sampler. Each reply extends the graph with a new node and edges. When the graph has a hole, the model says so. When the proposed extension fails to verify, the model says so.
+
+This is the abstract version of the argument I made concretely three weeks later in [The Verification Problem](/blog/2026-05-23-the-verification-problem): when AI-generated proofs are cheap and human verification is expensive, the only thing that scales is machine-checkable structure. This post sketches what the alternative would look like; that one shows what's at stake when it doesn't exist yet.
 
 ## Connection to the geometry post
 

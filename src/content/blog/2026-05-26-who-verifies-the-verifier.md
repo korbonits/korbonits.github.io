@@ -1,42 +1,42 @@
 ---
 title: "Who Verifies the Verifier"
 description: "An AI built the machine I said mathematics needed — a compiler that verifies proofs for cents instead of expert weekends. The catch is what it still can't read."
-date: 2026-05-26
+date: 2026-05-27
 draft: true
 tags: ["ai", "mathematics", "verification", "lean"]
 ---
 
 # Who Verifies the Verifier
 
-Three days ago I published [an essay](https://korbonits.com/blog/2026-05-23-the-verification-problem/) that ended on a problem I couldn't see a solution to. The short version: an AI had disproved one of Erdős's conjectures, the result was real, and it was *verified* — but verified in the only way we currently know how, which is that nine of the world's relevant experts — one of them a Fields medalist — read a hundred-page argument over a weekend and put their names on it. That doesn't scale. The supply of plausible-looking proofs is about to go vertical and the supply of expert weekends is fixed, so the binding constraint isn't generating proofs, it's checking them. I argued that formal verification — proofs machine-checked in a language like Lean — was the only thing that obviously scales, and then I admitted the catch: nobody had formalized that proof, and the tooling that would make formalization routine doesn't exist. "We are," I wrote, "relying on a process that everyone involved can see won't hold."
+Three days ago I published [an essay](https://korbonits.com/blog/2026-05-23-the-verification-problem/) that ended on a problem I couldn't see a solution to. The short version: an AI had disproved one of Erdős's conjectures, the result was real, and it was *verified* — but verified in the only way we currently know how, which is that nine of the world's relevant experts — one of them a Fields medalist — read a hundred-page argument over a weekend and put their names on it. That doesn't scale. The supply of plausible-looking proofs is about to go parabolic and the supply of expert weekends is fixed, so the binding constraint isn't generating proofs: it's checking them. I argued that formal verification — proofs machine-checked in a language like Lean — was the only thing that obviously scales, and then I admitted the catch: nobody had formalized that proof, and the tooling that would make formalization routine doesn't exist. "We are," I wrote, "relying on a process that everyone involved can see won't hold." I didn't just write about this last week after the OpenAI announcement. I've been thinking about it [since 2023](https://korbonits.com/blog/2026-04-02-i-was-thinking-about-llm-automated-reasoning-before-it-was-cool-and-i-wasnt-ready/).
 
 What I didn't know is that two days before I hit publish, Google DeepMind had posted the machine I was describing.
 
-The paper is [*Advancing Mathematics Research with AI-Driven Formal Proof Search*](https://arxiv.org/abs/2605.22763), submitted May 21. The headline numbers are the kind that get screenshotted: an agent that autonomously resolved 9 of 353 open Erdős problems, proved 44 of 492 open conjectures from the OEIS, and did it at an inference cost of a few hundred dollars per problem. The architecture is almost embarrassingly simple to state — a language model generates a candidate proof in Lean, the Lean compiler checks it, the error messages feed the next attempt, repeat until the compiler is satisfied. A generate-and-verify loop with the verifier in the critical path.
+The paper is [*Advancing Mathematics Research with AI-Driven Formal Proof Search*](https://arxiv.org/abs/2605.22763), submitted May 21. The headline numbers are the kind that get screenshotted: an agent that autonomously resolved 9 of 353 open Erdős problems, proved 44 of 492 open conjectures from the OEIS, and did it at an inference cost of a few hundred dollars per problem. The architecture is  simple: a language model generates a candidate proof in Lean, the Lean compiler checks it, the error messages feed the next attempt, repeat until the compiler is satisfied. A generate-and-verify loop.
 
-If you read my last post, this looks like the answer. The verification layer that saved the unit-distance disproof was nine scarce humans. The verification layer here is a compiler that costs cents and never gets tired.
+If you read my last post, this looks like a potential answer. The verification layer that saved the unit-distance disproof was nine scarce humans. The verification layer here is a compiler that costs cents and never gets tired.
 
-## Two frontiers, one headline
+## Two frontiers
 
-Here is the distinction the headlines flatten. Both results are "AI does Erdős." They are not the same act.
+Both results claim "AI does Erdős." They are not the same arc.
 
 The unit-distance disproof was: *generate deep mathematics in natural language, then have humans verify it.* The hard part was the mathematics, and the verification was the expensive, unscalable, human step.
 
-This paper is: *generate the proof natively in Lean from the start, and let the compiler verify each step as it goes.* The mathematics is shallower, and the verification is free.
+This paper is: *generate the proof natively in Lean from the start, and let the compiler verify each step as it goes.* The mathematics is shallower (for now), and the verification is free.
 
-These are two different frontiers. And the tell that they're different is sitting in the paper's own methodology: DeepMind ran their agent against the 353 Erdős problems that *already had Lean formalizations* in their open-source Formal Conjectures repository. The problems the machine can attack are, by construction, the ones already expressible in Lean. The unit-distance disproof is not in that set, and it couldn't easily be — its proof imports infinite class field towers and Golod–Shafarevich theory, machinery with no mature support in Lean's library. You cannot point this agent at it, because there is no formal statement to point it at.
+These are two different frontiers. DeepMind ran their agent against the 353 Erdős problems that *already had Lean formalizations* in their open-source Formal Conjectures repository. The problems the machine can attack are, by construction, the ones already expressible in Lean. The unit-distance disproof is not in that set. Its proof imports infinite class field towers and Golod–Shafarevich theory, machinery with no mature support in Lean's library. You cannot point this agent at it, because there is no formal statement to point it at.
 
-This is not a knock on the result. It's the point. Native Lean generation is the tractable frontier, and it is advancing fast and getting cheap. Autoformalizing the proofs humans actually write at research depth is the *other* frontier, and this paper — for all its real achievement — does not touch it. To see why that matters, it helps to watch the machine actually work. So let me take you into one of the proofs.
+Native Lean generation is the tractable frontier, and it is advancing fast and getting cheap. Autoformalizing the proofs humans actually write at research depth is the *other* frontier, and this paper — for all its real achievement — does not touch it.
 
-## Inside problem #125
+## Inside problem # 125
 
-I picked #125 because, unusually for this list, you can follow it without a graduate degree.
+I picked # 125 because it is simple to state, and therefore easier to communicate about to a lay audience.
 
-The problem, posed in 1996 and open until this paper: let *A* be the set of non-negative integers that use only the digits 0 and 1 when written in base 3, and let *B* be the same thing in base 4. Does the sumset *A* + *B* have positive lower density — that is, does it occupy some fixed fraction of the number line no matter how far out you look? The agent proved the answer is no: the lower density is zero.
+Briefly: let *A* be the set of integers that use only the digits 0 and 1 when written in base 3, and let *B* be the same thing in base 4. Does the sumset *A* + *B* have positive lower density — that is, is there some fixed fraction *c* > 0 such that, for every sufficiently large *N*, at least a *c*-share of the integers below *N* lands in *A* + *B*? ("Lower" means the worst large scales must stay above the floor, not just some of them — a set can be thick at carefully chosen scales and thin at others, and lower density rules out the easier case.) The agent proved the answer is no: the lower density is zero.
 
-The idea behind the proof is genuinely pretty, and it rides a single observation about two number systems that almost line up. The powers of 3 and the powers of 4 never coincide — `3^k` is never exactly `4^m` — because `log 4 / log 3` is irrational. But they come *arbitrarily close*: for any tolerance you like, you can find exponents where `3^k` and `4^m` are within it. This near-miss is the engine of the whole argument. The proof exploits it to show that every time you zoom out by one of these matched scales, the sumset can capture at most 11/12 of the proportion it held at the previous scale. Apply that thinning *d* times and your density bound is (11/12) raised to the *d* — which marches to zero. The paper names the technique "Inductive thinning via Diophantine approx. `3^m ≈ 4^k`," and that one phrase is the entire mathematical content.
+The idea behind the proof is elegant, and it rides a single observation about two number systems that almost line up. The powers of 3 and the powers of 4 never coincide — `3^k` is never exactly `4^m` — because `log 4 / log 3` is irrational. But they come *arbitrarily close*: for any tolerance you like, you can find exponents where `3^k` and `4^m` are within it. This near-miss is the crux of the whole argument. The proof exploits it to show that every time you zoom out by one of these matched scales, the sumset can capture at most 11/12 of the proportion it held at the previous scale. Apply that thinning *d* times and your density bound is (11/12) raised to the *d* — which marches to zero. The paper names the technique "Inductive thinning via Diophantine approx. `3^m ≈ 4^k`," and that one phrase is the approach to the solution.
 
-What's remarkable is that you can read that English paragraph straight off the Lean. The proof decomposes into named lemmas that map one-to-one onto the argument:
+Suprisingly, you can read that English paragraph straight off the Lean. The proof decomposes into named lemmas that map one-to-one onto the argument:
 
 ```lean
 lemma log_ratio_irrational : Irrational (Real.log 4 / Real.log 3)
@@ -52,7 +52,7 @@ lemma density_tends_to_zero (ε : ℝ) (hε : ε > 0) :
 
 `log_ratio_irrational` is the never-coincide fact. `dirichlet_approx` is the come-arbitrarily-close fact. `scale_step` is the single 11/12 shrink. `density_multi_scale` is the induction that applies it *d* times. `density_tends_to_zero` is the limit. The structure of the human idea and the structure of the formal proof are the same shape.
 
-Now the part that earns the word *verified*. Lean has a primitive called `sorry`. Write `sorry` and it closes any open goal and the file type-checks — it's the mathematical equivalent of "trust me." A proof is finished precisely when it compiles with *no `sorry` anywhere in it.* So "verified" is not a judgment call, and it is not nine reputations stacked on a PDF. It is a mechanical, checkable property: the absence of a single keyword. I cloned the repository and checked. The #125 file is 370 lines and contains zero `sorry`s. That is the entire basis of trust, and it cost a compile.
+Now the part that earns the word *verified*. Lean has a primitive called `sorry`. Write `sorry` and it closes any open goal and the file compiles, with a warning Lean prints but doesn't block on — the mathematical equivalent of "trust me." A proof is finished precisely when it compiles with *no `sorry` anywhere in it.* So "verified" is not a judgment call, and it is not nine reputations stacked on a PDF. It is a mechanical, checkable property: the absence of a single keyword. I cloned the repository and checked. The # 125 file is 370 lines and contains zero `sorry`s. That is the entire basis of trust, and it cost a compile.
 
 And here, finally, is the artifact I keep coming back to. The thing the agent was actually asked to produce was a proof filling a marked hole in this statement:
 
@@ -84,7 +84,7 @@ The difference, this time, is that it didn't work. A compiler is not an audience
 
 Which brings me back to the gap I flagged at the start, and to why this machine answers a different question than I asked. The evidence is in the paper itself, in two places.
 
-The first is a misformalization the paper reports on #125 itself. The original 1996 problem just said "density," and that word is ambiguous — natural density, lower density, and upper density are different things, and a proof of one is not a proof of another. The paper notes that the informal statement's "density" had to be amended to "lower density" (and on a separate problem, #741, to "upper density") to capture the intended question, after the agent produced a proof against a different reading. The machine proves; a person still has to ensure the formal statement says what the mathematician meant. That correction step is not incidental — it's the seam where a human stays in the loop.
+The first is a misformalization the paper reports on # 125 itself. The original 1996 problem just said "density," and that word is ambiguous — natural density, lower density, and upper density are different things, and a proof of one is not a proof of another. The paper notes that the informal statement's "density" had to be amended to "lower density" (and on a separate problem, #741, to "upper density") to capture the intended question, after the agent produced a proof against a different reading. The machine proves; a person still has to ensure the formal statement says what the mathematician meant. That correction step is not incidental — it's the seam where a human stays in the loop.
 
 The second is structural: when DeepMind autoformalized 492 OEIS questions, they had to add "test lemmas" — guards that check a formal statement reproduces the first few known terms of a sequence — specifically because autoformalization at that volume produces statements that don't mean what they should. The faithful-translation step is unreliable enough that it needs its own safety net.
 

@@ -1,7 +1,7 @@
 ---
 title: "Who Verifies the Verifier"
 description: "An AI built the machine I said mathematics needed — a compiler that verifies proofs for cents instead of expert weekends. The catch is what it still can't read."
-date: 2026-05-27
+date: 2026-05-28
 draft: true
 tags: ["ai", "mathematics", "verification", "lean"]
 ---

@@ -2,7 +2,7 @@
 title: "Who Verifies the Verifier"
 description: "An AI built the machine I said mathematics needed — a compiler that verifies proofs for cents instead of expert weekends. The catch is what it still can't read."
 date: 2026-05-28
-draft: true
+draft: false
 tags: ["ai", "mathematics", "verification", "lean"]
 ---
 
@@ -12,7 +12,7 @@ Three days ago I published [an essay](https://korbonits.com/blog/2026-05-23-the-
 
 What I didn't know is that two days before I hit publish, Google DeepMind had posted the machine I was describing.
 
-The paper is [*Advancing Mathematics Research with AI-Driven Formal Proof Search*](https://arxiv.org/abs/2605.22763), submitted May 21. The headline numbers are the kind that get screenshotted: an agent that autonomously resolved 9 of 353 open Erdős problems, proved 44 of 492 open conjectures from the OEIS, and did it at an inference cost of a few hundred dollars per problem. The architecture is  simple: a language model generates a candidate proof in Lean, the Lean compiler checks it, the error messages feed the next attempt, repeat until the compiler is satisfied. A generate-and-verify loop.
+The paper is [*Advancing Mathematics Research with AI-Driven Formal Proof Search*](https://arxiv.org/abs/2605.22763), submitted May 21. The headline numbers are the kind that get screenshotted: an agent that autonomously resolved 9 of 353 open Erdős problems, proved 44 of 492 open conjectures from the OEIS, and did it at an inference cost of a few hundred dollars per problem. The architecture is simple: a language model generates a candidate proof in Lean, the Lean compiler checks it, the error messages feed the next attempt, repeat until the compiler is satisfied. A generate-and-verify loop.
 
 If you read my last post, this looks like a potential answer. The verification layer that saved the unit-distance disproof was nine scarce humans. The verification layer here is a compiler that costs cents and never gets tired.
 
@@ -28,15 +28,15 @@ These are two different frontiers. DeepMind ran their agent against the 353 Erd�
 
 Native Lean generation is the tractable frontier, and it is advancing fast and getting cheap. Autoformalizing the proofs humans actually write at research depth is the *other* frontier, and this paper — for all its real achievement — does not touch it.
 
-## Inside problem # 125
+## Inside problem #125
 
-I picked # 125 because it is simple to state, and therefore easier to communicate about to a lay audience.
+I picked #125 because it is simple to state, and therefore easier to communicate to a lay audience.
 
 Briefly: let *A* be the set of integers that use only the digits 0 and 1 when written in base 3, and let *B* be the same thing in base 4. Does the sumset *A* + *B* have positive lower density — that is, is there some fixed fraction *c* > 0 such that, for every sufficiently large *N*, at least a *c*-share of the integers below *N* lands in *A* + *B*? ("Lower" means the worst large scales must stay above the floor, not just some of them — a set can be thick at carefully chosen scales and thin at others, and lower density rules out the easier case.) The agent proved the answer is no: the lower density is zero.
 
 The idea behind the proof is elegant, and it rides a single observation about two number systems that almost line up. The powers of 3 and the powers of 4 never coincide — `3^k` is never exactly `4^m` — because `log 4 / log 3` is irrational. But they come *arbitrarily close*: for any tolerance you like, you can find exponents where `3^k` and `4^m` are within it. This near-miss is the crux of the whole argument. The proof exploits it to show that every time you zoom out by one of these matched scales, the sumset can capture at most 11/12 of the proportion it held at the previous scale. Apply that thinning *d* times and your density bound is (11/12) raised to the *d* — which marches to zero. The paper names the technique "Inductive thinning via Diophantine approx. `3^m ≈ 4^k`," and that one phrase is the approach to the solution.
 
-Suprisingly, you can read that English paragraph straight off the Lean. The proof decomposes into named lemmas that map one-to-one onto the argument:
+Surprisingly, you can read that English paragraph straight off the Lean. The proof decomposes into named lemmas that map one-to-one onto the argument:
 
 ```lean
 lemma log_ratio_irrational : Irrational (Real.log 4 / Real.log 3)
@@ -52,7 +52,7 @@ lemma density_tends_to_zero (ε : ℝ) (hε : ε > 0) :
 
 `log_ratio_irrational` is the never-coincide fact. `dirichlet_approx` is the come-arbitrarily-close fact. `scale_step` is the single 11/12 shrink. `density_multi_scale` is the induction that applies it *d* times. `density_tends_to_zero` is the limit. The structure of the human idea and the structure of the formal proof are the same shape.
 
-Now the part that earns the word *verified*. Lean has a primitive called `sorry`. Write `sorry` and it closes any open goal and the file compiles, with a warning Lean prints but doesn't block on — the mathematical equivalent of "trust me." A proof is finished precisely when it compiles with *no `sorry` anywhere in it.* So "verified" is not a judgment call, and it is not nine reputations stacked on a PDF. It is a mechanical, checkable property: the absence of a single keyword. I cloned the repository and checked. The # 125 file is 370 lines and contains zero `sorry`s. That is the entire basis of trust, and it cost a compile.
+Now the part that earns the word *verified*. Lean has a primitive called `sorry`. Write `sorry` and it closes any open goal and the file compiles, with a warning Lean prints but doesn't block on — the mathematical equivalent of "trust me." A proof is finished precisely when it compiles with *no `sorry` anywhere in it.* So "verified" is not a judgment call, and it is not nine reputations stacked on a PDF. It is a mechanical, checkable property — something you run, not a reputation you weigh. The crude version of the check is the absence of a single keyword: I cloned the repository and the #125 file is 370 lines with zero `sorry`s. The precise version is one command — `#print axioms` — which prints exactly what a theorem rests on. Run it on #125 and it answers `[propext, Classical.choice, Quot.sound]`: the three standard axioms every ordinary Lean proof uses, and nothing else. No `sorry`, no hidden assumption, no escape hatch. That list — finite, enumerable, the same for this proof as for a one-liner — is the entire basis of trust, and it cost a compile.
 
 And here, finally, is the artifact I keep coming back to. The thing the agent was actually asked to produce was a proof filling a marked hole in this statement:
 
@@ -78,13 +78,13 @@ When they looked at the high-scoring proof attempts on problems the agent *faile
 
 Read that against the warning I quoted last time, from Melanie Wood: "in many cases, it will be easier for AI to convince humans it has a proof than to come up with a correct mathematical argument." This is precisely that instinct, caught in the act. Offered a hard step it can't take, the model reaches for *persuasion* — a deferred goal, a confident false citation — rather than *proof*. It is optimized to close the gap between convincing and correct from the wrong side. The October over-claim that opened my last post was this same failure with no checker in the room.
 
-The difference, this time, is that it didn't work. A compiler is not an audience. `sorry` is not a rhetorical flourish you can talk it into accepting, and a hallucinated lemma doesn't compile just because the prose around it is fluent. The paper's own conclusion is the sentence I'd have written myself: these failures "underscore the value of end-to-end formal verification." That is my thesis getting stress-tested under adversarial pressure and surviving. The formal layer is valuable *precisely because* it is immune to the one thing the model is best at.
+The difference, this time, is that it didn't work. A compiler is not an audience. `sorry` is not a rhetorical flourish you can talk it into accepting, and a hallucinated lemma doesn't compile just because the prose around it is fluent. But it pays to be precise about what the check buys you, because `sorry` compiles — it only warns. I built the whole repository and it goes green while still containing 128 `sorry`s, scattered across scaffolding files for problems that weren't solved. A passing build means the code is well-formed, not that everything in it is proved; the trust lives in the per-theorem check, not in the build succeeding. That is exactly why the failure analysis matters. The paper's own conclusion is the sentence I'd have written myself: these failures "underscore the value of end-to-end formal verification." That is my thesis getting stress-tested under adversarial pressure and surviving. The formal layer is valuable *precisely because* it is immune to the one thing the model is best at.
 
 ## The frontier that's still open
 
 Which brings me back to the gap I flagged at the start, and to why this machine answers a different question than I asked. The evidence is in the paper itself, in two places.
 
-The first is a misformalization the paper reports on # 125 itself. The original 1996 problem just said "density," and that word is ambiguous — natural density, lower density, and upper density are different things, and a proof of one is not a proof of another. The paper notes that the informal statement's "density" had to be amended to "lower density" (and on a separate problem, #741, to "upper density") to capture the intended question, after the agent produced a proof against a different reading. The machine proves; a person still has to ensure the formal statement says what the mathematician meant. That correction step is not incidental — it's the seam where a human stays in the loop.
+The first is a misformalization the paper reports on #125 itself. The original 1996 problem just said "density," and that word is ambiguous — natural density, lower density, and upper density are different things, and a proof of one is not a proof of another. The paper notes that the informal statement's "density" had to be amended to "lower density" (and on a separate problem, #741, to "upper density") to capture the intended question, after the agent produced a proof against a different reading. The machine proves; a person still has to ensure the formal statement says what the mathematician meant. That correction step is not incidental — it's the seam where a human stays in the loop.
 
 The second is structural: when DeepMind autoformalized 492 OEIS questions, they had to add "test lemmas" — guards that check a formal statement reproduces the first few known terms of a sequence — specifically because autoformalization at that volume produces statements that don't mean what they should. The faithful-translation step is unreliable enough that it needs its own safety net.
 

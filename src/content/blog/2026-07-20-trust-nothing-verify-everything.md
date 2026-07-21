@@ -78,6 +78,58 @@ $F(0, 6, -142) = F(1, 0, 2) = (2, 6, 0)$. Two distinct points, one image. (If yo
 
 That's it. That's the whole verification. The Jacobian conjecture is false.
 
+<div class="verify-widget" style="margin: 1.5rem 0; padding: 1rem; border: 1px solid rgb(var(--gray-light)); border-radius: 8px;">
+  <button id="verify-run" type="button" style="font: inherit; padding: 0.5em 1em; cursor: pointer; color: #fff; background: var(--accent); border: none; border-radius: 6px;">Don't trust these outputs — run both cells in your browser</button>
+  <p style="margin: 0.5em 0 0; font-size: 0.85em; color: rgb(var(--gray));">Downloads a Python runtime (Pyodide + sympy, ~20&nbsp;MB) and runs the exact cells above, on your machine. Nothing is sent anywhere.</p>
+  <pre id="verify-out" hidden style="margin-top: 1rem; white-space: pre-wrap; overflow-wrap: anywhere;"></pre>
+</div>
+
+<script>
+(function () {
+  var btn = document.getElementById('verify-run');
+  var out = document.getElementById('verify-out');
+  var CODE = [
+    "import sympy as sp",
+    "x, y, z = sp.symbols('x y z')",
+    "F = sp.Matrix([",
+    "    (1 + x*y)**3 * z + y**2 * (1 + x*y) * (4 + 3*x*y),",
+    "    y + 3*x*(1 + x*y)**2 * z + 3*x*y**2 * (4 + 3*x*y),",
+    "    2*x - 3*x**2*y - x**3*z,",
+    "])",
+    "det = sp.simplify(F.jacobian([x, y, z]).det())",
+    "p, q = {x: 0, y: 6, z: -142}, {x: 1, y: 0, z: 2}",
+    "Fp, Fq = list(F.subs(p).T), list(F.subs(q).T)",
+    "lines = ['cell one:  det JF = %s' % det]",
+    "lines.append('cell two:  F(0, 6, -142) = %s' % (Fp,))",
+    "lines.append('           F(1, 0, 2)    = %s' % (Fq,))",
+    "lines.append('')",
+    "lines.append('distinct points, same image: %s' % (Fp == Fq))",
+    "lines.append('Jacobian conjecture: %s' % ('FALSE' if (det.is_constant() and det != 0 and Fp == Fq) else 'still standing'))",
+    "'\\n'.join(lines)"
+  ].join("\n");
+  btn.addEventListener('click', async function () {
+    btn.disabled = true;
+    out.hidden = false;
+    var t0 = performance.now();
+    function status(msg) { out.textContent = msg; }
+    try {
+      status('Loading Python runtime…');
+      var mod = await import('https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.mjs');
+      var py = await mod.loadPyodide({ indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/' });
+      status('Loading sympy…');
+      await py.loadPackage('sympy');
+      status('Running the two cells…');
+      var result = await py.runPythonAsync(CODE);
+      var secs = ((performance.now() - t0) / 1000).toFixed(1);
+      out.textContent = result + '\n\n(' + secs + 's, in your browser.\nDon’t trust this button either — view source, or run the cells in your own Python.)';
+    } catch (err) {
+      out.textContent = 'Failed to load or run: ' + err + '\nThe cells above still work in any local Python with sympy installed.';
+      btn.disabled = false;
+    }
+  });
+})();
+</script>
+
 Two footnotes that fall out for free. The collision points are *integers*, so by a 1983 theorem of Connell and van den Dries the conjecture dies over every field of characteristic zero, not just $\mathbb{C}$. And padding the map with identity coordinates kills every dimension $n \geq 3$. What survives is exactly Keller's original two-variable problem — $n = 2$ remains open, and is suddenly the most interesting question in the area.
 
 ## What I didn't need

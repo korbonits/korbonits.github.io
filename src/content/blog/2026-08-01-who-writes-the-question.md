@@ -78,6 +78,8 @@ But some of it is bespoke, and the bespoke parts are exactly where you'd have to
 
 None of that is wrong. All of it is somebody's judgment, and the somebody is the system that also produced the proofs.
 
+And one result isn't pinned at all. Result 5 is advertised as lower bounds "using arithmetic circuits **and** formulas." The shipped comparator challenges cover the formula bounds only. `lakefile.toml` declares a thirteenth challenge root, `ComparatorChallenges.C_PermanentSuperquadraticStandalone`, and that file is not in the repository — so `lake build ComparatorChallenges` fails outright on a fresh clone, and the superquadratic circuit bound has no pinned statement to check it against. It may well be an oversight. I can't ask: issues are disabled on the repository.
+
 ## Three problems with an owner
 
 The three Erdős results are the place to test this, because Erdős problems have a curator. Thomas Bloom maintains [erdosproblems.com](https://www.erdosproblems.com), and his statements are as close to canonical as this subject gets.[^bloom146][^bloom180][^bloom183]

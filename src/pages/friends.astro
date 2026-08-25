@@ -1,0 +1,87 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const friends = [
+  {
+    name: 'Rachel Moss',
+    url: 'https://substack.com/@internetbedroom',
+    note: 'Writes about internet culture; we went to college together.',
+  },
+  {
+    name: 'Krys Gollihue',
+    url: 'https://krystingollihue.com/',
+    note: 'We went to college together; she’s a technical content writer.',
+  },
+  {
+    name: 'Phil Kalikman',
+    url: 'https://kalikman.com/',
+    note: 'We went to college together; he’s a professor and applied researcher in finance and real estate.',
+  },
+];
+
+const admired = [
+  {
+    name: 'Terence Tao',
+    url: 'https://terrytao.wordpress.com/',
+    note: 'Revolutionizing mathematics as a career, connecting to non-mathematicians, and spearheading the use of AI to augment mathematical research.',
+  },
+  {
+    name: 'Chip Huyen',
+    url: 'https://huyenchip.com/',
+    note: 'Clear writing and indispensable guides to ML engineering systems and AI engineering.',
+  },
+  {
+    name: 'Sebastian Raschka',
+    url: 'https://sebastianraschka.com/',
+    note: 'Elucidating deep dives on LLMs and reasoning models — unique perspective and exposition.',
+  },
+];
+---
+<html lang="en">
+  <head>
+    <BaseHead title="Friends" description="People Alex Korbonits knows, likes, and admires." />
+    <style>
+      main { width: 720px; max-width: calc(100% - 2em); margin: auto; padding: 3em 1em; }
+      h1 { margin-bottom: 0.25em; }
+      .intro { color: rgb(var(--gray)); margin-bottom: 2em; }
+      h2 { font-size: 1.25em; margin: 2em 0 0.5em; }
+      ul { padding-left: 1.25em; margin: 0; }
+      li { margin-bottom: 0.75em; }
+      .note { color: rgb(var(--gray)); }
+      .credit { margin-top: 3em; padding-top: 1em; border-top: 1px solid rgb(var(--gray-light)); color: rgb(var(--gray)); font-size: 0.85em; }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <h1>Friends</h1>
+      <p class="intro">People I know, like, and admire — an old-school blogroll.</p>
+
+      <h2>Friends</h2>
+      <ul>
+        {friends.map(p => (
+          <li>
+            <a href={p.url}>{p.name}</a> — <span class="note">{p.note}</span>
+          </li>
+        ))}
+      </ul>
+
+      <h2>People I admire online</h2>
+      <ul>
+        {admired.map(p => (
+          <li>
+            <a href={p.url}>{p.name}</a> — <span class="note">{p.note}</span>
+          </li>
+        ))}
+      </ul>
+
+      <p class="credit">
+        This is a /friends page, inspired by <a href="https://slashfriends.org">slashfriends.org</a>
+        and <a href="https://nickgray.net">Nick Gray</a>.
+      </p>
+    </main>
+    <Footer />
+  </body>
+</html>

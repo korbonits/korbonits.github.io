@@ -7,7 +7,8 @@ export type ProjectTag =
   | "ml"
   | "oss"
   | "agents"
-  | "personal-brand";
+  | "personal-brand"
+  | "civic";
 
 export type ProjectStatus = "active" | "coming-soon" | "archived";
 
@@ -25,6 +26,19 @@ export interface Project {
 }
 
 export const projects: Project[] = [
+  {
+    name: "The Santa Monica Athenaeum",
+    slug: "santa-monica-athenaeum",
+    description:
+      "LA has great public libraries and nowhere to sit with Euclid for three hours. I'm founding a membership library for mathematics and philosophy in Santa Monica — primary texts, open shelves, lending. Collecting founding pledges now.",
+    date: "2026-08-26",
+    tags: ["civic"],
+    status: "active",
+    links: {
+      primary: { label: "Read the prospectus", url: "https://santamonicaathenaeum.org" },
+      repo: "https://github.com/korbonits/santamonicaathenaeum.org",
+    },
+  },
   {
     name: "Sheaf",
     slug: "sheaf",

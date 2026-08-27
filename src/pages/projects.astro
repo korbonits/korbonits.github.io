@@ -24,6 +24,7 @@ const tagLabels: Record<ProjectTag, string> = {
   oss: "OSS",
   agents: "Agents",
   "personal-brand": "Personal Brand",
+  civic: "Civic",
 };
 
 const tagColors: Record<ProjectTag, string> = {
@@ -32,6 +33,7 @@ const tagColors: Record<ProjectTag, string> = {
   oss:            "tag--oss",
   agents:         "tag--agents",
   "personal-brand": "tag--brand",
+  civic: "tag--civic",
 };
 
 const activeCount = projects.filter(p => p.status === "active").length;
@@ -219,6 +221,7 @@ const summary = `${projects.length} projects · ${activeCount} active`;
   .tag--oss      { background: #fff7ed; color: #c2410c; }
   .tag--agents   { background: #fdf4ff; color: #7e22ce; }
   .tag--brand    { background: #fefce8; color: #854d0e; }
+  .tag--civic    { background: #fef2f2; color: #991b1b; }
   .tag--soon     { background: #f1f5f9; color: #94a3b8; }
 
   /* ── Body column ── */
@@ -325,6 +328,7 @@ const summary = `${projects.length} projects · ${activeCount} active`;
     .tag--oss      { background: #2c1a0e; color: #fb923c; }
     .tag--agents   { background: #2e1065; color: #d8b4fe; }
     .tag--brand    { background: #2d2006; color: #fde047; }
+    .tag--civic    { background: #2c1212; color: #fca5a5; }
     .tag--soon     { background: #1e2530; color: #64748b; }
   }
 </style>

@@ -54,7 +54,6 @@ const analyticsSecret = import.meta.env.PUBLIC_ANALYTICS_SECRET ?? '';
           user_agent: navigator.userAgent,
           nav_source: navSource,
           country: country,
-          timestamp: new Date().toISOString(),
         }),
         keepalive: true,
       });

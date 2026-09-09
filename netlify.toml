@@ -19,6 +19,14 @@
   to = "/.netlify/functions/:splat"
   status = 200
 
+# Stamp Sec-Fetch-Site from the document request onto a short-lived cookie the
+# client tracker reads. Declared first so it wraps the other edge functions and
+# sees whatever response they produce.
+[[edge_functions]]
+  path = "/*"
+  function = "nav-source"
+  excludedPath = ["/api/*", "/_astro/*", "/pagefind/*", "/*.md", "/*.json", "/*.xml", "/*.txt", "/*.png", "/*.jpg", "/*.svg", "/*.ico", "/*.webp", "/*.woff2"]
+
 # Basic auth on the analytics page via edge function.
 # Set ANALYTICS_USER and ANALYTICS_PASSWORD in Netlify environment variables.
 [[edge_functions]]

@@ -7,13 +7,14 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.SUPABASE_URL ?? '';
 const supabaseKey = import.meta.env.SUPABASE_ANON_KEY ?? '';
 
-interface PageView { path: string; referrer: string | null; created_at: string; }
+interface PageView { path: string; referrer: string | null; created_at: string; nav_source: string | null; }
 
 let totalViews = 0;
 let viewsToday = 0;
 let viewsLast7 = 0;
 let topPages: { path: string; count: number }[] = [];
 let referrerBreakdown: { domain: string; count: number }[] = [];
+let directBreakdown: { source: string; count: number }[] = [];
 let dailyLabels: string[] = [];
 let dailyCounts: number[] = [];
 let configError: string | null = null;
@@ -28,18 +29,46 @@ if (!supabaseUrl || !supabaseKey) {
   const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
-  const [allRes, todayRes, sevenRes, thirtyRes] = await Promise.all([
+  // PostgREST caps every response at `db-max-rows` (1000 by default), and it
+  // does so silently — a bare .limit(100000) returns 1000 rows and no error.
+  // Page through with .range() instead, or every breakdown below is computed
+  // on the most recent 1000 rows while the count tiles report the true total.
+  const PAGE_SIZE = 1000;
+  async function fetchAllSince(since: string, columns: string): Promise<PageView[]> {
+    const out: PageView[] = [];
+    for (let from = 0; ; from += PAGE_SIZE) {
+      const { data, error } = await supabase
+        .from('page_views')
+        .select(columns)
+        .gte('created_at', since)
+        .order('created_at', { ascending: true })
+        .range(from, from + PAGE_SIZE - 1);
+      if (error) throw error;
+      if (!data?.length) break;
+      out.push(...(data as unknown as PageView[]));
+      if (data.length < PAGE_SIZE) break;
+    }
+    return out;
+  }
+
+  // Falls back if sql/2026-09-08-nav-source.sql hasn't been applied yet — a
+  // missing column 400s the select, which would fail the whole page build.
+  const fetchThirtyDays = () =>
+    fetchAllSince(thirtyDaysAgo, 'path, referrer, created_at, nav_source')
+      .catch(() => fetchAllSince(thirtyDaysAgo, 'path, referrer, created_at'));
+
+  const [allRes, todayRes, sevenRes, thirtyRows] = await Promise.all([
     supabase.from('page_views').select('*', { count: 'exact', head: true }),
     supabase.from('page_views').select('*', { count: 'exact', head: true }).gte('created_at', todayStart),
     supabase.from('page_views').select('*', { count: 'exact', head: true }).gte('created_at', sevenDaysAgo),
-    supabase.from('page_views').select('path, referrer, created_at').gte('created_at', thirtyDaysAgo).limit(100000),
+    fetchThirtyDays(),
   ]);
 
   totalViews = allRes.count ?? 0;
   viewsToday = todayRes.count ?? 0;
   viewsLast7 = sevenRes.count ?? 0;
 
-  const rows: PageView[] = thirtyRes.data ?? [];
+  const rows: PageView[] = thirtyRows;
 
   // Top 10 pages
   const pathCounts: Record<string, number> = {};
@@ -69,6 +98,28 @@ if (!supabaseUrl || !supabaseKey) {
   referrerBreakdown = Object.entries(domainCounts)
     .sort((a, b) => b[1] - a[1])
     .map(([domain, count]) => ({ domain, count }));
+
+  // Split the (direct) bucket by the navigation's Sec-Fetch-Site, which the
+  // nav-source edge function stamps on the document request.  An empty
+  // document.referrer means only "no referrer reached the page"; Sec-Fetch-Site
+  // says whether that is because nothing linked here or because something did
+  // and stripped it.  Null for rows written before the edge function shipped.
+  const DIRECT_LABELS: Record<string, string> = {
+    'none': 'typed / bookmarked / no context',
+    'cross-site': 'linked from another site (referrer stripped)',
+    'same-site': 'linked from a subdomain',
+    'same-origin': 'internal navigation',
+    'unknown': 'client sent no Sec-Fetch-Site',
+  };
+  const directCounts: Record<string, number> = {};
+  for (const row of rows) {
+    if (row.referrer) continue;
+    const key = row.nav_source ?? '(not recorded)';
+    directCounts[DIRECT_LABELS[key] ?? key] = (directCounts[DIRECT_LABELS[key] ?? key] ?? 0) + 1;
+  }
+  directBreakdown = Object.entries(directCounts)
+    .sort((a, b) => b[1] - a[1])
+    .map(([source, count]) => ({ source, count }));
 
   // Daily views — last 30 days (fill gaps with 0)
   const dayCounts: Record<string, number> = {};
@@ -199,6 +250,30 @@ const dailyChart = { labels: dailyLabels, data: dailyCounts };
             </table>
           ) : (
             <p style="color:rgb(var(--gray)); font-size:0.9em;">No referrer data yet.</p>
+          )}
+
+          <h2>Inside (direct)</h2>
+          <p style="color:rgb(var(--gray)); font-size:0.9em;">
+            Where the no-referrer traffic actually came from, by the navigation's
+            <code>Sec-Fetch-Site</code>. Rows written before the nav-source edge
+            function shipped show as “(not recorded)”.
+          </p>
+          {directBreakdown.length > 0 ? (
+            <table>
+              <thead>
+                <tr><th>Navigation</th><th>Views</th></tr>
+              </thead>
+              <tbody>
+                {directBreakdown.map(r => (
+                  <tr>
+                    <td>{r.source}</td>
+                    <td>{r.count.toLocaleString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p style="color:rgb(var(--gray)); font-size:0.9em;">No direct traffic in the window.</p>
           )}
         </>
       )}

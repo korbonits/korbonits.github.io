@@ -15,11 +15,11 @@
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",
-    "@astrojs/sitemap": "^3.7.1",
+    "@astrojs/sitemap": "^3.7.4",
     "@resvg/resvg-js": "^2.6.2",
     "@supabase/supabase-js": "^2.49.4",
-    "astro": "^6.4.8",
-    "csv-parse": "^6.2.0",
+    "astro": "^7.3.2",
+    "csv-parse": "^7.0.2",
     "pagefind": "^1.4.0",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
@@ -29,10 +29,25 @@
     "@commitlint/cli": "^20.5.0"
   },
   "overrides": {
-    "sharp": "^0.35.0",
-    "svgo": "^4.0.2",
-    "fast-uri": "^3.1.4",
+    "sharp": "^0.35.4",
+    "svgo": "^4.1.0",
+    "fast-uri": "^3.1.6",
     "esbuild": "^0.28.1",
-    "postcss": "^8.5.18"
+    "postcss": "^8.5.18",
+    "nanoid": "^3.3.18",
+    "js-yaml": "^4.3.1",
+    "fflate": "^0.7.5"
+  },
+  "pnpm": {
+    "overrides": {
+      "sharp": "^0.35.4",
+      "svgo": "^4.1.0",
+      "fast-uri": "^3.1.6",
+      "esbuild": "^0.28.1",
+      "postcss": "^8.5.18",
+      "nanoid": "^3.3.18",
+      "js-yaml": "^4.3.1",
+      "fflate": "^0.7.5"
+    }
   }
 }

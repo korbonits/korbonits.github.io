@@ -40,6 +40,19 @@ export const projects: Project[] = [
     },
   },
   {
+    name: "Ricci Flow Blueprint",
+    slug: "ricci-flow-blueprint",
+    description:
+      "When I started, Riemannian curvature did not exist in Mathlib — no Riemann tensor, no Ricci, no sectional curvature. A leanblueprint that builds that vocabulary in Lean 4 and aims at Hamilton's 1982 theorem, with Perelman's spherical space form theorem — the Poincaré conjecture as the case Γ = 1 — as the terminal node.",
+    date: "2026-08-12",
+    tags: ["oss", "agents"],
+    status: "active",
+    links: {
+      primary: { label: "Read the blueprint", url: "https://korbonits.github.io/ricci-flow-blueprint/" },
+      repo: "https://github.com/korbonits/ricci-flow-blueprint",
+    },
+  },
+  {
     name: "Sheaf",
     slug: "sheaf",
     description:

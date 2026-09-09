@@ -36,6 +36,12 @@ const analyticsSecret = import.meta.env.PUBLIC_ANALYTICS_SECRET ?? '';
   document.addEventListener('astro:page-load', () => {
     if (!analyticsSecret) return;
     try {
+      // Set by the nav-source edge function on the document request; read once
+      // and cleared so a later view-transition navigation can't reuse it.
+      const m = document.cookie.match(/(?:^|;\s*)_nav=([^;]*)/);
+      const navSource = m ? m[1] : null;
+      if (m) document.cookie = '_nav=; Path=/; Max-Age=0; SameSite=Lax; Secure';
+
       fetch('/api/track', {
         method: 'POST',
         headers: {
@@ -46,6 +52,7 @@ const analyticsSecret = import.meta.env.PUBLIC_ANALYTICS_SECRET ?? '';
           path: window.location.pathname,
           referrer: document.referrer,
           user_agent: navigator.userAgent,
+          nav_source: navSource,
           timestamp: new Date().toISOString(),
         }),
         keepalive: true,

@@ -26,3 +26,8 @@ pnpm-debug.log*
 
 # Local Netlify folder
 .netlify
+
+# npm is the package manager here — Netlify installs from package-lock.json.
+# A stray pnpm lockfile silently produces a different tree (it also ignores the
+# npm `overrides` field), which has masked real build failures.
+pnpm-lock.yaml

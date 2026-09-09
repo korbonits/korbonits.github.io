@@ -30,7 +30,14 @@ export const handler = async (event) => {
   }
 
   const supabase = createClient(supabaseUrl, supabaseKey);
-  const country = event.headers['x-nf-country'] ?? null;
+
+  // Prefer the edge function's context.geo, relayed on the _nav cookie. The
+  // x-nf-country header is not populated for serverless functions, which is why
+  // this column was null on every row from March to September 2026.
+  const claimed = typeof body.country === 'string' ? body.country.toUpperCase() : '';
+  const country =
+    (/^[A-Z]{2}$/.test(claimed) ? claimed : null) ??
+    (event.headers['x-nf-country'] || null);
 
   const VALID_NAV = ['none', 'cross-site', 'same-site', 'same-origin', 'unknown'];
 

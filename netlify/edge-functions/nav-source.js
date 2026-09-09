@@ -27,9 +27,15 @@ export default async (request, context) => {
   const site = request.headers.get('sec-fetch-site') ?? 'unknown';
   if (!/^(none|cross-site|same-site|same-origin|unknown)$/.test(site)) return response;
 
+  // `country` has been null on every row since March: x-nf-country doesn't
+  // reach serverless functions the way context.geo reaches edge ones. Carry it
+  // on the same cookie rather than adding a second header.
+  const cc = context.geo?.country?.code ?? '';
+  const country = /^[A-Z]{2}$/.test(cc) ? cc : '';
+
   response.headers.append(
     'Set-Cookie',
-    `_nav=${site}; Path=/; Max-Age=60; SameSite=Lax; Secure`,
+    `_nav=${site}|${country}; Path=/; Max-Age=60; SameSite=Lax; Secure`,
   );
   return response;
 };

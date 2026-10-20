@@ -1,0 +1,373 @@
+id	title	coverage	coverage_ref	stateable	key_mathlib	comparator	note
+001	Milne’s rationality conjecture and algebraic specialization.	NONE	-	NO	-	-	Needs Hodge classes, crystalline/l-adic realizations of abelian varieties
+002	The full BSD formula from low Selmer corank.	PR	#5542	NO	WeierstrassCurve	-	Strong BSD needs Sha, regulator, Tamagawa, L-function continuation; main has weak BSD only
+003	The quasi-Riemann hypothesis.	NONE	-	YES	DirichletCharacter.LFunction, riemannZeta	QuasiRiemannHypothesis, DirichletSevenEighths, HeckeSevenEighths	forall chi, s, 7/8<Re s -> LFunction chi s != 0
+004	Hilbert’s tenth problem over ℚ.	PR	#5391	YES	ComputablePred, MvPolynomial, Primcodable	-	not ComputablePred (exists rational zero) on MvPolynomial (Fin n) Z
+005	Irrationality of Catalan’s constant.	MAIN	FormalConjectures/Wikipedia/Irrational.lean	YES	Irrational, tsum	Catalan	Already stated as irrational_catalanConstant with OAI reference
+006	Goldfeld’s conjecture: densities and mean analytic rank.	MAIN	FormalConjectures/Wikipedia/EllipticCurveRank.lean	NO	WeierstrassCurve, EllipticCurve.LFunction	-	Main states it with Mordell-Weil rank; analytic rank needs L(E,s) continuation
+007	Ordinary two-point correlations and the corrected Elliott conjecture.	NONE	-	YES	ArithmeticFunction.liouville, Asymptotics.IsBigO	OrdinaryTwoPointCorrelations, OrdinaryElliott	sum_{n<=X} lambda(a n+b) lambda(c n+d) = O(X/(log X)^c)
+008	The Deligne–Drinfeld conjecture.	NONE	-	SMALL	FreeLieAlgebra, LieAlgebra	DeligneDrinfeld	grt via pentagon/hexagon and Ihara bracket: sizable local defs over FreeLieAlgebra
+009	Function-field reconstruction from Milnor K-theory and Galois data.	NONE	-	NO	-	BogomolovPopInjectivity	Milnor K-theory and pro-l Galois reconstruction missing
+010	Unrestricted pro-modularity at the prime two.	NONE	-	NO	-	-	Completed Hecke algebras, Galois deformation, p-adic Hodge theory missing
+011	Prime-factor statistics of $`p-1`$.	MAIN	FormalConjectures/ErdosProblems/821.lean	SMALL	Nat.primeFactorsList, Nat.totient	-	Only totient-preimage corollary stated; PD(1) law needs local stick-breaking def
+012	Independent largest prime factors of consecutive integers.	MAIN	FormalConjectures/ErdosProblems/371.lean	YES	Nat.primeFactors, Filter.Tendsto	JointDickman	Already stated with OAI reference
+013	Ostmann’s inverse Goldbach conjecture.	MAIN	FormalConjectures/ErdosProblems/431.lean	YES	Nat.Prime, Set.add	OstmannPrimes, OstmannComplete	Already stated with OAI reference
+014	Restricted geometric Langlands, global Arthur enhancements, and generic Ramanujan.	NONE	-	NO	-	-	Geometric Langlands, automorphic representations missing
+015	Torus-packet equidistribution in prime, quartic, and sextic degrees.	NONE	-	NO	-	DukePrimeDegree	Torus packets, homogeneous-space Haar equidistribution for orders missing
+016	Zilber–Pink in abelian varieties and the Siegel threefold.	NONE	-	NO	-	-	Atypical subvarieties of abelian varieties missing; PR #6003 is modular Zilber-Pink only
+017	The irrationality exponent of π is 2.	MAIN	FormalConjectures/Wikipedia/FlintCooksonHills.lean; PR #5340	YES	Real.pi, LiouvilleWith	PiExponent	Flint-Hills in main; pi exponent statement in PR #5340
+018	The Margulis–Platonov conjecture over global fields.	NONE	-	NO	-	-	Algebraic groups over global fields, anisotropic local groups missing
+019	The local p-adic section conjecture and global consequences.	NONE	-	NO	-	-	Etale fundamental groups and sections missing
+020	Squarefree quartics and power-free polynomial values.	MAIN	FormalConjectures/ErdosProblems/978.lean	YES	Squarefree, Polynomial.eval	PowerFreeValues	Already stated with OAI reference
+021	A quadratic bound for Jacobsthal’s function.	MAIN	FormalConjectures/ErdosProblems/970.lean	YES	Nat.Coprime, Nat.primeFactors	Jacobsthal, JacobsthalImproved	Already stated with OAI reference
+022	The weak inhomogeneous Duffin–Schaeffer conjecture.	NONE	-	YES	Nat.totient, MeasureTheory.volume, round	-	Inhomogeneous DS: divergence implies a.e. x has infinitely many q; Erdos 999 is homogeneous
+023	Patterson's first moment for cubic Gauss sums.	NONE	-	SMALL	gaussSum, EisensteinInt	PattersonFirstMoment	Needs local cubic residue symbol on Z[omega] and primary primes
+024	An asymptotic formula for the number of totients.	MAIN	FormalConjectures/ErdosProblems/416.lean	YES	Nat.totient, Filter.Tendsto	TotientAsymptotic, TotientCompanionZero	Already stated with OAI reference
+025	Short Egyptian fractions.	MAIN	FormalConjectures/ErdosProblems/304.lean	YES	Finset.sum, Real.log	ShortEgyptianFractions, EgyptianFractions	Already stated with OAI reference
+026	Positive lower density of large prime gaps.	MAIN	FormalConjectures/ErdosProblems/968.lean	YES	Nat.nth, Nat.Prime	PrimeGaps	Already stated with OAI reference
+027	Potential integral density on curve character varieties.	NONE	-	NO	-	CharacterVarietiesAllSeamsSupport?	SL_r character varieties and integral points over number rings missing
+028	Uniformly bounded components of Gaussian-prime graphs.	MAIN	FormalConjectures/ErdosProblems/952.lean	YES	GaussianInt, Prime	GaussianMoat	Already stated with OAI reference
+029	Primitive roots for every admissible integer base.	MAIN	FormalConjectures/Wikipedia/ArtinPrimitiveRootsConjecture.lean	YES	orderOf, ZMod	-	artin_primitive_roots.parts.i covers infinitude
+030	Modularity of elliptic curves over imaginary quadratic fields.	NONE	-	NO	WeierstrassCurve	-	Main modularity is over Q only; Bianchi modular forms missing
+031	Uchida’s conjecture for open homomorphisms of Galois groups.	NONE	-	NO	-	-	Infinite Galois groups of number fields as topological groups; anabelian setup heavy
+032	The rational Hodge conjecture for CM abelian varieties.	PR	#5538	NO	-	-	Hodge conjecture PRs (#5538, #5585); CM abelian varieties and Hodge classes missing
+033	Iitaka subadditivity, variation, and logarithmic additivity.	NONE	-	NO	-	LogKodairaFiberNegative?	Log Kodaira dimension, variation, Fujiki class C missing
+034	Log abundance for compact Kähler spaces under logarithmic Iitaka subadditivity.	NONE	-	NO	-	-	Log canonical pairs, abundance, Kahler spaces missing
+035	Log-canonical threefold abundance in numerical dimension one.	NONE	-	NO	-	-	Log canonical threefolds, nef/semiample divisors missing
+036	Numerical semiampleness and generalized minimal models.	NONE	-	NO	-	-	Generalized pairs, minimal models, Bott-Chern cohomology missing
+037	The ordinary-double-point volume gap.	NONE	-	NO	-	-	Normalized volume of klt singularities missing
+038	Fujita’s freeness conjecture.	NONE	-	NO	-	-	Canonical bundles, global generation on smooth projective varieties missing
+039	Nagata’s conjecture and maximal Seshadri constants.	NONE	-	SMALL	MvPolynomial, MvPolynomial.IsHomogeneous	Nagata, MaximalSeshadriConstants	Plane-curve form: local defs for multiplicity at point and very general points
+040	Bloch’s conjecture for complex surfaces.	NONE	-	NO	-	-	Chow groups of zero-cycles and Albanese missing
+041	Hyperkähler SYZ and projective-space bases.	NONE	-	NO	-	-	Hyperkahler manifolds, semiample line bundles missing
+042	Oka classification for minimal compact complex surfaces: Kodaira dimension zero and class VII.	NONE	-	NO	-	-	Oka manifolds and compact complex surfaces missing
+043	P = W for fixed-determinant SLn moduli spaces.	NONE	-	NO	-	-	Higgs moduli, perverse and weight filtrations missing
+044	The equivariant cohomological Hikita conjecture.	NONE	-	NO	-	-	Nakajima varieties, Coulomb branches, equivariant cohomology missing
+046	Shafarevich counterexamples in dimension two and with large fundamental group.	NONE	-	NO	-	-	Universal covers of projective varieties, holomorphic convexity missing
+047	Zariski cancellation and affine fibrations over the complex numbers.	MAIN	FormalConjectures/Arxiv/2208.14736/ZariskiCancellation.lean	YES	MvPolynomial, Polynomial, AlgEquiv	ComplexCancellation	Already stated with OAI reference
+048	A characteristic-zero counterexample to Lipman–Zariski.	NONE	-	YES	Derivation, Module.Free, IsRegularLocalRing	-	Normal f.g. C-domain dim 2, Der free rank 2, some localization not regular
+049	A stable-coordinate counterexample in four variables.	NONE	-	YES	MvPolynomial, AlgEquiv, MvPolynomial.X	StableCoordinateFour, AbhyankarSathaye	exists f in C[x1..x4] not a coordinate, but coordinate in C[x1..x5]
+050	A counterexample to Griffiths’ positivity conjecture.	NONE	-	NO	-	-	Ample vector bundles and Hermitian curvature missing
+051	Kobayashi’s canonical-ampleness conjecture.	NONE	-	NO	-	-	Kahler manifolds, entire curves, ample canonical bundle missing
+052	Tangent splittings and product decompositions.	NONE	-	NO	-	KahlerSplitting, SplitTangentIntegrability	Holomorphic tangent bundle splittings on Kahler manifolds missing
+053	A counterexample to Pixton completeness in Chow.	NONE	-	NO	-	-	Moduli of stable curves and tautological rings missing
+054	Irrational cubic fourfolds with Hodge-theoretic and categorical K3 associations.	NONE	-	NO	-	-	Rationality of cubic fourfolds, K3 categories missing
+055	Gepner symmetry and large-volume stability on threefolds.	NONE	-	NO	-	-	Bridgeland stability conditions on derived categories missing
+056	Termination of projective and Kähler fourfold minimal model programs.	NONE	-	NO	-	-	MMP flips and termination missing
+057	Fundamental groups of special complex varieties and root orbifolds.	NONE	-	NO	-	-	Special Kahler manifolds (Campana) missing
+058	Semialgebraic universal covers and bounded domains.	NONE	-	NO	-	SymmetricDomains?	Universal covers of projective varieties, bounded symmetric domains missing
+059	Counterexamples to Zariski’s multiplicity conjecture.	NONE	-	SMALL	MvPowerSeries.order, Homeomorph, MvPolynomial	-	exists reduced f,g in C[x1..x4], germ homeomorphism of zero sets, orders 4 and 5
+060	The Global Spherical Shell conjecture.	NONE	-	NO	-	-	Class VII surfaces, global spherical shells missing
+062	Projective contact classification and the LeBrun–Salamon conjecture.	NONE	-	NO	-	-	Quaternionic-Kahler manifolds and contact Fano classification missing
+063	The generalized Mukai conjecture.	NONE	-	NO	-	-	Fano manifolds, Picard number, pseudoindex missing
+064	Topological triviality of μ-constant surface singularities.	NONE	-	NO	-	-	Milnor number families and topological triviality of germs missing
+065	Virasoro constraints for complete intersections and projective-bundle towers.	NONE	-	NO	-	-	Gromov-Witten theory and Virasoro operators absent from Mathlib
+066	Bounded klt complements for Fano contractions.	NONE	-	NO	-	-	klt singularities, log-canonical pairs, complements absent
+067	The Campana–Peternell conjecture in dimension six.	NONE	-	NO	-	-	Fano varieties, nef tangent bundle, rational homogeneous spaces absent
+068	Anticanonical nonvanishing in every dimension.	NONE	-	NO	-	-	canonical bundle, Hermitian metrics, curvature on varieties absent
+069	Global quantum geometric Langlands at irrational level.	NONE	-	NO	-	-	geometric Langlands, twisted D-modules, derived categories absent
+071	Koebe’s circle-domain conjecture.	NONE	-	SMALL	ConformalAt, DifferentiableOn, OnePoint	KoebeCircleDomains	state on domains in C: holomorphic bijection onto circle domain; define circle domain
+072	Brennan's conjecture and the integral-means spectrum.	MAIN	FormalConjectures/Wikipedia/Brennanconjecture.lean	YES	DifferentiableOn, MeasureTheory.volume, deriv	Brennan, BrennanSharp, StrictMeans	Brennan conjecture and integral means spectrum already stated
+073	The Falconer distance conjecture.	MAIN	FormalConjectures/Wikipedia/Falconer.lean	YES	dimH, MeasureTheory.volume, IsCompact	FalconerAllDimensions, PlanarFalconer	falconer_conjecture already stated for d >= 2
+074	Kakeya in three and four dimensions.	MAIN	FormalConjectures/Wikipedia/Kakeya.lean	YES	dimH, EuclideanSpace	-	kakeya_set_conjecture n=4 covers 4D; 3D maximal operator bound not stated
+075	The $`L\log L`$ Fourier-convergence conjecture.	NONE	-	SMALL	fourierCoeff, fourier, AddCircle.haarAddCircle	FourierLLogL	define L log L condition; ae convergence of symmetric partial sums
+076	Real ultraflat Littlewood polynomials and unbounded binary merit factors.	MAIN	FormalConjectures/ErdosProblems/1150.lean	YES	Polynomial.coeff, Polynomial.eval, Metric.sphere	AsymptoticallyMinimalLittlewood, LittlewoodFiniteFlatness	erdos_1150 disproof; also PR #6991; Turyn merit factor not stated
+077	Fourier restriction for positively curved surfaces.	NONE	-	SMALL	VectorFourier.fourierIntegral, hausdorffMeasure, eLpNorm	-	parametrize surface as graph; define extension operator and curvature condition
+078	The three-dimensional Bochner–Riesz conjecture.	NONE	-	SMALL	Real.fourierIntegral, SchwartzMap, eLpNorm	-	define Bochner-Riesz multiplier on Schwartz functions; L^p bound
+079	Local smoothing in three dimensions.	NONE	-	SMALL	SchwartzMap, Real.fourierIntegral, eLpNorm	-	define half-wave propagator and Bessel-potential Sobolev norm
+080	The exact Sobolev endpoint for Schrödinger convergence.	NONE	-	SMALL	Real.fourierIntegral, SchwartzMap, MeasureTheory.ae	-	define H^s via Fourier and Schrodinger propagator; ae limit
+081	Riesz transforms and rectifiability in higher codimension.	NONE	-	SMALL	hausdorffMeasure, LipschitzWith, MeasureTheory.Measure	RieszQuantitative	define ADR measure, truncated Riesz transform, uniform rectifiability
+082	Annular variation and dyadic absolute bounds for the triangular Hilbert transform.	NONE	-	SMALL	MeasureTheory.integral, eLpNorm, MeasureTheory.Lp	TriangularHilbert	define truncated triangular Hilbert transform and r-variation
+083	Hilbert transforms along Lipschitz directions.	NONE	-	SMALL	LipschitzWith, MeasureTheory.integral, eLpNorm	LipschitzHilbert	define truncated directional Hilbert transform along vector field
+084	The geometric case of the Erdős similarity conjecture.	MAIN	FormalConjectures/ErdosProblems/120.lean	YES	MeasureTheory.volume, IsCompact	-	general similarity conjecture stated; geometric q^n case not a separate variant
+085	Endpoint Sobolev regularity of centered disk averages.	PR	#7129	SMALL	eLpNorm, MeasureTheory.integral	DiskMaximal	no weak derivative / W^{1,1} in Mathlib; needs local definition
+086	An L3 bound for the trilinear Hilbert transform.	NONE	-	SMALL	MeasureTheory.integral, eLpNorm, MeasureTheory.Lp	-	define principal-value trilinear Hilbert transform; L3xL3xL3 to L1 bound
+087	The Mahler conjectures, functional inequalities and polar-product symplectic width.	PR	#6977	SMALL	ConvexBody, LinearMap.polar, MeasureTheory.volume	MahlerConjecture, GeneralMahler, SymmetricMahlerEquality, SymmetricPolar	define volume product and Hanner polytopes; Gromov width part needs symplectic
+088	Sharp projection-body inequalities and a counterexample to simplex maximization.	PR	#7150	SMALL	ConvexBody, orthogonalProjection, MeasureTheory.volume	PettyProjectionVolume, ProjectionVolume, ProjectionCounterexample	define projection body via projection volumes
+089	Bounded-distortion L1 embeddings of planar and bounded-treewidth graphs.	NONE	-	SMALL	SimpleGraph, SimpleGraph.dist, MeasureTheory.Lp	PlanarL1, BoundedTreewidthL1	treewidth and planarity not in Mathlib; local definitions needed
+090	Triangular-lattice optimality, long-range Riesz and Coulomb energies, and spherical logarithmic energy.	PR	#7455	SMALL	MeasureTheory.volume, Metric.sphere, Real.log	TriangularEnergy	PR covers Brauchart-Hardin-Saff log energy; lattice energy needs config defs
+091	Logarithmic and Lp Brunn–Minkowski inequalities and the B-conjecture.	PR	#6978	SMALL	ConvexBody, MeasureTheory.volume	LogBrunnMinkowski	define support function and log-Minkowski combination
+092	The optimal order of convex-body covering density.	NONE	-	SMALL	IsZLattice, ConvexBody, MeasureTheory.volume	CoveringDensity, SingleLatticeCovering	define lattice covering density; Theta(n log n) bounds
+093	Dimension-free logarithmic Sobolev inequality for subgaussian log-concave measures.	NONE	-	SMALL	MeasureTheory.Measure, Real.negMulLog, ConvexOn	-	define log-concave density, subgaussian marginals, entropy, LSI constant
+094	Subpolynomial dimension reduction in Lp.	NONE	-	YES	MeasureTheory.Lp, PiLp, LipschitzWith	SubpolynomialLp	n-point subsets of L^p embed into l_p^d, d=n^o(1), distortion D
+095	Hyperbolicity cones without semidefinite lifts.	NONE	-	SMALL	MvPolynomial.IsHomogeneous, Matrix.PosSemidef	HyperbolicCones	define hyperbolic polynomial, hyperbolicity cone, spectrahedral shadow
+096	The Gaussian propeller conjecture in every dimension.	PR	#7002	SMALL	ProbabilityTheory.stdGaussian, EuclideanSpace, MeasureTheory.integral	GaussianPropeller	sum of squared Gaussian moments over partitions <= 9/(8 pi)
+097	The Euclidean Steinitz–Bergström bound.	PR	#6990	YES	EuclideanSpace, Metric.closedBall, Finset.sum	SteinitzBergstrom	signs with partial sums bounded by C sqrt d
+098	Compact counterexamples to bi-Lipschitz dimension reduction.	PR	#6998	SMALL	LipschitzWith, NormedSpace, FiniteDimensional	DoublingHilbert, CompactBanach	metric doubling not defined in Mathlib; short local definition
+099	The sharp exponential scale of edit-distance distortion.	NONE	-	SMALL	MeasureTheory.Lp, LipschitzWith	EditDistance, BinaryEditLower	no edit distance in pinned Mathlib; define it and l1 distortion
+100	Cylinder coverings below the half-area bound.	NONE	-	SMALL	MeasureTheory.volume, convexHull, orthogonalProjection	CylinderCovering	define cylinders with triangular bases; tetrahedron covering
+101	The sharp simplex conjecture for isotropic constants.	NONE	-	SMALL	ConvexBody, MeasureTheory.volume, Matrix.det	-	define isotropic constant; simplices uniquely maximize
+102	The Unique Games Conjecture and optimal approximation thresholds.	PR	#5430	SMALL	Turing.TM2ComputableInPolyTime	UniqueGamesTheorem, OptimalMaxCut, VertexCover, MinUncut, DirectedFeedback	repo has NP and IsPolyTime; needs gap problems and reductions
+103	Exact derandomization of logarithmic space: $`\mathsf L=\mathsf{RL}=\mathsf{BPL}`$.	NONE	-	NO	-	LogspaceEquality	no space-bounded or randomized logspace machine model
+104	Quasipolynomial algorithms for mean-payoff, stochastic and parity games.	NONE	-	SMALL	Turing.TM2ComputableInTime	RandomizedMeanPayoff	define mean-payoff games; quasipolynomial time bound via TM2
+105	Perfect completeness for 2-to-1 games.	PR	#5430	SMALL	Turing.TM2ComputableInPolyTime	PerfectCompleteness	PR states 2-to-1 games with perfect completeness
+106	Hardness of coloring three-colorable graphs.	NONE	-	SMALL	SimpleGraph.Colorable, Turing.TM2ComputableInPolyTime	-	NP-hardness of c-coloring 3-colorable graphs via repo NP class
+107	Matrix multiplication with exponent at most 9/4.	PR	#5316	SMALL	TensorProduct, Matrix	MatrixMultiplication	PR defines tensor rank of matmul tensor; omega <= 9/4
+108	A cubic permanent–determinant lower bound.	NONE	-	SMALL	Matrix.det, Matrix.permanent, MvPolynomial	PermanentCubic	define border determinantal complexity via closure
+109	Integer multiplication below $`n\log n`$.	NONE	-	SMALL	Turing.TM2ComputableInTime	-	needs multitape TM model; Mathlib TM2 is stack-based
+110	Optimal-order randomized k-server on arbitrary metrics.	NONE	-	SMALL	MetricSpace, PMF	KServer, UniformKServer	define randomized online k-server and competitive ratio
+111	One-sample matroid prophet inequalities against an almighty adversary.	NONE	-	SMALL	Matroid, ProbabilityTheory.iIndepFun	MatroidProphet	define online sample-based policy and almighty adversary
+112	Beyond the square-root exponent for depth-three circuits.	NONE	-	SMALL	Turing.TM2ComputableInPolyTime	DepthThree	define depth-3 OR-AND-OR circuits; PR #7121 is B2 circuits only
+113	Approximate counting and entropy of perfect matchings.	NONE	-	SMALL	SimpleGraph, Real.negMulLog	MatchingFPRAS, MatchingEntropy, MatchingEntropyBounds	entropy conjecture is pure math; FPRAS needs randomized model
+114	Approximate counting of common integer polymatroid bases.	NONE	-	NO	Matroid	CommonBasesFPRAS	needs oracle randomized machine model for FPRAS
+115	Sampling and counting contingency tables with arbitrary margins.	NONE	-	NO	Matrix	ContingencyTables	needs randomized sampler model with expected time
+116	Uniform black-box noncommutative identity testing across characteristics.	NONE	-	SMALL	FreeAlgebra, Matrix	FormulaHitting, RationalHitting	define noncommutative formulas; explicit hitting set construction
+117	Uniform sparsest cut: hardness and semidefinite gaps.	NONE	-	SMALL	SimpleGraph, Turing.TM2ComputableInPolyTime	UniformSparsestCut	NP-hardness via repo NP; SDP gap part needs metric defs
+118	Bin packing and unbounded configuration-LP gaps.	NONE	-	SMALL	Finset, Turing.TM2ComputableInPolyTime	BinPackingGap	MIRUP disproof is pure math: OPT - ceil(LP) unbounded
+119	The Courtade–Kumar and Hellinger conjectures.	MAIN	FormalConjectures/Paper/CourtadeKumar.lean	YES	Real.negMulLog, Finset	CourtadeKumar	courtade_kumar already stated
+120	Almost-linear-time exact matching and prescribed-degree factors in general graphs.	NONE	-	NO	SimpleGraph	-	almost-linear word-RAM time; no RAM model
+121	Almost-linear approximation of edit distance.	NONE	-	NO	-	EditApproximation	almost-linear randomized time; no RAM model
+122	Quantitative trace-reconstruction bounds with a uniform decoder.	NONE	-	SMALL	PMF, ProbabilityTheory	TraceReconstruction	lower bound on traces is pure probability; define deletion channel
+124	Polynomial-time scheduling on three identical machines.	NONE	-	SMALL	Turing.TM2ComputableInPolyTime	ThreeMachine	define P3 prec unit-job scheduling; polytime optimal algorithm
+125	The metric k-median approximation threshold and recovery.	NONE	-	SMALL	Turing.TM2ComputableInPolyTime, MetricSpace	KMedianThreshold, KMedianRecovery, KMedianRefinedRecovery, MetricKMedian	polytime (1+2/e+eps)-approx; threshold assumes P != NP
+126	Exponential semidefinite complexity of perfect matching.	NONE	-	SMALL	Matrix.PosSemidef, convexHull	MatchingPSD, MatchingAffineLift	define psd rank of slack matrix; exponential lower bound
+127	Average sensitivity of polynomial threshold functions.	NONE	-	YES	MvPolynomial.totalDegree, Fintype, SignType.sign	GotsmanLinial	average sensitivity of degree-d PTF <= 8 d sqrt n
+128	A factor-two approximation for shortest common superstring.	NONE	-	SMALL	Turing.TM2ComputableInPolyTime, List.IsInfix	Superstring	polytime 2-approximation for shortest common superstring
+129	Exponential state costs for two-way automata.	NONE	-	SMALL	NFA, DFA, Language	TwoWayComplementation, TwoWayDeterminization	Needs local 2NFA/2DFA defs; state-count lower bound family over growing alphabets
+130	Exact Fourier transforms below $`n\log n`$.	NONE	-	SMALL	DFT via AddChar (ZMod n) ℂ, Polynomial	ExactFourier	Needs local straight-line arithmetic program model and operation count
+131	Rapid mixing of graph switches for every degree sequence.	NONE	-	SMALL	SimpleGraph, ProbabilityTheory	SwitchChain	Needs local switch Markov chain, TV distance, mixing time definitions
+132	A superquadratic separation of sensitivity and block sensitivity.	MAIN	FormalConjectures/Paper/StrongSensitivityConjecture.lean	SMALL	Finset, Fin n → Bool	SensitivitySeparation	Existing file states bs ≤ s^2; disproof is its negation
+133	The computational complexity of Weisfeiler–Leman refinement.	NONE	-	NO	SimpleGraph	WeisfeilerLeman, WLIdentification, VariableWL	WL definable, but n^Ω(k) time bounds and EXPTIME-completeness need machine models
+134	Generalized star height at most three.	NONE	-	SMALL	RegularExpression, Language.IsRegular, KStar	GeneralizedStarHeight	Local inductive generalized regex with complement; ∀ regular L, star height ≤ 3
+135	Homogeneous depth-five lower bounds for iterated matrix multiplication.	NONE	-	SMALL	MvPolynomial, Matrix	DepthFive	Needs local homogeneous depth-five circuit model and size measure
+136	A quasilinear PCP theorem for PPAD.	NONE	-	NO	-	-	PCP/PPAD reductions and complexity classes absent
+137	One-tape time simulation in two-fifths-power space.	NONE	-	NO	Turing.TM2	OneTapeSpace	Space-bounded simulation model absent; Mathlib only has time-bounded TM2
+138	Subset Sum in $`O(2^{0.49n})`$ time.	NONE	-	NO	-	-	Randomized word-RAM running time model absent
+139	Subpolynomial query complexity for log-concave sampling.	NONE	-	NO	MeasureTheory, gradient	LogConcaveQuery	Oracle query complexity of randomized samplers needs substantial algorithm model
+140	Memory–sample lower bounds for noiseless Gaussian regression.	NONE	-	NO	gaussianReal	NoiselessRegression	Memory-bounded streaming learner model absent
+141	Existential–universal real sentences in the counting hierarchy.	NONE	-	NO	-	-	Counting hierarchy and ETR complexity absent
+142	Deterministic polynomial factorization over prime fields.	NONE	-	SMALL	Polynomial, ZMod, UniqueFactorizationMonoid	-	Use FC4M IsPolyTime with bitstring encoding; needs factorization output encoding
+143	Hilbert's sixteenth problem: uniform bounds for limit cycles.	NONE	-	SMALL	MvPolynomial, HasDerivAt, IsIntegralCurve	QuinticLienard	Local defs of periodic orbit/limit cycle; ∀ degree n ∃ bound H(n)
+144	Banach’s simple Lebesgue-spectrum problem.	NONE	-	SMALL	MeasurePreserving, Lp, HilbertBasis, ContDiff	ThreeTorus	Koopman iterates of one observable form orthonormal basis of L2_0(T^3)
+145	Rokhlin’s multiple-mixing problem.	NONE	-	SMALL	MeasurePreserving, MeasurableEquiv, ProbabilityMeasure	Rokhlin	Local mixing/k-mixing defs; mixing → mixing of all orders
+146	Positive metric entropy for the standard map.	NONE	-	SMALL	AddCircle, volume, MeasurePreserving	StandardMapEntropy, StandardMapLyapunov	Kolmogorov–Sinai entropy absent; needs local partition-entropy def
+147	The near-boundary Birkhoff conjecture.	NONE	-	NO	Convex, ContDiff	-	Smooth billiard map, caustics, invariant-curve foliations all missing
+148	The entropy-rate dimension formula for self-similar measures.	NONE	-	SMALL	dimH, Measure, negMulLog	SelfSimilar, SelfSimilarCorollaries	Local defs of measure Hausdorff dimension and random-walk entropy rate
+149	Classwise permanence for weakly reversible mass-action systems.	PR	#7010	SMALL	ODE, HasDerivAt	MassAction	PR states endotactic permanence (generalizes weakly reversible); needs CRN defs
+150	Weak mixing of triangular billiards with an irrational angle.	NONE	-	SMALL	EuclideanSpace, MeasurePreserving	IrrationalTriangleBilliard	Needs local polygonal billiard flow and weak-mixing definition
+151	A C1 counterexample to the entropy conjecture.	NONE	-	SMALL	coverEntropy, SingularHomology, ContMDiff	C1EntropyCounterexample	Topological entropy and singular homology exist; manifold self-map counterexample
+152	Zero entropy does not guarantee a smooth positive-volume model.	NONE	-	NO	MeasurePreserving, ContMDiff	-	Needs KS entropy, smooth positive densities on arbitrary manifolds
+153	Arithmetic classification and non-Pisot singularity for Bernoulli convolutions.	NONE	-	SMALL	Measure.map, Polynomial, IsAlgebraic	-	Core: Bernoulli convolution singular at reciprocals of quartic Salem numbers
+154	Pointwise multiple ergodic averages for mixing transformations.	NONE	-	SMALL	MeasurePreserving, birkhoffAverage	-	Local mixing def; a.e. convergence of multiple averages to product of integrals
+155	A counterexample to periodic tiling in dimension three.	NONE	-	SMALL	Set, ℤ^3 translates	PeriodicTilingThree	Local tiling/periodicity defs; ∃ finite tile in ℤ^3 with no periodic tiling
+156	Borsuk's conjecture fails in dimension nine.	MAIN	FormalConjectures/Wikipedia/BorsukConjecture.lean	YES	EuclideanSpace, Metric.diam	BorsukNine	PR #7312 adds n ≥ 9 variant
+157	Graph coloring, clique minors, and Colin de Verdière invariants.	PR	#5196, #6981	SMALL	SimpleGraph.chromaticNumber, Subgraph	HadwigerCounterexample, ListHadwiger	Needs minors, fractional chromatic number; Colin de Verdière μ missing
+158	The Euclidean plane cannot be colored with five colors.	MAIN	FormalConjectures/ErdosProblems/508.lean; FormalConjectures/Wikipedia/HadwigerNelson.lean	YES	SimpleGraph.chromaticNumber, EuclideanSpace, SimpleGraph/UnitDistance	EuclideanFiveColor, PlaneColoring	χ(ℝ²) ≥ 6 is a lower bound variant in 508
+159	Erdős’s reciprocal-sum conjecture and quasipolynomial Szemerédi bounds.	MAIN	FormalConjectures/ErdosProblems/3.lean	YES	Summable, Set.IsAPOfLength	ErdosReciprocal	Divergent reciprocal sum implies arbitrarily long APs
+160	Superexponential van der Waerden numbers.	MAIN	FormalConjectures/ErdosProblems/138.lean	YES	Finset, Nat	QuantitativeVanDerWaerden	W(k)^{1/k} → ∞
+161	Counterexamples to Sidorenko’s conjecture and the forcing conjecture.	MAIN	FormalConjectures/Wikipedia/SidorenkoConjecture.lean	YES	SimpleGraph.Copy, FC4M HomDensity	SidorenkoCounterexample	Forcing conjecture not stated
+162	Counterexamples to Ryser’s covering conjecture.	PR	#6812	SMALL	Finset, SetFamily	RyserCovering	Needs local r-partite hypergraph, cover number τ, matching ν
+164	Hindman’s finite sums and products conjecture.	MAIN	FormalConjectures/ErdosProblems/172.lean	YES	Finset.sum, Finset.prod	-	Already marked solved with linked formal proof
+165	The Harary–Hill and Zarankiewicz crossing-number formulas.	NONE	-	SMALL	SimpleGraph, Path, ContinuousMap	CompleteCrossing, BipartiteCrossing	Needs local plane drawing and crossing number; PR #4111 is draft placeholder
+166	The higher-dimensional Erdős distinct-distances conjecture.	MAIN	FormalConjectures/ErdosProblems/1083.lean	YES	EuclideanSpace, Finset.image dist	-	1083 states n^{2/d-o(1)}; result gives c_d n^{2/d}
+167	Planar distinct distances and unit-distance bounds.	MAIN	FormalConjectures/ErdosProblems/604.lean; FormalConjectures/ErdosProblems/90.lean	YES	EuclideanSpace, dist	PinnedDistances, PlanarUnitDistances	PR #7340 links weak pinned proof; all-but-o(n) version stronger
+168	Combinatorial invariance of Kazhdan–Lusztig polynomials.	NONE	-	SMALL	CoxeterSystem, CoxeterSystem.length	KLInvariance	Bruhat order and KL polynomials absent; definable via R-polynomial recursion
+169	Shareshian–Wachs elementary positivity.	NONE	-	SMALL	MvPolynomial.esymm, SimpleGraph.Coloring	ElementaryPositivity	Local chromatic quasisymmetric function in finitely many variables
+170	Sharp logarithmic exponents for off-diagonal Ramsey numbers.	MAIN	FormalConjectures/ErdosProblems/986.lean	YES	SimpleGraph.CliqueFree, indepNum	SharpLogRamsey	986 is lower bound k^{s-1}/(log k)^c; sharp exponent is stronger
+171	The hypercube Ramsey conjecture.	MAIN	FormalConjectures/ErdosProblems/181.lean	YES	SimpleGraph.Copy, FC4M Hypercube	-	R(Q_n) ≪ 2^n
+172	Classification of finite Euclidean Ramsey configurations.	NONE	-	SMALL	EuclideanSpace, Isometry	EuclideanRamsey, EuclideanRamseyTransitive	Erdős 214 and PR #6980 are special cases; LRW conjecture not stated
+173	Seymour’s second-neighborhood conjecture.	PR	#5188	YES	Digraph	SeymourSecondNeighborhood	Oriented graph = Digraph with no loops or 2-cycles
+174	Deterministic construction of strong thin spanning trees.	NONE	-	SMALL	SimpleGraph.IsEdgeConnected, IsTree	StrongThinTree, AlgorithmicThinTrees	Multigraphs need local def; algorithmic part harder
+175	Talagrand’s expectation thresholds, discrete convexity, and graph decompositions.	NONE	-	SMALL	Finset, SetFamily	TalagrandExpectationThreshold, TalagrandDiscreteConvexity	GreensOpenProblems/54 is Gaussian convexity, different; needs p-biased measure
+176	The second Kahn–Kalai conjecture with an edge-count bound.	NONE	-	SMALL	SimpleGraph.Copy, ProbabilityTheory	SecondKahnKalai	PR #4018 is first Kahn–Kalai; needs local G(n,p) measure
+177	Bounded-degree coboundary expanders.	NONE	-	SMALL	ZMod 2, Finset	CoboundaryExpanders	Needs local abstract simplicial complex and F2 coboundary expansion
+178	Deterministic nonbipartite Ramanujan graphs in every fixed degree.	NONE	-	YES	SimpleGraph.adjMatrix, Matrix.IsHermitian.eigenvalues, IsRegularOfDegree	-	Existence part stateable; poly-time construction part not
+179	The circulant Hadamard and Barker-sequence conjectures.	MAIN	FormalConjectures/Arxiv/2402.13202/CirculantHadamard.lean; FormalConjectures/Arxiv/2104.00502/BarkerSequence.lean	YES	Matrix.circulant, Matrix	CirculantHadamard, EvenBarker	Circulant Hadamard only in orders 1, 4
+180	Barnette’s Hamiltonian-cycle conjecture.	PR	#7149	SMALL	SimpleGraph.IsHamiltonian, IsRegularOfDegree	BarnetteHamiltonian	Planarity absent in Mathlib; needs local def
+181	The Erdős–Gallai cycle-decomposition conjecture.	MAIN	FormalConjectures/ErdosProblems/184.lean	YES	SimpleGraph, Walk.IsCycle	CycleDecomposition	O(n) cycles and edges partition
+182	Power savings for intersective polynomial differences and prime arguments.	NONE	-	YES	Polynomial ℤ, ZMod, Finset.range	-	Intersective h; difference-free subsets of [N] have size O(N^{1-c_k})
+183	Power savings for planar halving lines and k-sets.	PR	#6979	YES	EuclideanSpace, Collinear	HalvingLines	Halving lines O(n^{4/3-ε}) for points with no three collinear
+184	Correspondence coloring with a fixed forbidden subgraph.	NONE	-	YES	SimpleGraph.CliqueFree, indepNum, maxDegree	CliqueFreeLog	AEKS core: K_r-free implies α ≥ c n log d / d; DP coloring needs local def
+185	Counterexamples to infinite matroid intersection and packing/covering.	NONE	-	YES	Matroid, Matroid.Indep, Matroid.dual	InfiniteMatroid, InfiniteMatroidCorollaries	Mathlib matroids allow infinite ground sets; state intersection conjecture negation
+186	Uniform influence and sharp thresholds for graph and hypergraph properties.	NONE	-	SMALL	SimpleGraph, Finset	SharpThreshold	Needs local p-biased measure and threshold width
+187	Snaky in 21 Maker moves.	NONE	-	SMALL	ℤ × ℤ, Finset	SnakyTwentyOne, SnakyCertificate, SnakyConditional	Needs local Maker–Breaker game and winning strategy definitions
+188	The sharp terminal leave in random triangle removal.	NONE	-	SMALL	SimpleGraph, ProbabilityTheory	TriangleRemoval	Needs local random triangle removal process
+189	Cycle–clique Ramsey numbers.	MAIN	FormalConjectures/ErdosProblems/551.lean	YES	SimpleGraph.cycleGraph, CliqueFree	CycleCliqueRamsey	PR #6992 records full formula
+190	Polynomial removal fails for ordered binary matrices.	NONE	-	SMALL	Matrix (Fin n) (Fin n) Bool	MatrixRemoval	Needs local ordered pattern copy density and removal distance
+191	A power improvement in the Heilbronn triangle lower bound.	MAIN	FormalConjectures/ErdosProblems/507.lean	YES	EuclideanSpace, MeasureTheory.volume	HeilbronnTriangle	Lower bound n^{-2+c} for Heilbronn
+192	Boolean functions violate the square-root degree bound by arbitrary factors.	NONE	-	SMALL	Finset.sum; Real.sqrt; Fintype	SquareRootDegree	Local defs of Boolean Fourier coefficient and degree; existential over C. PR 3807 is different
+193	Serre’s intersection-multiplicity conjecture.	MAIN	FormalConjectures/Wikipedia/SerreMultiplicityConjectures.lean	SMALL	IsRegularLocalRing; Module.length; TensorProduct	-	intersectionMultiplicity_pos already stated; PR 7215 adds proof note
+194	Lech’s multiplicity conjecture.	NONE	-	SMALL	Module.Flat; IsLocalHom; Module.length; ringKrullDim	-	Needs local Hilbert-Samuel multiplicity def; then e(R) ≤ e(S) for flat local maps
+195	A counterexample to the small Cohen–Macaulay module conjecture.	MAIN	FormalConjectures/Wikipedia/SmallCohenMacaulayModules.lean	SMALL	IsAdicComplete; IsLocalRing.maximalIdeal; ringKrullDim	-	exists_isSmallCohenMacaulay already stated; PR 7214 adds counterexample note
+196	A counterexample to Kaplansky’s zero-divisor conjecture.	MAIN	FormalConjectures/Wikipedia/Kaplansky.lean	YES	MonoidAlgebra; Monoid.IsTorsionFree; Group.IsFinitelyPresented	TorsionFreeZeroDivisors	zero_divisor_conjecture already marked solved, links OpenAI proof
+197	A torsion-free group algebra that is not directly finite.	MAIN	FormalConjectures/Wikipedia/SurjunctiveGroup.lean	YES	MonoidAlgebra; IsDedekindFiniteMonoid; Group.IsFinitelyPresented	KaplanskyDirectFiniteness; KaplanskyFinitelyPresented; OddKaplansky; GroupRingDeterminant	Gottschalk stated; direct-finiteness conjecture itself not stated in repo
+198	A counterexample to finitistic-dimension finiteness.	NONE	-	YES	projectiveDimension; HasProjectiveDimensionLE; ModuleCat; FiniteDimensional	LittleFinitistic; FinitisticAsymmetry	Exists f.d. ℂ-algebra with unbounded finite projective dimensions of f.d. modules
+199	Counterexamples to Auslander–Reiten, Tachikawa and related homological conjectures.	MAIN	FormalConjectures/Paper/AuslanderReiten.lean	YES	CategoryTheory.Abelian.Ext; ModuleCat; Module.Projective	AuslanderReiten; Tachikawa	Also open PRs #7067 (Tachikawa), #5547 (Nakayama)
+200	Eisenbud–Green–Harris and lex-plus-powers.	MAIN	FormalConjectures/Paper/EisenbudGreenHarris.lean	YES	MvPolynomial; Ideal.IsHomogeneous; Module.finrank	-	eisenbud_green_harris stated; lex-plus-powers Betti part not stated
+201	A counterexample to Kurosh’s division-ring problem.	NONE	-	YES	DivisionRing; Subring.center; Algebra.IsAlgebraic; Module.rank	-	∃ char-0 division ring, algebraic over center, 2-generated, infinite rank over center
+202	The blockwise Alperin weight conjecture.	NONE	-	NO	-	-	Needs blocks, Brauer characters, weights of finite groups
+203	Donovan's conjecture over fields and complete mixed-characteristic DVRs.	NONE	-	NO	-	-	Needs blocks, defect groups, Morita equivalence classes
+204	Tensor saturation for even spin groups.	NONE	-	NO	-	-	Needs Spin(2n) representation theory and dominant weights
+205	Saxl’s conjecture and universal tensor squares.	NONE	-	SMALL	FDRep; FDRep.character; CategoryTheory.Simple; Equiv.Perm	Saxl; UniversalTensorSquares	Universal-tensor-square variant stateable via FDRep; staircase needs Specht modules
+206	Finite lattice representation and undecidability.	NONE	-	SMALL	Lattice; Fintype; OrderIso; Setoid	FiniteCongruenceGraph(?)	Needs local finite universal-algebra and congruence-lattice defs
+207	The ℓ¹-Bass conjecture for all discrete groups.	MAIN	FormalConjectures/Arxiv/math.0703548/FarrellJonesConsequences.lean	SMALL	MonoidAlgebra; IsIdempotentElem; lp; Matrix.trace	BassTrace; BassTorsionFree	Bass (domains) and Kaplansky idempotent stated; ℓ¹ form needs local HS trace
+208	Finite symmetric tensor categories and the Verlinde tower.	NONE	-	NO	-	-	Needs symmetric tensor categories and higher Verlinde categories
+209	Integral counterexamples to Gersten’s conjecture.	NONE	-	NO	-	-	Needs higher algebraic K-theory of rings
+210	Foulkes' conjecture for sixth powers and quadratic stabilization.	NONE	-	SMALL	SymmetricPower; Representation; LinearMap	FoulkesHowe	Define canonical Foulkes-Howe map; state surjectivity for b ≥ a(a-1)
+211	The geometric phase diagram, diffusion, and spectra of random planar maps.	NONE	-	NO	-	FKCRT	Needs LQG, Brownian CRT, Liouville Brownian motion
+212	Planar first-passage geometry and the absence of bigeodesics.	NONE	-	SMALL	Measure.infinitePi; SimpleGraph.Walk; IsProbabilityMeasure	PlanarFirstPassage; GammaPassage	Local FPP passage time and bigeodesic defs on ℤ²; a.s. no bigeodesic
+213	Critical percolation on every quasi-transitive graph.	NONE	-	SMALL	Measure.infinitePi; SimpleGraph.Connected; SimpleGraph.LocallyFinite	CriticalPercolation; CriticalZ3; CayleyPercolation(?)	Local Bernoulli percolation, p_c, quasi-transitivity defs; θ(p_c)=0
+214	The Benjamini–Schramm nonuniqueness conjecture.	NONE	-	SMALL	Measure.infinitePi; SimpleGraph.LocallyFinite; SimpleGraph.Connected	BenjaminiSchramm	Local percolation, p_u, nonamenability defs; p_c < p_u
+215	Canonical $`O(3)`$ continuum limit and exact $`O(4)`$ mass asymptotics.	NONE	-	NO	-	ClassicalON	Continuum QFT limit and infinite-volume Gibbs states missing
+216	Critical and near-critical XY scaling and BKT universality.	NONE	-	NO	-	-	Infinite-volume XY Gibbs states, BKT asymptotics missing
+217	The low-temperature Sherrington–Kirkpatrick fluctuation law.	NONE	-	SMALL	gaussianReal; ProbabilityTheory.variance; Measure.pi	-	Finite-n SK log partition function concrete; Var ~ c n^{1/3}
+218	Conformal universality for weakly interacting and random-bond Ising models.	NONE	-	NO	-	-	Needs SLE3 and Ising scaling limits
+219	GOE bulk universality for regular graphs with weak Anderson disorder.	NONE	-	NO	-	-	Needs GOE point-process limits for random regular graphs
+220	Directional zero–one laws beyond iid environments and iid ballisticity.	NONE	-	SMALL	ProbabilityTheory.Kernel.traj; Measure.infinitePi; Filter.Tendsto	DirectionalBallisticity; DirectionalWalk	Local RWRE quenched/annealed law; transience implies positive velocity
+221	The Mézard–Parisi formula for diluted spin glasses.	NONE	-	NO	-	DilutedSpin	Mézard-Parisi hierarchical cavity functional too heavy
+222	Perceptron free energies and microscopic jamming exponents.	NONE	-	NO	-	PerceptronFreeEnergy	Variational free-energy formulas too heavy
+223	Random-cluster interfaces: critical, disordered, thermal, and natural-time scaling.	NONE	-	NO	-	-	Needs SLE/CLE
+224	Critical and quenched near-critical universality for Poisson–Voronoi percolation.	NONE	-	NO	-	-	Needs Poisson-Voronoi percolation and conformal Cardy limit
+225	Gaussian free field limits throughout the balanced six-vertex regime.	NONE	-	NO	-	-	Needs Gaussian free field convergence
+226	The double-dimer loop ensemble converges to CLE4.	NONE	-	NO	-	-	Needs CLE4
+227	Critical SK autocorrelation processes and dynamics across the temperature transition.	NONE	-	SMALL	Matrix.exp; gaussianReal; Fintype	CriticalSK; CriticalSKMixing	Mixing-time bounds stateable with local TV and heat-bath generator defs
+228	Continuum phase transitions for radial pair potentials.	NONE	-	NO	-	ContinuumTransition; RadialTransition	Thermodynamic limit of continuum canonical free energy missing
+229	Exact three- and four-state reconstruction thresholds and four-state tree capacity.	NONE	-	SMALL	Measure; Filter.Tendsto; Fintype	ThreeStateSupercritical(?); ThreeStateTreeClauses(?)	Local finite-depth broadcast on d-ary tree; reconstruction iff dλ²>1
+230	Exact Hausdorff gauges for SLE.	NONE	-	NO	-	SLELowerPositivity(?)	Needs SLE
+231	The free uniform spanning forest is a factor of IID.	NONE	-	NO	-	FreeUniformSpanningForest; StronglyRayleighDPP	Needs free uniform spanning forest and factor-of-iid machinery
+232	Gaussian fields and interfaces for triangular-lattice Lipschitz heights.	NONE	-	NO	-	TriangularGaussian(?)	Needs GFF and SLE4 limits
+233	The joint critical Ashkin–Teller current limit.	NONE	-	NO	-	GaussianReplacement(?)	Needs GFF and its local sets
+234	All-temperature pressure of orthogonally invariant Ising spin glasses.	NONE	-	NO	-	-	Variational pressure formula too heavy
+235	Limiting random SAT thresholds, sharp variance and computability.	NONE	-	SMALL	PMF; Finset.card; Filter.Tendsto	SATComputability; SATSharpness; SATVariance; FixedClauseThreshold	Local random k-SAT model; ∃ r_k sharp threshold limit
+236	The exact factor-of-IID threshold for free Ising spins on trees.	NONE	-	NO	-	FreeIsing	Needs infinite-tree Ising Gibbs state and factor-of-iid defs
+237	The three-quarter exponent for honeycomb self-avoiding walk.	NONE	-	SMALL	SimpleGraph.Walk.IsPath; Finset.card; Real.rpow	HoneycombBridgeFiniteness(?); HoneycombBridgeMassSupport(?)	Uniform n-step honeycomb SAW diameter n^{3/4+o(1)}; PR 4014 unrelated
+238	Optimal logarithmic mixing of the Thorp shuffle.	NONE	-	SMALL	Equiv.Perm; PMF; Fin	ThorpRouting; ThorpFirstReciprocal; ThorpRemaining; ThorpWeightedCompatibility	Local Thorp shuffle and TV mixing time; t_mix = Θ(d)
+239	Sharp singularity rates for symmetric random sign matrices.	NONE	-	YES	Matrix.det; Matrix.IsSymm; Finset.card; Filter.Tendsto	-	Count symmetric ±1 matrices with det 0; nth root → 1/2
+240	Shelah's eventual categoricity and the prescribed-threshold obstruction.	NONE	-	SMALL	FirstOrder.Language.Structure; Cardinal; FirstOrder.Language.Embedding	CHObstruction	Needs local AEC definition and categoricity; then eventual categoricity
+241	Rigidity of the Turing degrees.	NONE	-	YES	TuringDegree; TuringDegree.instPartialOrder; OrderIso	DegreeRigidity	∀ f : TuringDegree ≃o TuringDegree, f = id
+242	Single-fold Diophantine representations and undecidability under an at-most-one-solution promise.	NONE	-	SMALL	Dioph; REPred; MvPolynomial	SingleFold	Local single-fold Diophantine representation def; every r.e. set has one
+243	Separating choiceless counting from polynomial time and witnessed choice.	NONE	-	NO	-	ChoicelessPolynomialTime; WitnessedChoice	Needs CPT+C logic formalism
+244	The Partition Principle does not imply Choice.	NONE	-	NO	-	PartitionPrinciple	Needs ZF models/symmetric extensions
+245	Weak normalization implies strong normalization in pure type systems.	NONE	-	SMALL	Relation.ReflTransGen; Acc; WellFounded	TypeSystemNormalization	Local PTS syntax, β-reduction, typing; WN → SN
+246	Cannon's conjecture.	NONE	-	NO	-	CannonGeometricAction	Gromov boundary missing (FCForMathlib has hyperbolic groups only)
+247	An infinite finitely presented residually finite 2-group and a finitely presented nil algebra.	PR	7412	YES	Group.IsFinitelyPresented; ResiduallyFinite; IsOfFinOrder; Infinite	PeriodicGroup	∃ infinite f.p. residually finite group, every element order 2^k
+248	Thompson's group F is nonamenable.	NONE	-	SMALL	PresentedGroup; Group.FG; MeasureTheory FoelnerFilter	ThompsonNonamenability	Local Thompson F presentation and Følner amenability def; ¬amenable
+249	A finitely generated Eilenberg–Ganea counterexample.	NONE	-	NO	-	EilenbergGanea	Needs geometric dimension (classifying spaces)
+250	Boone–Higman embeddings with higher finiteness.	NONE	-	SMALL	IsSimpleGroup; Group.IsFinitelyPresented; ComputablePred	BooneHigman; UniversalFInfinity	Local decidable-word-problem def; iff embeds in f.p. simple group
+251	Amenability, unitarizability, and strong Ulam stability.	NONE	-	SMALL	ContinuousLinearMap; InnerProductSpace; unitary	Dixmier; DixmierAllDiscrete	Local amenability and uniformly bounded rep defs; unitarizable iff amenable
+252	A torsion-free hyperbolic group that is neither residually finite nor linear over any field.	MAIN	FormalConjectures/Other/HyperbolicGroupsResiduallyFinite.lean	YES	ResiduallyFinite; Monoid.IsTorsionFree; (FCForMathlib IsHyperbolic)	TorsionFreeHyperbolic	hyperbolic_residuallyFinite stated; non-linearity part not stated
+253	An infinite finitely presented simple amenable group.	NONE	-	SMALL	IsSimpleGroup; Group.IsFinitelyPresented; Infinite; FoelnerFilter	SimpleAmenable	Needs local group amenability def
+254	Classifying spaces and geometric obstructions for Artin groups.	NONE	-	SMALL	CoxeterMatrix, PresentedGroup, Subgroup.closure	ArtinParabolicIntersections, ArtinCAT0	Parabolic intersection stateable via Artin presentation; K(pi,1)/CAT(0) parts NO
+255	Quasi-isometric recognition of virtually polycyclic groups.	NONE	-	SMALL	Group.FG, IsSolvable, Subgroup.FiniteIndex	PolycyclicRecognition	Needs local polycyclic and word-metric quasi-isometry definitions
+256	Nonsingular systems of equations over arbitrary groups.	NONE	-	YES	Monoid.Coprod, Subgroup.normalClosure, FreeGroup	Kervaire	Kervaire: G nontrivial implies (G * Z)/<<w>> nontrivial; Howie needs exponent sums
+257	A hyperbolic group without a geometric CAT(0) action.	NONE	-	NO	-	HyperbolicObstruction	Needs Gromov hyperbolic groups, CAT(0) spaces, geometric actions
+258	Gersten’s conjecture and virtual compact specialness of one-relator groups.	NONE	-	NO	PresentedGroup	-	Needs word-hyperbolicity and virtual compact specialness
+259	A group without fixed price.	NONE	-	NO	-	-	Needs cost of pmp equivalence relations
+260	Spacetime Penrose inequalities: enclosing area, charge, rotation, and anti-de Sitter extensions.	NONE	-	NO	-	-	Needs Lorentzian initial data, ADM mass, trapped surfaces
+261	Localization and delocalization in the Anderson model.	NONE	-	NO	-	PlanarAndersonSpectrum	Needs random Schroedinger operators and spectral type decomposition
+262	Sharp finite-matrix Lieb–Thirring inequalities and all equality cases.	NONE	-	NO	-	LiebThirring	Needs matrix Schroedinger operators on L2(R) and their eigenvalue sums
+263	The ionization and generalized ionization conjectures.	NONE	-	NO	-	CoulombIonization, CoulombRadii	Needs many-body Coulomb Hamiltonians and ground-state binding
+264	Strong cosmic censorship near two-ended Kerr data.	NONE	-	NO	-	-	Needs Einstein vacuum evolution and extension theory
+265	Area laws and tensor networks for two-dimensional gapped systems.	NONE	-	NO	-	-	Needs local Hamiltonians, entanglement entropy, PEPS on lattices
+266	Exactly three mutually unbiased bases in dimension six.	MAIN	FormalConjectures/OpenQuantumProblems/13.lean	YES	Matrix.unitaryGroup, Complex.abs	MUBSix	mutuallyUnbiasedBases_dim6 states max MUB count in dimension 6
+267	Positive-temperature Bose–Einstein condensation and exact quantum depletion.	NONE	-	NO	-	HardSphere	Needs canonical Gibbs states and thermodynamic limits for hard spheres
+268	The spin-one Haldane gap.	NONE	-	SMALL	Matrix.IsHermitian.eigenvalues, Matrix.kroneckerMap	-	Finite spin-1 Heisenberg ring Hamiltonian; gap bounded below uniformly in L
+269	Uniform Laughlin gap and stability under bounded scalar disorder.	NONE	-	NO	-	LaughlinGap	Needs lowest Landau level on sphere and V1 pseudopotential setup
+270	Threshold and positive-energy bound states of the BFSS matrix model.	NONE	-	NO	-	-	Needs BFSS supersymmetric matrix quantum mechanics on L2
+271	Bloch's law, its lattice correction, and the spherical magnetization law.	NONE	-	NO	-	Heisenberg	Needs quantum Gibbs states, thermodynamic limit, magnetization asymptotics
+272	Entanglement without distillable secret key.	NONE	-	SMALL	Matrix.kroneckerMap, Matrix.PosSemidef	DimensionTenPair	PPT-square disproof stateable via Choi matrices; distillable key part NO
+273	The entropy photon-number inequality.	NONE	-	NO	-	EntropyPhotonNumber	Needs bosonic Fock space, beam splitters, von Neumann entropy
+274	Parity is not in QAC0.	NONE	-	SMALL	Matrix.unitaryGroup, Matrix.kroneckerMap	QACParity	Needs local QAC0 circuit model definitions on qubit tensor powers
+275	QMA-hardness of continuum Coulomb energy.	NONE	-	NO	-	ContinuumCoulombHardness	Needs QMA and polynomial-time reductions
+276	Classical capacity of generalized amplitude damping.	NONE	-	NO	-	AmplitudeDamping	Needs quantum channel capacity and Holevo quantities
+277	Threshold repetition for entangled games.	NONE	-	SMALL	Matrix.PosSemidef, Matrix.kroneckerMap	EntangledGames	Needs local nonlocal game, entangled value, k-fold repetition definitions
+278	Failure of Kohn–Sham ensemble representation.	NONE	-	NO	-	CoulombCounterexample	Needs Coulomb ground-state densities and Kohn-Sham potentials
+279	Exact quantum factoring over a fixed finite gate set.	NONE	-	NO	-	ExactQuantumFactoring	Needs uniform quantum circuit families and polynomial-time complexity
+280	Unitary vertex operator algebras and conformal nets.	NONE	-	NO	-	VertexAlgebraNet	Needs vertex operator algebras and conformal nets
+281	QAOA attains the SK optimum in the thermodynamic-first limit.	NONE	-	NO	-	-	Needs SK model limits and QAOA energy asymptotics
+282	From scale symmetry to local conformal symmetry in four-dimensional QFT.	NONE	-	NO	-	-	Needs algebraic QFT local nets and stress tensors
+283	Polynomial-time unitary synthesis from a Boolean oracle.	NONE	-	NO	-	-	Needs uniform quantum oracle circuits and diamond norm
+284	The optimal quartic separation between randomized and quantum queries.	NONE	-	NO	-	-	Needs randomized and quantum query complexity
+285	Counterexamples to Baum–Connes and Kadison–Kaplansky.	NONE	-	NO	-	-	Needs Baum-Connes assembly and reduced group C*-algebras
+286	Rigidity and arithmetic of lattice von Neumann algebras.	NONE	-	NO	-	-	Needs group von Neumann algebras and bimodule theory
+287	Isomorphism of the free group factors.	NONE	-	NO	-	InterpolatedFactors	Needs free group factors L(F_n)
+288	Kadison's similarity conjecture.	NONE	-	YES	CStarAlgebra, ContinuousLinearMap, StarAlgHom, Units	KadisonSimilarity	Bounded unital hom A -> B(H) is similar to a star-homomorphism
+289	Strong Kadison–Kastler stability and its spatial boundaries.	NONE	-	YES	VonNeumannAlgebra, Metric.hausdorffDist, unitary	StrongKadisonKastler	Close vN algebras on H are conjugate by unitary near identity
+290	Relative bicentralizers and modular spectral recovery.	NONE	-	NO	-	-	Needs type III1 factors, bicentralizers, core c(M)
+291	Cuntz comparison, nuclear dimension, and equivariant Jiang–Su stability.	NONE	-	NO	-	-	Needs Jiang-Su algebra, nuclear dimension, strict comparison
+292	Kirchberg's $`\mathcal O_2`$ norm-ultrapower embedding problem.	NONE	-	NO	-	NuclearUltrapower	Needs full group C*-algebras, norm ultrapowers, O_2
+293	Invariant projections, hyperinvariant subspaces, and transitive algebras.	NONE	-	YES	spectralRadius, Submodule, Commute, VonNeumannAlgebra	HyperinvariantSubspaces	Exists quasinilpotent T with no nontrivial closed hyperinvariant subspace
+294	Kaplansky's quasitrace conjecture and failure of tensor-product stable finiteness.	NONE	-	NO	-	KaplanskyQuasitrace, KaplanskyStableFiniteness	Needs 2-quasitraces and minimal tensor products of C*-algebras
+295	The Kadison–Ringrose cohomology conjecture.	NONE	-	SMALL	VonNeumannAlgebra, ContinuousMultilinearMap	KadisonRingrose	Define bounded Hochschild cochains and coboundary; higher cohomology vanishes
+296	The generator problem for finite factors.	NONE	-	SMALL	VonNeumannAlgebra, Set.centralizer	FactorGeneration, RelativeGeneration	Needs II1 factor, normal trace, separable predual local definitions
+297	A ZFC counterexample to Naimark's problem.	NONE	-	SMALL	CStarAlgebra, StarAlgHom, ContinuousLinearMap	Naimark	Define irreducible reps and unitary equivalence; existence of counterexample
+298	Two notions of free entropy differ even when both are finite.	NONE	-	NO	-	FiniteEntropySeparation	Needs Voiculescu microstates and non-microstates free entropy
+299	The Kirchberg–Rørdam character criterion and infinite tensor-power Jiang–Su stability.	NONE	-	NO	-	CharacterCriterion	Needs Jiang-Su algebra, central sequence algebras, ultrapowers
+300	Approximation and quadratic strong-operator paving.	NONE	-	NO	VonNeumannAlgebra	-	Needs masas, conditional expectations, SOT paving framework
+301	Trace cones and Razak–Jacelon stabilization.	NONE	-	NO	-	-	Needs Razak-Jacelon algebra and trace-cone classification
+302	Radius of comparison equals half the mean dimension.	NONE	-	NO	-	-	Needs radius of comparison and mean dimension
+303	Weak pure infiniteness and Cuntz-algebra absorption.	NONE	-	NO	-	ExactInfiniteness, IndividualStrongInfiniteness	Needs pure infiniteness, Cuntz comparison, O_infinity absorption
+304	The Hilbert–Smith conjecture in every dimension.	MAIN	FormalConjectures/HilbertProblems/5.lean	YES	IsTopologicalGroup, LocallyCompactSpace, ChartedSpace, LieGroup	-	hilbert_smith_conjecture; PR #7043 adds second-countable variants
+305	Four-dimensional disk embedding and Wall's conjecture.	NONE	-	NO	-	-	Needs Freedman-Quinn good groups and Poincare duality groups
+306	The purely cosmetic surgery conjecture.	NONE	-	NO	-	-	Needs knots in S3 and Dehn surgery
+307	Failure of rational injectivity for maximal coarse assembly.	NONE	-	NO	-	CoarseAssembly	Needs Roe algebras and coarse assembly maps
+308	Finite Smith–Toda complexes at every height.	NONE	-	NO	-	-	Needs spectra and Brown-Peterson homology
+309	The Kervaire invariant problem at the prime three.	NONE	-	NO	-	-	Needs Adams spectral sequence and stable stems
+310	Quillen's conjecture in rational homology.	NONE	-	SMALL	nerve, alternatingFaceMapComplex, Sylow	-	Order complex rational homology of elementary abelian p-subgroup poset
+311	The Hovey–Strickland and Chai conjectures.	NONE	-	NO	-	-	Needs Lubin-Tate rings, K(n)-local spectra, Balmer spectrum
+312	The Grothendieck homotopy hypothesis.	NONE	-	NO	-	-	Needs Grothendieck coherators and infinity-groupoid homotopy theory
+313	Finite generation for the $`K(n)`$-local sphere.	NONE	-	NO	-	-	Needs K(n)-local sphere and its homotopy groups
+314	Cyclic length and chromatic fixed-point loss.	NONE	-	NO	-	-	Needs equivariant spectra, geometric fixed points, chromatic height
+315	The four-dimensional Singer conjecture.	NONE	-	NO	-	-	Needs L2-Betti numbers and aspherical topological 4-manifolds
+316	Curtis’s conjecture.	NONE	-	NO	-	-	Stable homotopy groups of spheres, Hurewicz map to H_*(HF2) absent
+317	Thomason model structures in all strict higher dimensions.	NONE	-	NO	-	ThomasonModelStructures	Model categories and strict n-categories with Thomason structures absent
+318	Chromatic splitting: filtrations and counterexamples.	NONE	-	NO	-	-	Spectra, K(n)-localization, chromatic homotopy absent
+319	Counterexamples to finite generation at chromatic height two.	NONE	-	NO	-	-	Spectra, BP<2>, fp-type absent
+320	Nonhomeomorphic closed aspherical four-manifolds.	NONE	-	YES	HomotopyGroup; ContinuousMap.HomotopyEquiv; ChartedSpace; Homeomorph	-	Core: exist closed aspherical top. 4-manifolds, homotopy equivalent, not homeomorphic
+321	A counterexample to Wall's finite D(2) problem.	NONE	-	NO	-	-	Needs CW complexes plus cohomology with local coefficients
+322	Tingley’s sphere-isometry problem.	PR	#6988	YES	Metric.sphere; IsometryEquiv; LinearIsometryEquiv; NormedSpace	TingleySphereIsometry	Surjective sphere isometry extends to linear isometry
+323	Independence of the separable quotient problem.	PR	#7001	YES	Cardinal.continuum; SeparableSpace; NormedSpace; Submodule	SeparableQuotientNegative	CH half stateable; consistency/independence half needs set-theory metatheory
+324	Lipschitz equivalent Banach spaces need not be linearly isomorphic.	PR	#6999	YES	LipschitzWith; ContinuousLinearEquiv; SeparableSpace	LipschitzEquivalence	Exist separable Banach X,Y bi-Lipschitz but not linearly isomorphic
+325	The complete Crouzeix conjecture.	PR	#5247	SMALL	InnerProductSpace; ContinuousLinearMap; Matrix; Polynomial.aeval	CompleteCrouzeix; CrouzeixHilbert; DirectCrouzeix; HilbertCrouzeix; StructuralCrouzeix	Define numerical range, matrix-valued polynomial calculus; PR states scalar Crouzeix
+326	The cotype–cotype conjecture under the approximation property.	PR	#7153	SMALL	NormedSpace; ContinuousLinearMap; StrongDual	Cotype	Define Rademacher type/cotype, K-convexity, approximation property
+327	Markov type characterizes superreflexivity.	NONE	-	SMALL	UniformConvexSpace; NormedSpace; Matrix	MarkovType	Define Markov type via stationary reversible chains; renorming to uniformly convex
+328	Nonexpansive fixed points in reflexive Banach spaces.	PR	#6989	YES	NormedSpace.inclusionInDoubleDual; LipschitzWith; Convex; Bornology.IsBounded	ReflexiveFixedPoints	Nonexpansive self-map of closed bounded convex set in reflexive space has fixed point
+329	A counterexample to metric-entropy duality.	PR	#7152	SMALL	Metric.coveringNumber; polar; Convex	MetricEntropyDuality	Define translate-covering number N(K,L); negate Pietsch duality
+330	A uniformly discrete counterexample to bounded approximation in Lipschitz-free spaces.	NONE	-	NO	-	DiscreteLipschitzFree	Lipschitz-free space construction absent
+331	Reflexive midpoint convexity and diamond distortion.	NONE	-	SMALL	NormedSpace.inclusionInDoubleDual; SimpleGraph; LipschitzWith	DiamondDistortion; MidpointLenses	Define asymptotic (midpoint) uniform convexity moduli, diamond graphs, distortion
+332	Metric Markov cotype of ℓ1 and Hilbert-space Lipschitz extension.	NONE	-	YES	lp; LipschitzWith; InnerProductSpace; LipschitzWith.extend_real	LipschitzHilbert	Core: Lipschitz maps from subsets of Hilbert into l1 extend with constant C
+333	Smooth isometric immersions of surfaces into ℝ4.	PR	#7211	SMALL	Bundle.RiemannianMetric; IsRiemannianManifold; mfderiv	SurfaceImmersion	Closed Riemannian surface isometrically immerses in R^4; PR covers orientable
+334	A smooth surface metric with no local isometric immersion in ℝ3.	NONE	-	SMALL	ContDiff; fderiv; Matrix.PosDef	IsometricImmersion	Smooth PD matrix field g on (-1,1)^2; no local f with Df^T Df = g
+335	Gromov’s integral scalar-curvature bound for simplicial volume.	NONE	-	NO	-	-	Scalar curvature, simplicial volume absent
+336	Spectral scalar curvature, Urysohn width, and macroscopic dimension.	NONE	-	NO	-	-	Scalar curvature, Urysohn width, macroscopic dimension absent
+337	Sharp Cartan–Hadamard isoperimetry and rigidity.	NONE	-	NO	-	SharpCAT0Filling	Sectional curvature, finite-perimeter sets, integral currents absent
+338	Yau's uniformization conjecture.	NONE	-	NO	-	-	Kähler manifolds, bisectional curvature absent
+339	Katok's entropy rigidity conjecture.	NONE	-	NO	-	-	Sectional curvature, geodesic flow entropy, Liouville measure absent
+340	A counterexample to the nearby Lagrangian conjecture.	NONE	-	NO	-	-	Cotangent bundles symplectic structure, Hamiltonian isotopy absent
+341	Donaldson's hypersymplectic deformation conjecture.	NONE	-	NO	-	-	Differential forms on manifolds, de Rham cohomology absent
+342	Donaldson's tamed-to-compatible conjecture.	NONE	-	NO	-	TamingCompatibility	Almost complex structures, symplectic forms on manifolds absent
+343	Symplectic ball packing in higher dimensions.	NONE	-	SMALL	EuclideanSpace; ContDiff; fderiv; Matrix.J	BallPacking; BallPackingNecessity	Define standard symplectic form and symplectic embeddings of balls in R^2n
+344	The metric Blaschke conjecture.	NONE	-	NO	-	-	Injectivity radius, CROSS classification absent
+345	Infinitely many closed geodesics on Riemannian spheres and closed three-manifolds.	NONE	-	NO	-	-	Closed geodesics on Riemannian manifolds absent
+346	Sharp singular-set bounds for stationary integral varifolds.	NONE	-	NO	-	-	Varifolds, first variation absent
+347	Counterexamples to stable-Morse and strong Arnold fixed-point bounds.	NONE	-	NO	-	ArnoldCounterexample	Hamiltonian diffeomorphisms on Kähler manifolds absent
+348	Nonnegative-curvature Einstein classification and an L2 topological gap.	NONE	-	NO	-	EinsteinFour	Einstein metrics, sectional curvature absent
+349	The Solomon–Yau least-volume conjecture.	NONE	-	NO	-	-	Minimal immersions in spheres, Riemannian volume absent
+350	Yau’s nodal bounds: surfaces and higher dimensions.	NONE	-	NO	-	NodalLength; SmoothYau; YauCounterexample	Laplace–Beltrami eigenfunctions on closed manifolds absent
+351	Scalar curvature and finite-time Ricci-flow singularities.	NONE	-	NO	-	-	Ricci flow absent
+352	A finite-time singularity of Calabi flow.	NONE	-	NO	-	-	Calabi flow, Kähler metrics on CP^n absent
+353	Affine Bernstein rigidity through dimension nine and a smooth dimension-ten counterexample.	NONE	-	SMALL	ContDiff; fderiv; Matrix.det; ConvexOn	AffineBernstein	Entire convex graphs solving affine-maximal 4th-order PDE are quadratic, n<=9
+354	The isoperimetric profile of the cubic three-torus.	NONE	-	NO	-	CubicTorus; ThreeTorus	Finite-perimeter sets on flat torus absent
+355	Unique tangent flows at the first surface singularity.	NONE	-	NO	-	-	Mean curvature flow, tangent flows absent
+356	Gigli’s characterization of Alexandrov curvature.	NONE	-	NO	-	-	RCD spaces, Alexandrov curvature absent
+357	Bi-Lipschitz coordinates at every regular RCD point.	NONE	-	NO	-	-	RCD spaces, tangent cones absent
+358	A three-manifold without conjugate points or nonpositive curvature.	NONE	-	NO	-	ConjugatePoints	Conjugate points, sectional curvature absent
+359	Negative Kähler curvature without bounded holomorphic coordinates.	NONE	-	NO	-	PinchedKahler	Complete Kähler metrics, holomorphic sectional curvature absent
+360	Weak MTW curvature gives convexity and regular optimal transport.	NONE	-	NO	-	WeakMTWGlobalSupport	MTW tensor, cut locus, Riemannian OT absent
+361	Failure of integer-degree harmonic dimension comparison.	NONE	-	SMALL	laplacian; ContDiff; Matrix; FiniteDimensional.finrank	HarmonicGrowth	Metric on R^3 as matrix field; define Ricci, Laplace–Beltrami in coordinates
+362	Global smoothness for relativistic Vlasov–Maxwell.	NONE	-	SMALL	fderiv; ContDiff; EuclideanSpace; HasCompactSupport	VlasovMaxwell	Classical PDE system statable with smooth functions, like Millennium/NavierStokes
+363	Nonuniqueness with local conservation for the hard-sphere Boltzmann equation.	NONE	-	NO	-	BoltzmannNonuniqueness	Entropy solutions of Boltzmann equation, L^1 weak theory absent
+364	Kinetic limits and fluctuations over the Boltzmann lifespan.	NONE	-	NO	-	-	Particle-system kinetic limits, BBGKY absent
+365	Joint metric and connection recovery from one boundary patch.	NONE	-	NO	-	Conductivity	Weak elliptic solutions, Dirichlet-to-Neumann maps on bundles absent
+366	The planar Mumford–Shah regularity conjecture and local weak-L4 gradient bounds.	NONE	-	NO	-	-	SBV, Mumford–Shah functional absent
+367	The critical dimension for the one-phase Bernoulli problem.	NONE	-	NO	-	BernoulliNonflatInSeven	Sobolev H^1 minimizers of Alt–Caffarelli energy absent
+368	The three-dimensional Ball–Evans approximation problem.	NONE	-	NO	-	-	Sobolev spaces W^{1,p} absent
+369	The hot spots conjecture for simply connected planar domains.	NONE	-	SMALL	laplacian; ContDiff; IsSimplyConnected; IsMaxOn	HotSpots	Classical Neumann eigenfunctions on smooth planar domains; define normal derivative
+370	The Lane–Emden and Hénon–Lane–Emden conjectures.	NONE	-	YES	InnerProductSpace.laplacian; ContDiffOn; EuclideanSpace	HenonEmden	No positive entire classical solution of the Hénon–Lane–Emden system
+371	Stable blowup for the defocusing Schrödinger equation.	NONE	-	NO	-	DefocusingNLS	Sobolev H^k on torus, NLS well-posedness absent
+372	Global uniqueness in smooth isotropic elasticity.	NONE	-	SMALL	fderiv; ContDiff; EuclideanSpace	ElasticityUniqueness	Cauchy data of smooth Lamé solutions; define smooth domain, normal
+373	Nonattainment of the three-marginal Coulomb Monge problem.	NONE	-	SMALL	MeasureTheory.Measure.map; ProbabilityMeasure; lintegral	CoulombCounterexample	Define multi-marginal couplings, Monge/Kantorovich costs; Monge infimum not attained
+374	Sharp one-third stability of Brenier maps.	NONE	-	SMALL	MeasureTheory.Measure.map; ConvexOn; gradient	Brenier	Define W2 via couplings, Brenier map; Hölder-1/3 stability, sharp
+375	De Giorgi's conjecture in dimension eight.	MAIN	FormalConjectures/Paper/DeGiorgi.lean	YES	InnerProductSpace.laplacian; ContDiff; EuclideanSpace	-	DeGiorgi_le_eight / dimension-8 case already stated
+376	Universal computation in forced Navier–Stokes flows.	NONE	-	NO	-	ForcedNavierStokesComputation	Forced NS solutions plus Turing compilation; too heavy
+377	Interior $`C^{1,\alpha}`$ regularity for infinity-harmonic functions.	PR	#7446	SMALL	ContDiff; fderiv; HolderWith	-	Define viscosity infinity-harmonic functions; C^{1,alpha} interior estimate

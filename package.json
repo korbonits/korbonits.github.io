@@ -24,7 +24,7 @@
     "pagefind": "^1.4.0",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
-    "satori": "^0.26.0"
+    "satori": "^0.33.5"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.5.0"
